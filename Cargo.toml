@@ -11,6 +11,18 @@ keywords = { workspace = true }
 readme = { workspace = true }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+## =======
+## name = "web-view"
+## version = "0.7.3"
+## authors = ["Boscop", "zxey <r.hozak@seznam.cz>", "Sam Green <sam.green81@gmail.com>"]
+## readme = "README.md"
+## license = "MIT"
+## repository = "https://github.com/Boscop/web-view"
+## description = "Rust bindings for webview, a tiny cross-platform library to render web-based GUIs for desktop applications"
+## keywords = ["web", "gui", "desktop", "electron", "webkit"]
+## categories = ["gui", "web-programming", "api-bindings", "rendering", "visualization"]
+exclude = ["webview-sys/**", "webview-examples/**", ".github/**", "Cargo.lock"]
+
 [dependencies]
 comrak = "0.23.0"
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
@@ -18,6 +30,20 @@ indicatif = "0.17.8"
 markdown = { version = "1.0.0-alpha.17", features = ["json", "log", "serde"] }
 markdown2html-converter = "1.1.12"
 
+urlencoding = "1.1"
+webview-sys = { path = "webview-sys", version = "0.6.2" }
+boxfnonce = "0.1"
+tinyfiledialogs = "3.3"
+
 [build-dependencies]
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
 markdown = "1.0.0-alpha.17"
+
+[features]
+edge = ["webview-sys/edge"]
+
+## [workspace]
+## members = [
+##     "webview-sys",
+##     "webview-examples",
+## ]
