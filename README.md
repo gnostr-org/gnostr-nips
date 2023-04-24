@@ -62,6 +62,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-98: HTTP Auth](98.md)
 
 ## Event Kinds
 
@@ -90,6 +91,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `10002` | Relay List Metadata        | [65](65.md) |
 | `22242` | Client Authentication      | [42](42.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
+| `27235` | HTTP Auth                  | [98](98.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
 | `30008` | Profile Badges             | [58](58.md) |
