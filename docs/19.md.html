@@ -41,9 +41,9 @@ size indicated by <code>L</code>.</p>
 <ul>
 <li><code>nprofile</code>: a nostr profile</li>
 <li><code>nevent</code>: a nostr event</li>
-<li><code>nrelay</code>: a nostr relay</li>
 <li><code>naddr</code>: a nostr <em>replaceable event</em>
 coordinate</li>
+<li><code>nrelay</code>: a nostr relay (deprecated)</li>
 </ul>
 <p>These possible standardized <code>TLV</code> types are indicated
 here:</p>
@@ -55,7 +55,6 @@ here:</p>
 <li>for <code>nprofile</code> it will be the 32 bytes of the profile
 public key</li>
 <li>for <code>nevent</code> it will be the 32 bytes of the event id</li>
-<li>for <code>nrelay</code>, this is the relay URL</li>
 <li>for <code>naddr</code>, it is the identifier (the <code>"d"</code>
 tag) of the event being referenced. For non-parameterized replaceable
 events, use an empty string.</li>

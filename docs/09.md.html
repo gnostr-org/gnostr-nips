@@ -28,6 +28,9 @@ events.</p>
 indefinitely, as clients may already have the event that&#x2019;s intended to
 be deleted. Additionally, clients SHOULD broadcast deletion events to
 other relays which don&#x2019;t have it.</p>
+<p>When an <code>a</code> tag is used, relays SHOULD delete all versions
+of the replaceable event up to the <code>created_at</code> timestamp of
+the deletion event.</p>
 <h2 id="client-usage">Client Usage</h2>
 <p>Clients MAY choose to fully hide any events that are referenced by
 valid deletion events. This includes text notes, direct messages, or

@@ -134,49 +134,54 @@ table:</p>
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>kind</th>
 <th>name</th>
 <th>tags</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>9000</td>
 <td><code>add-user</code></td>
 <td><code>p</code> (pubkey hex)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>9001</td>
 <td><code>remove-user</code></td>
 <td><code>p</code> (pubkey hex)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>9002</td>
 <td><code>edit-metadata</code></td>
 <td><code>name</code>, <code>about</code>, <code>picture</code>
 (string)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>9003</td>
 <td><code>add-permission</code></td>
 <td><code>p</code> (pubkey), <code>permission</code> (name)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>9004</td>
 <td><code>remove-permission</code></td>
 <td><code>p</code> (pubkey), <code>permission</code> (name)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>9005</td>
 <td><code>delete-event</code></td>
 <td><code>e</code> (id hex)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>9006</td>
 <td><code>edit-group-status</code></td>
 <td><code>public</code> or <code>private</code>, <code>open</code> or
 <code>closed</code></td>
+</tr>
+<tr>
+<td>9007</td>
+<td><code>create-group</code></td>
+<td></td>
 </tr>
 </tbody>
 </table>

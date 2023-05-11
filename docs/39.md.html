@@ -10,19 +10,20 @@ validate and display this information.</p>
 <h2 id="i-tag-on-a-metadata-event"><code>i</code> tag on a metadata
 event</h2>
 <p>A new optional <code>i</code> tag is introduced for
-<code>kind 0</code> metadata event contents in addition to name, about,
-picture fields as included in <a
-href="https://github.com/nostr-protocol/nips/blob/master/01.md.html">NIP-01</a>:</p>
+<code>kind 0</code> metadata event defined in <a
+href="01.md.html">NIP-01</a>:</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;github:semisol&quot;</span><span class="ot">,</span> <span class="st">&quot;9721ce4ee4fceb91c9711ca2a6c9a5ab&quot;</span><span class="ot">],</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;twitter:semisol_public&quot;</span><span class="ot">,</span> <span class="st">&quot;1619358434134196225&quot;</span><span class="ot">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;mastodon:bitcoinhackers.org/@semisol&quot;</span><span class="ot">,</span> <span class="st">&quot;109775066355589974&quot;</span><span class="ot">]</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;telegram:1087295469&quot;</span><span class="ot">,</span> <span class="st">&quot;nostrdirectory/770&quot;</span><span class="ot">]</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;id&gt;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="er">&lt;pubkey&gt;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;github:semisol&quot;</span><span class="ot">,</span> <span class="st">&quot;9721ce4ee4fceb91c9711ca2a6c9a5ab&quot;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;twitter:semisol_public&quot;</span><span class="ot">,</span> <span class="st">&quot;1619358434134196225&quot;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;mastodon:bitcoinhackers.org/@semisol&quot;</span><span class="ot">,</span> <span class="st">&quot;109775066355589974&quot;</span><span class="ot">]</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;telegram:1087295469&quot;</span><span class="ot">,</span> <span class="st">&quot;nostrdirectory/770&quot;</span><span class="ot">]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>An <code>i</code> tag will have two parameters, which are defined as
 the following: 1. <code>platform:identity</code>: This is the platform
 name (for example <code>github</code>) and the identity on that platform

@@ -37,6 +37,9 @@ indefinitely, as clients may already have the event that&rsquo;s
 intended to be deleted. Additionally, clients SHOULD broadcast deletion
 events to other relays which don&rsquo;t have it.
 
+When an a tag is used, relays SHOULD delete all versions of the
+replaceable event up to the created_at timestamp of the deletion event.
+
 Client Usage
 
 Clients MAY choose to fully hide any events that are referenced by valid

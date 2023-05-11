@@ -236,7 +236,8 @@
 <h1 id="nip-15">NIP-15</h1>
 <h2 id="nostr-marketplace">Nostr Marketplace</h2>
 <p><code>draft</code> <code>optional</code></p>
-<p>Based on https://github.com/lnbits/Diagon-Alley.</p>
+<p>Based on <a
+href="https://github.com/lnbits/Diagon-Alley">Diagon-Alley</a>.</p>
 <p>Implemented in <a
 href="https://github.com/lnbits/nostrmarket">NostrMarket</a> and <a
 href="https://github.com/PlebeianTech/plebeian-market">Plebeian
@@ -389,32 +390,32 @@ categories that the product can be part of (<code>food</code>,
 <code>fruits</code>). Multiple <code>t</code> tags can be present.</li>
 </ul>
 <h2 id="checkout-events">Checkout events</h2>
-<p>All checkout events are sent as JSON strings using (<a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>).</p>
+<p>All checkout events are sent as JSON strings using <a
+href="04.md.css.html">NIP-04</a>.</p>
 <p>The <code>merchant</code> and the <code>customer</code> can exchange
 JSON messages that represent different actions. Each <code>JSON</code>
 message <code>MUST</code> have a <code>type</code> field indicating the
 what the JSON represents. Possible types:</p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>Message Type</th>
 <th>Sent By</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>0</td>
 <td>Customer</td>
 <td>New Order</td>
 </tr>
-<tr class="even">
+<tr>
 <td>1</td>
 <td>Merchant</td>
 <td>Payment Request</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>2</td>
 <td>Merchant</td>
 <td>Order Status Update</td>
@@ -423,8 +424,7 @@ what the JSON represents. Possible types:</p>
 </table>
 <h3 id="step-1-customer-order-event">Step 1: <code>customer</code> order
 (event)</h3>
-<p>The below JSON goes in content of <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>.</p>
+<p>The below JSON goes in content of <a href="04.md.css.html">NIP-04</a>.</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">generated</span> <span class="er">by</span> <span class="er">the</span> <span class="er">customer&gt;</span><span class="fu">,</span></span>
@@ -451,7 +451,7 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="
 <p>Sent back from the merchant for payment. Any payment option is valid
 that the merchant can check.</p>
 <p>The below JSON goes in <code>content</code> of <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>.</p>
+href="04.md.css.html">NIP-04</a>.</p>
 <p><code>payment_options</code>/<code>type</code> include:</p>
 <ul>
 <li><code>url</code> URL to a payment page, stripe, paypal,
@@ -484,7 +484,7 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="
 <code>merchant</code> verify payment/shipped (event)</h3>
 <p>Once payment has been received and processed.</p>
 <p>The below JSON goes in <code>content</code> of <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>.</p>
+href="04.md.css.html">NIP-04</a>.</p>
 <div class="sourceCode" id="cb8"><pre
 class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">the</span> <span class="er">order&gt;</span><span class="fu">,</span></span>
@@ -495,8 +495,7 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <h2 id="customize-marketplace">Customize Marketplace</h2>
 <p>Create a customized user experience using the <code>naddr</code> from
-<a
-href="https://github.com/nostr-protocol/nips/blob/master/19.md.css.html#shareable-identifiers-with-extra-metadata">NIP-19</a>.
+<a href="19.md.css.html#shareable-identifiers-with-extra-metadata">NIP-19</a>.
 The use of <code>naddr</code> enables easy sharing of marketplace events
 while incorporating a rich set of metadata. This metadata can include
 relays, merchant profiles, and more. Subsequently, it allows merchants
@@ -623,8 +622,8 @@ extended. So the actual end date of an auction is always
 <code>start_date + duration + (SUM(c.duration_extended) FOR c in all confirmations</code>.</p>
 <h2 id="customer-support-events">Customer support events</h2>
 <p>Customer support is handled over whatever communication method was
-specified. If communicating via nostr, NIP-04 is used
-https://github.com/nostr-protocol/nips/blob/master/04.md.css.html.</p>
+specified. If communicating via nostr, <a href="04.md.css.html">NIP-04</a> is
+used.</p>
 <h2 id="additional">Additional</h2>
 <p>Standard data models can be found
 <a href="https://raw.githubusercontent.com/lnbits/nostrmarket/main/models.py">here</a></p>

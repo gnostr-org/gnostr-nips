@@ -168,6 +168,8 @@ table:
 
   9006                    edit-group-status       public or private, open
                                                   or closed
+
+  9007                    create-group            
   -----------------------------------------------------------------------
 
 -   group metadata (kind:39000) (optional)

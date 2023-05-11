@@ -72,11 +72,13 @@ List
 -   NIP-52: Calendar Events
 -   NIP-53: Live Activities
 -   NIP-54: Wiki
+-   NIP-55: Android Signer Application
 -   NIP-56: Reporting
 -   NIP-57: Lightning Zaps
 -   NIP-58: Badges
 -   NIP-59: Gift Wrap
 -   NIP-65: Relay List Metadata
+-   NIP-70: Protected Events
 -   NIP-71: Video Events
 -   NIP-72: Moderated Communities
 -   NIP-75: Zap Goals
@@ -95,7 +97,7 @@ Event Kinds
   ------------------------------------------------------------------------
   kind           description                   NIP
   -------------- ----------------------------- ---------------------------
-  0              Metadata                      01
+  0              User Metadata                 01
 
   1              Short Text Note               01
 
@@ -168,6 +170,8 @@ Event Kinds
   2003           Torrent                       35
 
   2004           Torrent Comment               35
+
+  2022           Coinjoin Pool                 joinstr
 
   4550           Community Post Approval       72
 
@@ -342,9 +346,6 @@ Relay to Client
   COUNT    used to send requested event counts to clients       45
   ------------------------------------------------------------------------
 
-Please update these lists when proposing NIPs introducing new event
-kinds.
-
 Standardized Tags
 
   --------------------------------------------------------------------------------
@@ -360,13 +361,17 @@ Standardized Tags
 
   d                 identifier            &ndash;            01
 
+  -                 &ndash;               &ndash;            70
+
   g                 geohash               &ndash;            52
+
+  h                 group id              &ndash;            29
 
   i                 identity              proof              39
 
   k                 kind number (string)  &ndash;            18, 25, 72
 
-  l                 label, label          annotations        32
+  l                 label, label          &ndash;            32
                     namespace                                
 
   L                 label namespace       &ndash;            32
@@ -375,7 +380,7 @@ Standardized Tags
 
   q                 event id (hex)        relay URL          18
 
-  r                 a reference (URL,     petname            
+  r                 a reference (URL,     petname            24
                     etc)                                     
 
   r                 relay url             marker             65
@@ -422,7 +427,7 @@ Standardized Tags
 
   name              name                  &ndash;            34, 58
 
-  nonce             random                &ndash;            13
+  nonce             random                difficulty         13
 
   preimage          hash of bolt11        &ndash;            57
                     invoice                                  
@@ -457,10 +462,12 @@ Standardized Tags
                     URL                                      
   --------------------------------------------------------------------------------
 
+Please update these lists when proposing new NIPs.
+
 Criteria for acceptance of NIPs
 
-1.  They should be implemented in at least two clients and one relay
-    &ndash; when applicable.
+1.  They should be fully implemented in at least two clients and one
+    relay &ndash; when applicable.
 2.  They should make sense.
 3.  They should be optional and backwards-compatible: care must be taken
     such that clients and relays that choose to not implement them do

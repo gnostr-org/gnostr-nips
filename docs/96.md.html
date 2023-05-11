@@ -74,78 +74,69 @@ the &#x201C;api_url&#x201D; field instead.</p>
 Storage Servers</h3>
 <p>See
 https://github.com/aljazceru/awesome-nostr#nip-96-file-storage-servers.</p>
+<h2 id="auth">Auth</h2>
+<p>When indicated, <code>clients</code> must add an <a
+href="98.md.html">NIP-98</a> <code>Authorization</code> header
+(<strong>optionally</strong> with the encoded <code>payload</code> tag
+set to the base64-encoded 256-bit SHA-256 hash of the file - not the
+hash of the whole request body).</p>
 <h2 id="upload">Upload</h2>
-<p>A file can be uploaded one at a time to
-<code>https://your-file-server.example/custom-api-path</code> (route
-from
-<code>https://your-file-server.example/.well-known/nostr/nip96.json</code>
-&#x201C;api_url&#x201D; field) as <code>multipart/form-data</code> content type using
-<code>POST</code> method with the file object set to the
-<code>file</code> form data field.</p>
-<p><code>Clients</code> must add an <a href="98.md.html">NIP-98</a>
-<code>Authorization</code> header (<strong>optionally</strong> with the
-encoded <code>payload</code> tag set to the base64-encoded 256-bit
-SHA-256 hash of the file - not the hash of the whole request body). If
-using an html form, use an <code>Authorization</code> form data field
-instead.</p>
-<p>These following <strong>optional</strong> form data fields MAY be
-used by <code>servers</code> and SHOULD be sent by <code>clients</code>:
-- <code>expiration</code>: string of the UNIX timestamp in seconds.
-Empty string if file should be stored forever. The server isn&#x2019;t required
-to honor this; - <code>size</code>: string of the file byte size. This
-is just a value the server can use to reject early if the file size
-exceeds the server limits; - <code>alt</code>: (recommended) strict
-description text for visibility-impaired users; - <code>caption</code>:
-loose description; - <code>media_type</code>: &#x201C;avatar&#x201D; or &#x201C;banner&#x201D;.
-Informs the server if the file will be used as an avatar or banner. If
-absent, the server will interpret it as a normal upload, without special
-treatment; - <code>content_type</code>: mime type such as &#x201C;image/jpeg&#x201D;.
-This is just a value the server can use to reject early if the mime type
-isn&#x2019;t supported.</p>
+<p><code>POST $api_url</code> as <code>multipart/form-data</code>.</p>
+<p><strong>AUTH required</strong></p>
+<p>List of form fields:</p>
+<ul>
+<li><code>file</code>: <strong>REQUIRED</strong> the file to upload</li>
+<li><code>caption</code>: <strong>RECOMMENDED</strong> loose
+description;</li>
+<li><code>expiration</code>: UNIX timestamp in seconds. Empty string if
+file should be stored forever. The server isn&#x2019;t required to honor
+this.</li>
+<li><code>size</code>: File byte size. This is just a value the server
+can use to reject early if the file size exceeds the server limits.</li>
+<li><code>alt</code>: <strong>RECOMMENDED</strong> strict description
+text for visibility-impaired users.</li>
+<li><code>media_type</code>: &#x201C;avatar&#x201D; or &#x201C;banner&#x201D;. Informs the server if
+the file will be used as an avatar or banner. If absent, the server will
+interpret it as a normal upload, without special treatment.</li>
+<li><code>content_type</code>: mime type such as &#x201C;image/jpeg&#x201D;. This is
+just a value the server can use to reject early if the mime type isn&#x2019;t
+supported.</li>
+<li><code>no_transform</code>: &#x201C;true&#x201D; asks server not to transform the
+file and serve the uploaded file as is, may be rejected.</li>
+</ul>
 <p>Others custom form data fields may be used depending on specific
 <code>server</code> support. The <code>server</code> isn&#x2019;t required to
 store any metadata sent by <code>clients</code>.</p>
-<p>Note for <code>clients</code>: if using an HTML form, it is important
-for the <code>file</code> form field to be the <strong>last</strong>
-one, or be re-ordered right before sending or be appended as the last
-field of XHR2&#x2019;s FormData object.</p>
 <p>The <code>filename</code> embedded in the file may not be honored by
 the <code>server</code>, which could internally store just the SHA-256
 hash value as the file name, ignoring extra metadata. The hash is enough
 to uniquely identify a file, that&#x2019;s why it will be used on the
-&#x201C;download&#x201D; and &#x201C;delete&#x201D; routes.</p>
+<code>download</code> and <code>delete</code> routes.</p>
 <p>The <code>server</code> MUST link the user&#x2019;s <code>pubkey</code>
-string (which is embedded in the decoded header value) as the owner of
-the file so to later allow them to delete the file. Note that if a file
-with the same hash of a previously received file (so the same file) is
-uploaded by another user, the server doesn&#x2019;t need to store the new file.
-It should just add the new user&#x2019;s <code>pubkey</code> to the list of the
-owners of the already stored file with said hash (if it wants to save
-space by keeping just one copy of the same file, because multiple
-uploads of the same file results in the same file hash).</p>
-<p>The <code>server</code> MAY also store the <code>Authorization</code>
-header/field value (decoded or not) for accountability purpose as this
-proves that the user with the unique pubkey did ask for the upload of
-the file with a specific hash. However, storing the pubkey is sufficient
-to establish ownership.</p>
-<p>The <code>server</code> MUST reject with 413 Payload Too Large if
-file size exceeds limits.</p>
-<p>The <code>server</code> MUST reject with 400 Bad Request status if
-some fields are invalid.</p>
-<p>The <code>server</code> MUST reply to the upload with 200 OK status
-if the <code>payload</code> tag value contains an already used SHA-256
-hash (if file is already owned by the same pubkey) or reject the upload
-with 403 Forbidden status if it isn&#x2019;t the same of the received file.</p>
-<p>The <code>server</code> MAY reject the upload with 402 Payment
-Required status if the user has a pending payment (Payment flow is not
-strictly required. Server owners decide if the storage is free or not.
-Monetization schemes may be added later to correlated NIPs.).</p>
-<p>On successful uploads the <code>server</code> MUST reply with
-<strong>201 Created</strong> HTTP status code or <strong>202
-Accepted</strong> if a <code>processing_url</code> field is added to the
-response so that the <code>client</code> can follow the processing
-status (see <a href="#delayed-processing">Delayed Processing</a>
-section).</p>
+string as the owner of the file so to later allow them to delete the
+file.</p>
+<p><code>no_transform</code> can be used to replicate a file to multiple
+servers for redundancy, clients can use the <a
+href="#selecting-a-server">server list</a> to find alternative servers
+which might contain the same file. When uploading a file and requesting
+<code>no_transform</code> clients should check that the hash matches in
+the response in order to detect if the file was modified.</p>
+<h3 id="response-codes">Response codes</h3>
+<ul>
+<li><code>200 OK</code>: File upload exists, but is successful (Existing
+hash)</li>
+<li><code>201 Created</code>: File upload successful (New hash)</li>
+<li><code>202 Accepted</code>: File upload is awaiting processing, see
+<a href="#delayed-processing">Delayed Processing</a> section</li>
+<li><code>413 Payload Too Large</code>: File size exceeds limit</li>
+<li><code>400 Bad Request</code>: Form data is invalid or not
+supported.</li>
+<li><code>403 Forbidden</code>: User is not allowed to upload or the
+uploaded file hash didnt match the hash included in the
+<code>Authorization</code> header <code>payload</code> tag.</li>
+<li><code>402 Payment Required</code>: Payment is required by the
+server, <strong>this flow is undefined</strong>.</li>
+</ul>
 <p>The upload response is a json object as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// &quot;success&quot; if successful or &quot;error&quot; if not</span></span>
@@ -202,12 +193,14 @@ server MUST link the saved file to the SHA-256 hash of the
 <code>nip94_event.tags.*.ox</code> tag value). The
 <strong>original</strong> file&#x2019;s SHA-256 hash will be used to identify
 the saved file when downloading or deleting it.</p>
-<p><code>Clients</code> may upload the same file to one or many
+<p><code>clients</code> may upload the same file to one or many
 <code>servers</code>. After successful upload, the <code>client</code>
 may optionally generate and send to any set of nostr <code>relays</code>
 a <a href="94.md.html">NIP-94</a> event by including the missing fields.</p>
 <p>Alternatively, instead of using NIP-94, the <code>client</code> can
 share or embed on a nostr note just the above url.</p>
+<p><code>clients</code> may also use the tags from the
+<code>nip94_event</code> to construct an <code>imeta</code> tag</p>
 <h3 id="delayed-processing">Delayed Processing</h3>
 <p>Sometimes the server may want to place the uploaded file in a
 processing queue for deferred file processing.</p>
@@ -246,19 +239,14 @@ can be applied by the server. However, for all file actions, such as
 download and deletion, the <strong>original</strong> file SHA-256 hash
 is what identifies the file in the url string.</p>
 <h2 id="download">Download</h2>
-<p><code>Servers</code> must make available the route
-<code>https://your-file-server.example/custom-api-path/&lt;sha256-file-hash&gt;(.ext)</code>
-(route taken from
-<code>https://your-file-server.example/.well-known/nostr/nip96.json</code>
-&#x201C;api_url&#x201D; or &#x201C;download_url&#x201D; field) with <code>GET</code> method for file
-download.</p>
+<p><code>GET $api_url/&lt;sha256-hash&gt;(.ext)</code></p>
 <p>The primary file download url informed at the upload&#x2019;s response field
 <code>nip94_event.tags.*.url</code> can be that or not (it can be any
 non-standard url the server wants). If not, the server still MUST also
 respond to downloads at the standard url mentioned on the previous
 paragraph, to make it possible for a client to try downloading a file on
 any NIP-96 compatible server by knowing just the SHA-256 file hash.</p>
-<p>Note that the &#x201C;&lt;sha256-file-hash&gt;&#x201D; part is from the
+<p>Note that the &#x201C;&lt;sha256-hash&gt;&#x201D; part is from the
 <strong>original</strong> file, <strong>not</strong> from the
 <strong>transformed</strong> file if the uploaded file went through any
 server transformation.</p>
@@ -270,39 +258,32 @@ header to send (e.g.: &#x201C;Content-Type&#x201D;: &#x201C;image/png&#x201D; fo
 The file extension may be absent because the hash is the only needed
 string to uniquely identify a file.</p>
 <p>Example:
-<code>https://your-file-server.example/custom-api-path/719171db19525d9d08dd69cb716a18158a249b7b3b3ec4bbdec5698dca104b7b.png</code></p>
+<code>$api_url/719171db19525d9d08dd69cb716a18158a249b7b3b3ec4bbdec5698dca104b7b.png</code></p>
 <h3 id="media-transformations">Media Transformations</h3>
-<p><code>Servers</code> may respond to some media transformation query
+<p><code>servers</code> may respond to some media transformation query
 parameters and ignore those they don&#x2019;t support by serving the original
 media file without transformations.</p>
 <h4 id="image-transformations">Image Transformations</h4>
 <h5 id="resizing">Resizing</h5>
 <p>Upon upload, <code>servers</code> may create resized image variants,
 such as thumbnails, respecting the original aspect ratio.
-<code>Clients</code> may use the <code>w</code> query parameter to
+<code>clients</code> may use the <code>w</code> query parameter to
 request an image version with the desired pixel width.
-<code>Servers</code> can then serve the variant with the closest width
+<code>servers</code> can then serve the variant with the closest width
 to the parameter value or an image variant generated on the fly.</p>
-<p>Example:
-<code>https://your-file-server.example/custom-api-path/&lt;sha256-file-hash&gt;.png?w=32</code></p>
+<p>Example: <code>$api_url/&lt;sha256-hash&gt;.png?w=32</code></p>
 <h2 id="deletion">Deletion</h2>
-<p><code>Servers</code> must make available the route
-<code>https://deletion.domain/deletion-path/&lt;sha256-file-hash&gt;(.ext)</code>
-(route taken from
-<code>https://your-file-server.example/.well-known/nostr/nip96.json</code>
-&#x201C;api_url&#x201D; field) with <code>DELETE</code> method for file deletion.</p>
-<p>Note that the &#x201C;&lt;sha256-file-hash&gt;&#x201D; part is from the
+<p><code>DELETE $api_url/&lt;sha256-hash&gt;(.ext)</code></p>
+<p><strong>AUTH required</strong></p>
+<p>Note that the <code>/&lt;sha256-hash&gt;</code> part is from the
 <strong>original</strong> file, <strong>not</strong> from the
 <strong>transformed</strong> file if the uploaded file went through any
 server transformation.</p>
 <p>The extension is optional as the file hash is the only needed file
 identification.</p>
-<p><code>Clients</code> should send a <code>DELETE</code> request to the
-server deletion route in the above format. It must include a NIP-98
-<code>Authorization</code> header.</p>
 <p>The <code>server</code> should reject deletes from users other than
-the original uploader. The <code>pubkey</code> encoded on the header
-value identifies the user.</p>
+the original uploader with the appropriate http response code (403
+Forbidden).</p>
 <p>It should be noted that more than one user may have uploaded the same
 file (with the same hash). In this case, a delete must not really delete
 the file but just remove the user&#x2019;s <code>pubkey</code> from the file
@@ -315,18 +296,49 @@ fields:</p>
   status: &quot;success&quot;,
   message: &quot;File deleted.&quot;
 }</code></pre>
+<h2 id="listing-files">Listing files</h2>
+<p><code>GET $api_url?page=x&amp;count=y</code></p>
+<p><strong>AUTH required</strong></p>
+<p>Returns a list of files linked to the authenticated users pubkey.</p>
+<p>Example Response:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;count&quot;</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="co">// server page size, eg. max(1, min(server_max_page_size, arg_count))</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;total&quot;</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="co">// total number of files</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;page&quot;</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="co">// the current page number</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;files&quot;</span><span class="op">:</span> [</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;ox&quot;</span><span class="op">:</span> <span class="st">&quot;719171db19525d9d08dd69cb716a18158a249b7b3b3ec4bbdec5698dca104b7b&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;x&quot;</span><span class="op">:</span> <span class="st">&quot;5d2899290e0e69bcd809949ee516a4a1597205390878f780c098707a7f18e3df&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;size&quot;</span><span class="op">,</span> <span class="st">&quot;123456&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;alt&quot;</span><span class="op">,</span> <span class="st">&quot;a meme that makes you laugh&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;expiration&quot;</span><span class="op">,</span>  <span class="st">&quot;1715691139&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ...other metadata</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;haha funny meme&quot;</span><span class="op">,</span> <span class="co">// caption</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;created_at&quot;</span><span class="op">:</span> <span class="dv">1715691130</span> <span class="co">// upload timestamp</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>files</code> contains an array of NIP-94 events</p>
+<h3 id="query-args">Query args</h3>
+<ul>
+<li><code>page</code> page number (<code>offset=page*count</code>)</li>
+<li><code>count</code> number of items per page</li>
+</ul>
 <h2 id="selecting-a-server">Selecting a Server</h2>
 <p>Note: HTTP File Storage Server developers may skip this section. This
 is meant for client developers.</p>
 <p>A File Server Preference event is a kind 10096 replaceable event
 meant to select one or more servers the user wants to upload files to.
 Servers are listed as <code>server</code> tags:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">10096</span><span class="op">,</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;server&quot;</span><span class="op">,</span> <span class="st">&quot;https://file.server.one&quot;</span>]<span class="op">,</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;server&quot;</span><span class="op">,</span> <span class="st">&quot;https://file.server.two&quot;</span>]</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">10096</span><span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;server&quot;</span><span class="op">,</span> <span class="st">&quot;https://file.server.one&quot;</span>]<span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;server&quot;</span><span class="op">,</span> <span class="st">&quot;https://file.server.two&quot;</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>

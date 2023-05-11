@@ -262,10 +262,9 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <h2 id="kind-41-set-channel-metadata">Kind 41: Set channel metadata</h2>
 <p>Update a channel’s public metadata.</p>
-<p>Clients and relays SHOULD handle kind 41 events similar to kind 33
-replaceable events, where the information is used to update the
-metadata, without modifying the event id for the channel.Only the most
-recent kind 41 is needed to be stored.</p>
+<p>Kind 41 is used to update the metadata without modifying the event id
+for the channel. Only the most recent kind 41 per <code>e</code> tag
+value MAY be available.</p>
 <p>Clients SHOULD ignore kind 41s from pubkeys other than the kind 40
 pubkey.</p>
 <p>Clients SHOULD support basic metadata fields:</p>

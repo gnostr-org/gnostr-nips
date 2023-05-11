@@ -255,9 +255,12 @@ query to the best of their ability and return events that match it.
 Relays SHOULD perform matching against <code>content</code> event field,
 and MAY perform matching against other fields if that makes sense in the
 context of a specific kind.</p>
-<p>A query string may contain <code>key:value</code> pairs (two words
-separated by colon), these are extensions, relays SHOULD ignore
-extensions they don’t support.</p>
+<p>Results SHOULD be returned in descending order by quality of search
+result (as defined by the implementation), not by the usual
+<code>.created_at</code>. The <code>limit</code> filter SHOULD be
+applied after sorting by matching score. A query string may contain
+<code>key:value</code> pairs (two words separated by colon), these are
+extensions, relays SHOULD ignore extensions they don’t support.</p>
 <p>Clients may specify several search filters,
 i.e. <code>["REQ", "", { "search": "orange" }, { "kinds": [1, 2], "search": "purple" }]</code>.
 Clients may include <code>kinds</code>, <code>ids</code> and other

@@ -272,16 +272,17 @@ structure:</p>
 ]</code></pre>
 <p>To prevent implementation differences from creating a different event
 ID for the same event, the following rules MUST be followed while
-serializing: - No whitespace, line breaks or other unnecessary
-formatting should be included in the output JSON. - No characters except
-the following should be escaped, and instead should be included
-verbatim: - A line break, <code>0x0A</code>, as <code>\n</code> - A
-double quote, <code>0x22</code>, as <code>\"</code> - A backslash,
-<code>0x5C</code>, as <code>\\</code> - A carriage return,
-<code>0x0D</code>, as <code>\r</code> - A tab character,
-<code>0x09</code>, as <code>\t</code> - A backspace, <code>0x08</code>,
-as <code>\b</code> - A form feed, <code>0x0C</code>, as <code>\f</code>
-- UTF-8 should be used for encoding.</p>
+serializing: - UTF-8 should be used for encoding. - Whitespace, line
+breaks or other unnecessary formatting should not be included in the
+output JSON. - The following characters in the content field must be
+escaped as shown, and all other characters must be included verbatim: -
+A line break (<code>0x0A</code>), use <code>\n</code> - A double quote
+(<code>0x22</code>), use <code>\"</code> - A backslash
+(<code>0x5C</code>), use <code>\\</code> - A carriage return
+(<code>0x0D</code>), use <code>\r</code> - A tab character
+(<code>0x09</code>), use <code>\t</code> - A backspace,
+(<code>0x08</code>), use <code>\b</code> - A form feed,
+(<code>0x0C</code>), use <code>\f</code></p>
 <h3 id="tags">Tags</h3>
 <p>Each tag is an array of one or more strings, with some conventions
 around them. Take a look at the example below:</p>
@@ -334,11 +335,12 @@ in an event of kind 10002). Each NIP may define the meaning of a set of
 kinds that weren’t defined elsewhere. This NIP defines two basic
 kinds:</p>
 <ul>
-<li><code>0</code>: <strong>metadata</strong>: the <code>content</code>
-is set to a stringified JSON object
+<li><code>0</code>: <strong>user metadata</strong>: the
+<code>content</code> is set to a stringified JSON object
 <code>{name: &lt;username&gt;, about: &lt;string&gt;, picture: &lt;url, string&gt;}</code>
-describing the user who created the event. A relay may delete older
-events once it gets a new one for the same pubkey.</li>
+describing the user who created the event. <a href="24.md.css.html#kind-0">Extra
+metadata fields</a> may be set. A relay may delete older events once it
+gets a new one for the same pubkey.</li>
 <li><code>1</code>: <strong>text note</strong>: the <code>content</code>
 is set to the <strong>plaintext</strong> content of a note (anything the
 user wants to say). Content that must be parsed, such as Markdown and
@@ -349,9 +351,9 @@ those.</li>
 experimentation and flexibility of relay implementation:</p>
 <ul>
 <li>for kind <code>n</code> such that
-<code>1000 &lt;= n &lt; 10000</code>, events are
-<strong>regular</strong>, which means they’re all expected to be stored
-by relays.</li>
+<code>1000 &lt;= n &lt; 10000 || 4 &lt;= n &lt; 45 || n == 1 || n == 2</code>,
+events are <strong>regular</strong>, which means they’re all expected to
+be stored by relays.</li>
 <li>for kind <code>n</code> such that
 <code>10000 &lt;= n &lt; 20000 || n == 0 || n == 3</code>, events are
 <strong>replaceable</strong>, which means that, for each combination of
@@ -410,8 +412,8 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;authors&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">lowercase</span> <span class="er">pubkeys</span><span class="fu">,</span> <span class="er">the</span> <span class="er">pubkey</span> <span class="er">of</span> <span class="er">an</span> <span class="er">event</span> <span class="er">must</span> <span class="er">be</span> <span class="er">one</span> <span class="er">of</span> <span class="er">these&gt;</span><span class="fu">,</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">a</span> <span class="er">kind</span> <span class="er">numbers&gt;</span><span class="fu">,</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;#&lt;single-letter (a-zA-Z)&gt;&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">tag</span> <span class="er">values</span><span class="fu">,</span> <span class="er">for</span> <span class="er">#e</span> <span class="er">—</span> <span class="er">a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">event</span> <span class="er">ids</span><span class="fu">,</span> <span class="er">for</span> <span class="er">#p</span> <span class="er">—</span> <span class="er">a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">pubkeys</span><span class="fu">,</span> <span class="er">etc.&gt;</span><span class="fu">,</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;since&quot;</span><span class="fu">:</span> <span class="er">&lt;an</span> <span class="er">integer</span> <span class="er">unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds</span><span class="fu">,</span> <span class="er">events</span> <span class="er">must</span> <span class="er">be</span> <span class="er">newer</span> <span class="er">than</span> <span class="er">this</span> <span class="er">to</span> <span class="er">pass&gt;</span><span class="fu">,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;until&quot;</span><span class="fu">:</span> <span class="er">&lt;an</span> <span class="er">integer</span> <span class="er">unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds</span><span class="fu">,</span> <span class="er">events</span> <span class="er">must</span> <span class="er">be</span> <span class="er">older</span> <span class="er">than</span> <span class="er">this</span> <span class="er">to</span> <span class="er">pass&gt;</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;since&quot;</span><span class="fu">:</span> <span class="er">&lt;an</span> <span class="er">integer</span> <span class="er">unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds.</span> <span class="er">Events</span> <span class="er">must</span> <span class="er">have</span> <span class="er">a</span> <span class="er">created_at</span> <span class="er">&gt;=</span> <span class="er">to</span> <span class="er">this</span> <span class="er">to</span> <span class="er">pass&gt;</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;until&quot;</span><span class="fu">:</span> <span class="er">&lt;an</span> <span class="er">integer</span> <span class="er">unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds.</span> <span class="er">Events</span> <span class="er">must</span> <span class="er">have</span> <span class="er">a</span> <span class="er">created_at</span> <span class="er">&lt;=</span> <span class="er">to</span> <span class="er">this</span> <span class="er">to</span> <span class="er">pass&gt;</span><span class="fu">,</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;limit&quot;</span><span class="fu">:</span> <span class="er">&lt;maximum</span> <span class="er">number</span> <span class="er">of</span> <span class="er">events</span> <span class="er">relays</span> <span class="er">SHOULD</span> <span class="er">return</span> <span class="er">in</span> <span class="er">the</span> <span class="er">initial</span> <span class="er">query&gt;</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>Upon receiving a <code>REQ</code> message, the relay SHOULD query its
@@ -454,7 +456,9 @@ conditions.</p>
 initial query and MUST be ignored afterwards. When <code>limit: n</code>
 is present it is assumed that the events returned in the initial query
 will be the last <code>n</code> events ordered by the
-<code>created_at</code>. It is safe to return less events than
+<code>created_at</code>. Newer events should appear first, and in the
+case of ties the event with the lowest id (first in lexical order)
+should be first. It is safe to return less events than
 <code>limit</code> specifies, but it is expected that relays do not
 return (much) more events than requested so clients don’t get
 unnecessarily overwhelmed by data.</p>

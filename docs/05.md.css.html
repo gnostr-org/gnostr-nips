@@ -237,7 +237,7 @@
 <h2 id="mapping-nostr-keys-to-dns-based-internet-identifiers">Mapping
 Nostr keys to DNS-based internet identifiers</h2>
 <p><code>final</code> <code>optional</code></p>
-<p>On events of kind <code>0</code> (<code>metadata</code>) one can
+<p>On events of kind <code>0</code> (<code>user metadata</code>) one can
 specify the key <code>"nip05"</code> with an <a
 href="https://datatracker.ietf.org/doc/html/rfc5322#section-3.4.1">internet
 identifier</a> (an email-like address) as the value. Although there is a
@@ -252,8 +252,8 @@ these values to make a GET request to
 <code>"names"</code> that should then be a mapping of names to hex
 formatted public keys. If the public key for the given
 <code>&lt;name&gt;</code> matches the <code>pubkey</code> from the
-<code>metadata</code> event, the client then concludes that the given
-pubkey can indeed be referenced by its identifier.</p>
+<code>user's metadata</code> event, the client then concludes that the
+given pubkey can indeed be referenced by its identifier.</p>
 <h3 id="example">Example</h3>
 <p>If a client sees an event like this:</p>
 <div class="sourceCode" id="cb1"><pre

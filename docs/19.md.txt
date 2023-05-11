@@ -51,8 +51,8 @@ These are the possible bech32 prefixes with TLV:
 
 -   nprofile: a nostr profile
 -   nevent: a nostr event
--   nrelay: a nostr relay
 -   naddr: a nostr replaceable event coordinate
+-   nrelay: a nostr relay (deprecated)
 
 These possible standardized TLV types are indicated here:
 
@@ -61,7 +61,6 @@ These possible standardized TLV types are indicated here:
         -   for nprofile it will be the 32 bytes of the profile public
             key
         -   for nevent it will be the 32 bytes of the event id
-        -   for nrelay, this is the relay URL
         -   for naddr, it is the identifier (the "d" tag) of the event
             being referenced. For non-parameterized replaceable events,
             use an empty string.

@@ -64,8 +64,8 @@ responding to. Optionally, a request can have an <code>expiration</code>
 tag that has a unix timestamp in seconds. If the request is received
 after this timestamp, it should be ignored.</p>
 <p>The content of requests and responses is encrypted with <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.html">NIP04</a>,
-and is a JSON-RPCish object with a semi-fixed structure:</p>
+href="04.md.html">NIP04</a>, and is a JSON-RPCish object with a semi-fixed
+structure:</p>
 <p>Request:</p>
 <pre class="jsonc"><code>{
     &quot;method&quot;: &quot;pay_invoice&quot;, // method, string

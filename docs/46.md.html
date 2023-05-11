@@ -33,7 +33,9 @@ supports remote signing.</p>
 <pre><code>bunker://&lt;remote-user-pubkey&gt;?relay=&lt;wss://relay-to-connect-on&gt;&amp;relay=&lt;wss://another-relay-to-connect-on&gt;&amp;secret=&lt;optional-secret-value&gt;</code></pre>
 <p>This token is pasted into the client by the user and the client then
 uses the details to connect to the remote signer via the specified
-relay(s).</p>
+relay(s). Optional secret can be used for single successfully
+established connection only, remote signer SHOULD ignore new attempts to
+establish connection with old optional secret.</p>
 <h3 id="direct-connection-initiated-by-the-client">Direct connection
 initiated by the client</h3>
 <p>In this case, basically the opposite direction of the first case, the
@@ -108,8 +110,7 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="er">&lt;unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds&gt;</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>The <code>content</code> field is a JSON-RPC-like message that is <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.html">NIP-04</a>
-encrypted and has the following structure:</p>
+href="04.md.html">NIP-04</a> encrypted and has the following structure:</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;random_string&gt;</span><span class="fu">,</span></span>
@@ -133,54 +134,54 @@ signer.</p>
 <col style="width: 48%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>Command</th>
 <th>Params</th>
 <th>Result</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>connect</code></td>
 <td><code>[&lt;remote_user_pubkey&gt;, &lt;optional_secret&gt;, &lt;optional_requested_permissions&gt;]</code></td>
 <td>&#x201C;ack&#x201D;</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>sign_event</code></td>
 <td><code>[&lt;{kind, content, tags, created_at}&gt;]</code></td>
 <td><code>json_stringified(&lt;signed_event&gt;)</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>ping</code></td>
 <td><code>[]</code></td>
 <td>&#x201C;pong&#x201D;</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>get_relays</code></td>
 <td><code>[]</code></td>
 <td><code>json_stringified({&lt;relay_url&gt;: {read: &lt;boolean&gt;, write: &lt;boolean&gt;}})</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>get_public_key</code></td>
 <td><code>[]</code></td>
 <td><code>&lt;hex-pubkey&gt;</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>nip04_encrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;plaintext_to_encrypt&gt;]</code></td>
 <td><code>&lt;nip04_ciphertext&gt;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>nip04_decrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;nip04_ciphertext_to_decrypt&gt;]</code></td>
 <td><code>&lt;plaintext&gt;</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>nip44_encrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;plaintext_to_encrypt&gt;]</code></td>
 <td><code>&lt;nip44_ciphertext&gt;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>nip44_decrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;nip44_ciphertext_to_decrypt&gt;]</code></td>
 <td><code>&lt;plaintext&gt;</code></td>
@@ -208,8 +209,7 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="er">&lt;unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds&gt;</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>The <code>content</code> field is a JSON-RPC-like message that is <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.html">NIP-04</a>
-encrypted and has the following structure:</p>
+href="04.md.html">NIP-04</a> encrypted and has the following structure:</p>
 <div class="sourceCode" id="cb8"><pre
 class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;request_id&gt;</span><span class="fu">,</span></span>
@@ -268,14 +268,14 @@ signer.</p>
 <col style="width: 38%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>Command</th>
 <th>Params</th>
 <th>Result</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>create_account</code></td>
 <td><code>[&lt;username&gt;, &lt;domain&gt;, &lt;optional_email&gt;, &lt;optional_requested_permissions&gt;]</code></td>
 <td><code>&lt;newly_created_remote_user_pubkey&gt;</code></td>
@@ -332,7 +332,5 @@ Oauth-like flow to create a new user account with Nsecbunker</h4>
 <p>Coming soon&#x2026;</p>
 <h2 id="references">References</h2>
 <ul>
-<li><a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.html">NIP-04 -
-Encryption</a></li>
+<li><a href="04.md.html">NIP-04 - Encryption</a></li>
 </ul>

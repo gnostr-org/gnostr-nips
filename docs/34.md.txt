@@ -62,7 +62,7 @@ reply to the original root patch.
         ["p", "<repository-owner>"],
         ["p", "<other-user>"], // optionally send the patch to another user to bring it to their attention
 
-        ["t", "root"], // ommited for additional patches in a series
+        ["t", "root"], // omitted for additional patches in a series
         // for the first patch in a revision
         ["t", "root-revision"],
 

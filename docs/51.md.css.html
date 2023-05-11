@@ -265,7 +265,7 @@ receive annoying notifications from.</p>
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>name</th>
 <th>kind</th>
 <th>description</th>
@@ -273,78 +273,78 @@ receive annoying notifications from.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Mute list</td>
 <td>10000</td>
 <td>things the user doesn’t want to see in their feeds</td>
 <td><code>"p"</code> (pubkeys), <code>"t"</code> (hashtags),
 <code>"word"</code> (lowercase string), <code>"e"</code> (threads)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Pinned notes</td>
 <td>10001</td>
 <td>events the user intends to showcase in their profile page</td>
 <td><code>"e"</code> (kind:1 notes)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Bookmarks</td>
 <td>10003</td>
 <td>uncategorized, “global” list of things a user wants to save</td>
 <td><code>"e"</code> (kind:1 notes), <code>"a"</code> (kind:30023
 articles), <code>"t"</code> (hashtags), <code>"r"</code> (URLs)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Communities</td>
 <td>10004</td>
 <td><a href="72.md.css.html">NIP-72</a> communities the user belongs to</td>
 <td><code>"a"</code> (kind:34550 community definitions)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Public chats</td>
 <td>10005</td>
 <td><a href="28.md.css.html">NIP-28</a> chat channels the user is in</td>
 <td><code>"e"</code> (kind:40 channel definitions)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Blocked relays</td>
 <td>10006</td>
 <td>relays clients should never connect to</td>
 <td><code>"relay"</code> (relay URLs)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Search relays</td>
 <td>10007</td>
 <td>relays clients should use when performing search queries</td>
 <td><code>"relay"</code> (relay URLs)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Simple groups</td>
 <td>10009</td>
 <td><a href="29.md.css.html">NIP-29</a> groups the user is in</td>
 <td><code>"group"</code> (<a href="29.md.css.html">NIP-29</a> group ids +
 mandatory relay URL)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Interests</td>
 <td>10015</td>
 <td>topics a user may be interested in and pointers</td>
 <td><code>"t"</code> (hashtags) and <code>"a"</code> (kind:30015
 interest set)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Emojis</td>
 <td>10030</td>
 <td>user preferred emojis and pointers to emoji sets</td>
 <td><code>"emoji"</code> (see <a href="30.md.css.html">NIP-30</a>) and
 <code>"a"</code> (kind:30030 emoji set)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Good wiki authors</td>
 <td>10101</td>
 <td><a href="54.md.css.html">NIP-54</a> user recommended wiki authors</td>
 <td><code>"p"</code> (pubkeys)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Good wiki relays</td>
 <td>10102</td>
 <td><a href="54.md.css.html">NIP-54</a> relays deemed to only host useful
@@ -376,7 +376,7 @@ UI.</p>
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>name</th>
 <th>kind</th>
 <th>description</th>
@@ -384,21 +384,21 @@ UI.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Follow sets</td>
 <td>30000</td>
 <td>categorized groups of users a client may choose to check out in
 different circumstances</td>
 <td><code>"p"</code> (pubkeys)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Relay sets</td>
 <td>30002</td>
 <td>user-defined relay groups the user can easily pick and choose from
 during various operations</td>
 <td><code>"relay"</code> (relay URLs)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Bookmark sets</td>
 <td>30003</td>
 <td>user-defined bookmarks categories , for when bookmarks must be in
@@ -406,7 +406,7 @@ labeled separate groups</td>
 <td><code>"e"</code> (kind:1 notes), <code>"a"</code> (kind:30023
 articles), <code>"t"</code> (hashtags), <code>"r"</code> (URLs)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Curation sets</td>
 <td>30004</td>
 <td>groups of articles picked by users as interesting and/or belonging
@@ -414,26 +414,26 @@ to the same category</td>
 <td><code>"a"</code> (kind:30023 articles), <code>"e"</code> (kind:1
 notes)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Curation sets</td>
 <td>30005</td>
 <td>groups of videos picked by users as interesting and/or belonging to
 the same category</td>
 <td><code>"a"</code> (kind:34235 videos)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Interest sets</td>
 <td>30015</td>
 <td>interest topics represented by a bunch of “hashtags”</td>
 <td><code>"t"</code> (hashtags)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Emoji sets</td>
 <td>30030</td>
 <td>categorized emoji groups</td>
 <td><code>"emoji"</code> (see <a href="30.md.css.html">NIP-30</a>)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Release artifact sets</td>
 <td>30063</td>
 <td>groups of files of a software release</td>
@@ -449,29 +449,29 @@ on transitioning to the <a href="#standard-lists">standard formats</a>
 above.</p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>kind</th>
 <th>“d” tag</th>
 <th>use instead</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>30000</td>
 <td><code>"mute"</code></td>
 <td>kind 10000 <em>mute list</em></td>
 </tr>
-<tr class="even">
+<tr>
 <td>30001</td>
 <td><code>"pin"</code></td>
 <td>kind 10001 <em>pin list</em></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>30001</td>
 <td><code>"bookmark"</code></td>
 <td>kind 10003 <em>bookmarks list</em></td>
 </tr>
-<tr class="even">
+<tr>
 <td>30001</td>
 <td><code>"communities"</code></td>
 <td>kind 10004 <em>communities list</em></td>
