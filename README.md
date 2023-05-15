@@ -1,7 +1,7 @@
 # NIPs
 
 NIPs stand for **Nostr Implementation Possibilities**.
-They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
+They exist to document what may be implemented by [Nostr](https://github.com/nostr-protocol/nostr)-compatible _relay_ and _client_ software.
 
 ---
 
@@ -46,6 +46,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-30: Custom Emoji](30.md)
+- [NIP-31: Dealing with Unknown Events](31.md)
+- [NIP-32: Labeling](32.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -53,6 +55,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
+- [NIP-47: Wallet Connect](47.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
 - [NIP-56: Reporting](56.md)
@@ -62,7 +65,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
-- [NIP-98: HTTP Auth](98.md)
 
 ## Event Kinds
 
@@ -74,10 +76,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `3`     | Contacts                   | [2](02.md)  |
 | `4`     | Encrypted Direct Messages  | [4](04.md)  |
 | `5`     | Event Deletion             | [9](09.md)  |
-| `6`     | Repost                     | [18](18.md) |
+| `6`     | Reposts                    | [18](18.md) |
 | `7`     | Reaction                   | [25](25.md) |
 | `8`     | Badge Award                | [58](58.md) |
-| `16`    | Generic Repost             | [18](18.md) |
 | `40`    | Channel Creation           | [28](28.md) |
 | `41`    | Channel Metadata           | [28](28.md) |
 | `42`    | Channel Message            | [28](28.md) |
@@ -90,9 +91,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `10000` | Mute List                  | [51](51.md) |
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
+| `13194` | Wallet Info                | [47](47.md) |
 | `22242` | Client Authentication      | [42](42.md) |
+| `23194` | Wallet Request             | [47](47.md) |
+| `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
-| `27235` | HTTP Auth                  | [98](98.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
 | `30008` | Profile Badges             | [58](58.md) |
@@ -145,6 +148,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | name              | value                                | other parameters     | NIP                      |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------ |
 | `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
