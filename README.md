@@ -65,8 +65,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
-- [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-98: HTTP Auth](98.md)
+- [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
 
@@ -78,9 +79,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `3`     | Contacts                   | [2](02.md)  |
 | `4`     | Encrypted Direct Messages  | [4](04.md)  |
 | `5`     | Event Deletion             | [9](09.md)  |
-| `6`     | Reposts                    | [18](18.md) |
+| `6`     | Repost                     | [18](18.md) |
 | `7`     | Reaction                   | [25](25.md) |
 | `8`     | Badge Award                | [58](58.md) |
+| `16`    | Generic Repost             | [18](18.md) |
 | `40`    | Channel Creation           | [28](28.md) |
 | `41`    | Channel Metadata           | [28](28.md) |
 | `42`    | Channel Message            | [28](28.md) |
@@ -100,6 +102,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23194` | Wallet Request             | [47](47.md) |
 | `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
+| `27235` | HTTP Auth                  | [98](98.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
 | `30008` | Profile Badges             | [58](58.md) |
@@ -109,10 +112,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30023` | Long-form Content          | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
 | `30311` | Live Event                 | [53](53.md) |
+| `30402` | Classified Listing         | [99](99.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
-| `65000` | Job Feedback               | [90](90.md) |
-| `65001` | Job Result                 | [90](90.md) |
 
 ### Event Kind Ranges
 
@@ -122,7 +124,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10000`--`19999` | Replaceable Events               | [16](16.md) |
 | `20000`--`29999` | Ephemeral Events                 | [16](16.md) |
 | `30000`--`39999` | Parameterized Replaceable Events | [33](33.md) |
-| `65002`--`66000` | Job Requests                     | [90](90.md) |
 
 ## Message types
 
@@ -178,9 +179,11 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
+| `location`        | location string                      | --                   | [99](99.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
+| `price`           | price                                | currency, frequency  | [99](99.md)              |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)              |
 | `relay`           | relay url                            | --                   | [42](42.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)              |
