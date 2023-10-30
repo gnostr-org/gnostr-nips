@@ -67,6 +67,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
+- [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
@@ -129,7 +130,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 | `34550` | Community Definition       | [72](72.md) |
-
 
 ## Message types
 
