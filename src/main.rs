@@ -49,21 +49,34 @@ fn print_entries<const BOUND: u8>() -> () {
     for entry in PROJECT_DIR.find(glob).unwrap() {
         count = count + 1;
         //println!("count={}", count);
-        //println!("Found {}", entry.path().display());
+        //println!("{}", entry.path().display());
         nip_vec.push((entry.path().display()).to_string());
-        nip_vec.push("md content".to_string());
+        //nip_vec.push("md content".to_string());
         let mut md_content = PROJECT_DIR.get_file(entry.path()).unwrap();
         let content = md_content.contents_utf8().unwrap();
         println!("\n{}", content);
     }
-    for i in 1..count - 1 {
-        //nip_vec.push(i * 2); // Add elements (i * 2) to the Vec
-        //println!("Found {}", entry.path().display());
-        //let README_MD = PROJECT_DIR.get_file("README.md").unwrap();
-        //let readme = README_MD.contents_utf8().unwrap();
-        //println!("readme={}", readme);
-        //nip_vec.push((i * 1).to_string());
-    }
+    let (a, b) = nip_vec.split_at(1);
+    println!("a={:}", format!("{:?}",a[0]));
+    let mut readme = PROJECT_DIR.get_file(a[0].clone()).unwrap();
+    let readme_md = readme.contents_utf8().unwrap();
+    println!("\n{}", readme_md);
+    println!("b={:?}", b);
+    let (c, d) = b.split_at(1);
+    println!("c={:?}", c);
+    println!("d={:?}", d);
+    let (e, f) = d.split_at(1);
+    println!("e={:?}", e);
+    println!("f={:?}", f);
+    let (g, h) = f.split_at(1);
+    println!("e={:?}", g);
+    println!("f={:?}", h);
+    //nip_vec.push(i * 2); // Add elements (i * 2) to the Vec
+    //println!("Found {}", entry.path().display());
+    //let README_MD = PROJECT_DIR.get_file("README.md").unwrap();
+    //let readme = README_MD.contents_utf8().unwrap();
+    //println!("readme={}", readme);
+    //nip_vec.push((i * 1).to_string());
 
     //println!("Vec: {:?}", nip_vec);
     //println!("BOUND={}", BOUND);
