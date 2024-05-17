@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-
-for doc in $(ls docs);do echo docs/$doc;git commit docs/$doc -m "docs/$doc";done
-for doc in $(ls     );do echo docs/$doc;git commit      $doc -m "     $doc";done
-
 count=0;
 new_count=0;
 INIT_COMMIT=$(git rev-list --all --max-parents=0)
@@ -47,13 +43,13 @@ export COUNT=$count
 
 #new_count = 0
 for commit_hash in $(gnostr-reflog);do
-echo $commit_hash
+#echo $commit_hash
 padded_commit_hash=`printf '%064s' "$commit_hash"`
-echo $padded_commit_hash
+#echo $padded_commit_hash
 export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
-gnostr --sec $padded_commit_hash -t $padded_commit_hash --tag nip_commit $commit_hash --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay wss://e.nos.lol || true
+gnostr --sec $padded_commit_hash -t $padded_commit_hash --tag nip_commit $commit_hash --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay wss://e.nos.lol || exit
 ##echo $commit_hash;
 	#for commit_padded_hash in $(gnostr-reflog -p);do
 	##echo $commit_padded_hash;
