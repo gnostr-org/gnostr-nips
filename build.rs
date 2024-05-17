@@ -1,9 +1,9 @@
 use std::env;
-use std::path::Path;
+//use std::path::Path;
 use std::process::Command;
 
 fn main() {
-let _out_dir = env::var("OUT_DIR").unwrap();
+    let _out_dir = env::var("OUT_DIR").unwrap();
 
     Command::new("git")
         .args(&[
