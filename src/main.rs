@@ -81,15 +81,31 @@ fn print_entries<const BOUND: u8>() -> () {
     //traverse documents from last to no more remainders
     count = count - 1;
 
-    //loop {
-    //    if count > 1 {
-    //        print!("count={}", count);
-    //    }
-    //        count = count - 1;
-    //}
+
+    print!("count={}",count);
+    count = count - 1;
     println!("count={}", count);
-    let (last, remainder) = remainder.split_at(1);
+    let (mut last, remainder) = remainder.split_at(1);
     let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
     let last_md = last.contents_utf8().unwrap();
-    //println!("\nlast_md={}", last_md);
+    println!("\n=====================\nlast_md={}\n===================", last_md);
+    println!("\n=====================\nremainder={:?}\n===================", remainder);
+
+    print!("count={}",count);
+    count = count - 1;
+    println!("count={}", count);
+    let (mut last, remainder) = remainder.split_at(1);
+    let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
+    let last_md = last.contents_utf8().unwrap();
+    println!("\n=====================\nlast_md={}\n===================", last_md);
+    println!("\n=====================\nremainder={:?}\n===================", remainder);
+
+    print!("count={}",count);
+    count = count - 1;
+    println!("count={}", count);
+    let (mut last, remainder) = remainder.split_at(1);
+    let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
+    let last_md = last.contents_utf8().unwrap();
+    println!("\n=====================\nlast_md={}\n===================", last_md);
+    println!("\n=====================\nremainder={:?}\n===================", remainder);
 }
