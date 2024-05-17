@@ -1,6 +1,6 @@
 use include_dir::{include_dir, Dir};
-use std::path::Path;
 extern crate comrak;
+
 use comrak::nodes::NodeValue;
 use comrak::{format_html, parse_document, Arena, Options};
 
@@ -9,7 +9,8 @@ static GIT_REMOTE: &str = "http://github.com/nostr-protocol/nips.git";
 static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR");
 
 fn replace_text(document: &str, orig_string: &str, replacement: &str) -> String {
-    // The returned nodes are created in the supplied Arena, and are bound by its lifetime.
+    // The returned nodes are created in the supplied Arena, and are bound by its
+    // lifetime.
     let arena = Arena::new();
 
     // Parse the document into a root `AstNode`
@@ -30,24 +31,35 @@ fn replace_text(document: &str, orig_string: &str, replacement: &str) -> String 
 }
 
 fn main() {
-
-    // let doc = "This is my input.\n\n1. Also [my](#) input.\n2. Certainly *my* input.\n";
-    // let orig = "my";
+    // let doc = "This is my input.\n\n1. Also [my](#) input.\n2. Certainly *my*
+    // input.\n"; let orig = "my";
     // let repl = "your";
     // let html = replace_text(&doc, &orig, &repl);
     // println!("{}", html);
 
-    print_entries();
+    const BOUND: u8 = 50;
+    print_entries::<{ BOUND }>();
 }
 
-fn print_entries() -> () {
+fn print_entries<const BOUND: u8>() -> () {
+    let mut count: u8 = 0;
     let glob = "**/*.md";
+    let mut nip_vec = Vec::<String>::new(); // Create an empty Vec
+
     for entry in PROJECT_DIR.find(glob).unwrap() {
-
+        count = count + 1;
+        println!("count={}", count);
         println!("Found {}", entry.path().display());
-
-        let README_MD = PROJECT_DIR.get_file("README.md").unwrap();
-        let readme = README_MD.contents_utf8().unwrap();
-        println!("readme={}", readme);
     }
+    for i in 1..count - 1 {
+        //nip_vec.push(i * 2); // Add elements (i * 2) to the Vec
+        //println!("Found {}", entry.path().display());
+        //let README_MD = PROJECT_DIR.get_file("README.md").unwrap();
+        //let readme = README_MD.contents_utf8().unwrap();
+        // println!("readme={}", readme);
+        nip_vec.push((i * 1).to_string());
+    }
+
+    println!("Vec: {:?}", nip_vec);
+    println!("BOUND={}", BOUND);
 }
