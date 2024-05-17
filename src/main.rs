@@ -4,7 +4,7 @@ extern crate comrak;
 use comrak::nodes::NodeValue;
 use comrak::{format_html, parse_document, Arena, Options};
 
-static GIT_REMOTE: &str = "http://github.com/nostr-protocol/nips.git";
+//static GIT_REMOTE: &str = "http://github.com/nostr-protocol/nips.git";
 
 static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR");
 
@@ -48,18 +48,23 @@ fn print_entries<const BOUND: u8>() -> () {
 
     for entry in PROJECT_DIR.find(glob).unwrap() {
         count = count + 1;
-        println!("count={}", count);
-        println!("Found {}", entry.path().display());
+        //println!("count={}", count);
+        //println!("Found {}", entry.path().display());
+        nip_vec.push((entry.path().display()).to_string());
+        nip_vec.push("md content".to_string());
+        let mut md_content = PROJECT_DIR.get_file(entry.path()).unwrap();
+        let content = md_content.contents_utf8().unwrap();
+        println!("\n{}", content);
     }
     for i in 1..count - 1 {
         //nip_vec.push(i * 2); // Add elements (i * 2) to the Vec
         //println!("Found {}", entry.path().display());
         //let README_MD = PROJECT_DIR.get_file("README.md").unwrap();
         //let readme = README_MD.contents_utf8().unwrap();
-        // println!("readme={}", readme);
-        nip_vec.push((i * 1).to_string());
+        //println!("readme={}", readme);
+        //nip_vec.push((i * 1).to_string());
     }
 
-    println!("Vec: {:?}", nip_vec);
-    println!("BOUND={}", BOUND);
+    //println!("Vec: {:?}", nip_vec);
+    //println!("BOUND={}", BOUND);
 }
