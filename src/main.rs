@@ -56,28 +56,40 @@ fn print_entries<const BOUND: u8>() -> () {
         let content = md_content.contents_utf8().unwrap();
         println!("\n{}", content);
     }
-    let (a, b) = nip_vec.split_at(1);
-    println!("a={:}", format!("{:?}",a[0]));
-    let mut readme = PROJECT_DIR.get_file(a[0].clone()).unwrap();
+
+    println!("count={}", count); //original document count
+
+    //README.md
+    let (first, remainder) = nip_vec.split_at(1);
+    //println!("a={:}", format!("{:?}",a[0]));
+    let mut readme = PROJECT_DIR.get_file(first[0].clone()).unwrap();
     let readme_md = readme.contents_utf8().unwrap();
     println!("\n{}", readme_md);
-    println!("b={:?}", b);
-    let (c, d) = b.split_at(1);
-    println!("c={:?}", c);
-    println!("d={:?}", d);
-    let (e, f) = d.split_at(1);
-    println!("e={:?}", e);
-    println!("f={:?}", f);
-    let (g, h) = f.split_at(1);
-    println!("e={:?}", g);
-    println!("f={:?}", h);
-    //nip_vec.push(i * 2); // Add elements (i * 2) to the Vec
-    //println!("Found {}", entry.path().display());
-    //let README_MD = PROJECT_DIR.get_file("README.md").unwrap();
-    //let readme = README_MD.contents_utf8().unwrap();
-    //println!("readme={}", readme);
-    //nip_vec.push((i * 1).to_string());
 
-    //println!("Vec: {:?}", nip_vec);
-    //println!("BOUND={}", BOUND);
+    count = count - 1;
+    println!("count={}", count);
+
+    //second
+    //BREAKING.md
+    let mut breaking = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
+    let breaking_md = breaking.contents_utf8().unwrap();
+    println!("\n{}", breaking_md);
+
+    //REMAINDERS
+    //count variable based on new documents added to nips repo
+
+    //traverse documents from last to no more remainders
+    count = count - 1;
+
+    //loop {
+    //    if count > 1 {
+    //        print!("count={}", count);
+    //    }
+    //        count = count - 1;
+    //}
+    println!("count={}", count);
+    let (last, remainder) = remainder.split_at(1);
+    let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
+    let last_md = last.contents_utf8().unwrap();
+    //println!("\nlast_md={}", last_md);
 }
