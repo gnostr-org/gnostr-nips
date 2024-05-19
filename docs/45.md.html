@@ -1,0 +1,46 @@
+<h1 id="nip-45">NIP-45</h1>
+<h2 id="event-counts">Event Counts</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Relays may support the verb <code>COUNT</code>, which provides a
+mechanism for obtaining event counts.</p>
+<h2 id="motivation">Motivation</h2>
+<p>Some queries a client may want to execute against connected relays
+are prohibitively expensive, for example, in order to retrieve follower
+counts for a given pubkey, a client must query all kind-3 events
+referring to a given pubkey only to count them. The result may be
+cached, either by a client or by a separate indexing server as an
+alternative, but both options erode the decentralization of the network
+by creating a second-layer protocol on top of Nostr.</p>
+<h2 id="filters-and-return-values">Filters and return values</h2>
+<p>This NIP defines the verb <code>COUNT</code>, which accepts a
+subscription id and filters as specified in <a href="01.md.html">NIP 01</a>
+for the verb <code>REQ</code>. Multiple filters are OR&#x2019;d together and
+aggregated into a single count result.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;COUNT&quot;</span><span class="ot">,</span> <span class="er">&lt;subscription_id&gt;</span><span class="ot">,</span> <span class="er">&lt;filters</span> <span class="er">JSON&gt;...</span><span class="ot">]</span></span></code></pre></div>
+<p>Counts are returned using a <code>COUNT</code> response in the form
+<code>{"count": &lt;integer&gt;}</code>. Relays may use probabilistic
+counts to reduce compute requirements. In case a relay uses
+probabilistic counts, it MAY indicate it in the response with
+<code>approximate</code> key
+i.e.&#xA0;<code>{"count": &lt;integer&gt;, "approximate": &lt;true|false&gt;}</code>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;COUNT&quot;</span><span class="ot">,</span> <span class="er">&lt;subscription_id&gt;</span><span class="ot">,</span> <span class="fu">{</span><span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="er">&lt;integer&gt;</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+<p>Whenever the relay decides to refuse to fulfill the
+<code>COUNT</code> request, it MUST return a <code>CLOSED</code>
+message.</p>
+<h2 id="examples">Examples</h2>
+<h3 id="followers-count">Followers count</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;COUNT&quot;</span><span class="ot">,</span> <span class="er">&lt;subscription_id&gt;</span><span class="ot">,</span> <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">3</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">&quot;#p&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">&lt;pubkey&gt;</span><span class="ot">]</span><span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;COUNT&quot;</span><span class="ot">,</span> <span class="er">&lt;subscription_id&gt;</span><span class="ot">,</span> <span class="fu">{</span><span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="dv">238</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+<h3 id="count-posts-and-reactions">Count posts and reactions</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;COUNT&quot;</span><span class="ot">,</span> <span class="er">&lt;subscription_id&gt;</span><span class="ot">,</span> <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">1</span><span class="ot">,</span> <span class="dv">7</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">&quot;authors&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">&lt;pubkey&gt;</span><span class="ot">]</span><span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;COUNT&quot;</span><span class="ot">,</span> <span class="er">&lt;subscription_id&gt;</span><span class="ot">,</span> <span class="fu">{</span><span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+<h3 id="count-posts-approximately">Count posts approximately</h3>
+<pre><code>[&quot;COUNT&quot;, &lt;subscription_id&gt;, {&quot;kinds&quot;: [1]}]
+[&quot;COUNT&quot;, &lt;subscription_id&gt;, {&quot;count&quot;: 93412452, &quot;approximate&quot;: true}]</code></pre>
+<h3 id="relay-refuses-to-count">Relay refuses to count</h3>
+<pre><code>[&quot;COUNT&quot;, &lt;subscription_id&gt;, {&quot;kinds&quot;: [4], &quot;authors&quot;: [&lt;pubkey&gt;], &quot;#p&quot;: [&lt;pubkey&gt;]}]
+[&quot;CLOSED&quot;, &lt;subscription_id&gt;, &quot;auth-required: cannot count other people&#39;s DMs&quot;]</code></pre>
