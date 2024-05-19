@@ -1,0 +1,27 @@
+<h1 id="nip-18">NIP-18</h1>
+<h2 id="reposts">Reposts</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>A repost is a <code>kind 6</code> event that is used to signal to
+followers that a <code>kind 1</code> text note is worth reading.</p>
+<p>The <code>content</code> of a repost event is <em>the stringified
+JSON of the reposted note</em>. It MAY also be empty, but that is not
+recommended.</p>
+<p>The repost event MUST include an <code>e</code> tag with the
+<code>id</code> of the note that is being reposted. That tag MUST
+include a relay URL as its third entry to indicate where it can be
+fetched.</p>
+<p>The repost SHOULD include a <code>p</code> tag with the
+<code>pubkey</code> of the event being reposted.</p>
+<h2 id="quote-reposts">Quote Reposts</h2>
+<p>Quote reposts are <code>kind 1</code> events with an embedded
+<code>q</code> tag of the note being quote reposted. The <code>q</code>
+tag ensures quote reposts are not pulled and included as replies in
+threads. It also allows you to easily pull and count all of the quotes
+for a post.</p>
+<h2 id="generic-reposts">Generic Reposts</h2>
+<p>Since <code>kind 6</code> reposts are reserved for
+<code>kind 1</code> contents, we use <code>kind 16</code> as a &#x201C;generic
+repost&#x201D;, that can include any kind of event inside other than
+<code>kind 1</code>.</p>
+<p><code>kind 16</code> reposts SHOULD contain a <code>k</code> tag with
+the stringified kind number of the reposted event as its value.</p>
