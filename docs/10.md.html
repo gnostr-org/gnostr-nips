@@ -1,0 +1,85 @@
+<h1 id="nip-10">NIP-10</h1>
+<h2 id="on-e-and-p-tags-in-text-events-kind-1.">On &#x201C;e&#x201D; and &#x201C;p&#x201D; tags in
+Text Events (kind 1).</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2 id="abstract">Abstract</h2>
+<p>This NIP describes how to use &#x201C;e&#x201D; and &#x201C;p&#x201D; tags in text events,
+especially those that are replies to other text events. It helps clients
+thread the replies into a tree rooted at the original event.</p>
+<h2 id="positional-e-tags-deprecated">Positional &#x201C;e&#x201D; tags
+(DEPRECATED)</h2>
+<blockquote>
+<p>This scheme is in common use; but should be considered
+deprecated.</p>
+</blockquote>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;]</code> as per
+NIP-01.</p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;event-id&gt;</code> is the id of the event being
+referenced.</li>
+<li><code>&lt;relay-url&gt;</code> is the URL of a recommended relay
+associated with the reference. Many clients treat this field as
+optional.</li>
+</ul>
+<p><strong>The positions of the &#x201C;e&#x201D; tags within the event denote
+specific meanings as follows</strong>:</p>
+<ul>
+<li><p>No &#x201C;e&#x201D; tag: <br> This event is not a reply to, nor does it refer
+to, any other event.</p></li>
+<li><p>One &#x201C;e&#x201D; tag: <br> <code>["e", &lt;id&gt;]</code>: The id of the
+event to which this event is a reply.</p></li>
+<li><p>Two &#x201C;e&#x201D; tags: <code>["e", &lt;root-id&gt;]</code>,
+<code>["e", &lt;reply-id&gt;]</code> <br> <code>&lt;root-id&gt;</code>
+is the id of the event at the root of the reply chain.
+<code>&lt;reply-id&gt;</code> is the id of the article to which this
+event is a reply.</p></li>
+<li><p>Many &#x201C;e&#x201D; tags: <code>["e", &lt;root-id&gt;]</code>
+<code>["e", &lt;mention-id&gt;]</code>, &#x2026;,
+<code>["e", &lt;reply-id&gt;]</code><br> There may be any number of
+<code>&lt;mention-ids&gt;</code>. These are the ids of events which may,
+or may not be in the reply chain. They are citing from this event.
+<code>root-id</code> and <code>reply-id</code> are as above.</p></li>
+</ul>
+<blockquote>
+<p>This scheme is deprecated because it creates ambiguities that are
+difficult, or impossible to resolve when an event references another but
+is not a reply.</p>
+</blockquote>
+<h2 id="marked-e-tags-preferred">Marked &#x201C;e&#x201D; tags (PREFERRED)</h2>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;marker&gt;]</code></p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;event-id&gt;</code> is the id of the event being
+referenced.</li>
+<li><code>&lt;relay-url&gt;</code> is the URL of a recommended relay
+associated with the reference. Clients SHOULD add a valid
+<code>&lt;relay-URL&gt;</code> field, but may instead leave it as
+<code>""</code>.</li>
+<li><code>&lt;marker&gt;</code> is optional and if present is one of
+<code>"reply"</code>, <code>"root"</code>, or
+<code>"mention"</code>.</li>
+</ul>
+<p>Those marked with <code>"reply"</code> denote the id of the reply
+event being responded to. Those marked with <code>"root"</code> denote
+the root id of the reply thread being responded to. For top level
+replies (those replying directly to the root event), only the
+<code>"root"</code> marker should be used. Those marked with
+<code>"mention"</code> denote a quoted or reposted event id.</p>
+<p>A direct reply to the root of a thread should have a single marked
+&#x201C;e&#x201D; tag of type &#x201C;root&#x201D;.</p>
+<blockquote>
+<p>This scheme is preferred because it allows events to mention others
+without confusing them with <code>&lt;reply-id&gt;</code> or
+<code>&lt;root-id&gt;</code>.</p>
+</blockquote>
+<h2 id="the-p-tag">The &#x201C;p&#x201D; tag</h2>
+<p>Used in a text event contains a list of pubkeys used to record who is
+involved in a reply thread.</p>
+<p>When replying to a text event E the reply event&#x2019;s &#x201C;p&#x201D; tags should
+contain all of E&#x2019;s &#x201C;p&#x201D; tags as well as the <code>"pubkey"</code> of the
+event being replied to.</p>
+<p>Example: Given a text event authored by <code>a1</code> with &#x201C;p&#x201D; tags
+[<code>p1</code>, <code>p2</code>, <code>p3</code>] then the &#x201C;p&#x201D; tags of
+the reply should be [<code>a1</code>, <code>p1</code>, <code>p2</code>,
+<code>p3</code>] in no particular order.</p>
