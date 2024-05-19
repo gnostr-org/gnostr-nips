@@ -1,0 +1,58 @@
+<h1 id="nip-98">NIP-98</h1>
+<h2 id="http-auth">HTTP Auth</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines an ephemeral event used to authorize requests to
+HTTP servers using nostr events.</p>
+<p>This is useful for HTTP services which are built for Nostr and deal
+with Nostr user accounts.</p>
+<h2 id="nostr-event">Nostr event</h2>
+<p>A <code>kind 27235</code> (In reference to <a
+href="https://www.rfc-editor.org/rfc/rfc7235">RFC 7235</a>) event is
+used.</p>
+<p>The <code>content</code> SHOULD be empty.</p>
+<p>The following tags MUST be included.</p>
+<ul>
+<li><code>u</code> - absolute URL</li>
+<li><code>method</code> - HTTP Request Method</li>
+</ul>
+<p>Example event:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;fe964e758903360f28d8424d092da8494ed207cba823110be3a57dfe4b578734&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;63fe6318dc58583cfe16810f86dd09e18bfd76aabc24a0081ce2856f330504ed&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">27235</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1682327852</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;u&quot;</span><span class="ot">,</span> <span class="st">&quot;https://api.snort.social/api/v1/n5sp/list&quot;</span><span class="ot">],</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;method&quot;</span><span class="ot">,</span> <span class="st">&quot;GET&quot;</span><span class="ot">]</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;5ed9d8ec958bc854f997bdc24ac337d005af372324747efe4a00e24f4c30437ff4dd8308684bed467d9d6be3e5a517bb43b1732cc7d33949a3aaf86705c22184&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Servers MUST perform the following checks in order to validate the
+event: 1. The <code>kind</code> MUST be <code>27235</code>. 2. The
+<code>created_at</code> timestamp MUST be within a reasonable time
+window (suggestion 60 seconds). 3. The <code>u</code> tag MUST be
+exactly the same as the absolute request URL (including query
+parameters). 4. The <code>method</code> tag MUST be the same HTTP method
+used for the requested resource.</p>
+<p>When the request contains a body (as in POST/PUT/PATCH methods)
+clients SHOULD include a SHA256 hash of the request body in a
+<code>payload</code> tag as hex
+(<code>["payload", "&lt;sha256-hex&gt;"]</code>), servers MAY check this
+to validate that the requested payload is authorized.</p>
+<p>If one of the checks was to fail the server SHOULD respond with a 401
+Unauthorized response code.</p>
+<p>Servers MAY perform additional implementation-specific validation
+checks.</p>
+<h2 id="request-flow">Request Flow</h2>
+<p>Using the <code>Authorization</code> HTTP header, the
+<code>kind 27235</code> event MUST be <code>base64</code> encoded and
+use the Authorization scheme <code>Nostr</code></p>
+<p>Example HTTP Authorization header:</p>
+<pre><code>Authorization: Nostr eyJpZCI6ImZlOTY0ZTc1ODkwMzM2MGYyOGQ4NDI0ZDA5MmRhODQ5NGVkMjA3Y2JhODIzMTEwYmUzYTU3ZGZlNGI1Nzg3MzQiLCJwdWJrZXkiOiI2M2ZlNjMxOGRjNTg1ODNjZmUxNjgxMGY4NmRkMDllMThiZmQ3NmFhYmMyNGEwMDgxY2UyODU2ZjMzMDUwNGVkIiwiY29udGVudCI6IiIsImtpbmQiOjI3MjM1LCJjcmVhdGVkX2F0IjoxNjgyMzI3ODUyLCJ0YWdzIjpbWyJ1cmwiLCJodHRwczovL2FwaS5zbm9ydC5zb2NpYWwvYXBpL3YxL241c3AvbGlzdCJdLFsibWV0aG9kIiwiR0VUIl1dLCJzaWciOiI1ZWQ5ZDhlYzk1OGJjODU0Zjk5N2JkYzI0YWMzMzdkMDA1YWYzNzIzMjQ3NDdlZmU0YTAwZTI0ZjRjMzA0MzdmZjRkZDgzMDg2ODRiZWQ0NjdkOWQ2YmUzZTVhNTE3YmI0M2IxNzMyY2M3ZDMzOTQ5YTNhYWY4NjcwNWMyMjE4NCJ9</code></pre>
+<h2 id="reference-implementations">Reference Implementations</h2>
+<ul>
+<li>C# ASP.NET <code>AuthenticationHandler</code> <a
+href="https://gist.github.com/v0l/74346ae530896115bfe2504c8cd018d3">NostrAuth.cs</a></li>
+</ul>
