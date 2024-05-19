@@ -1,0 +1,270 @@
+<h1 id="nip-11">NIP-11</h1>
+<h2 id="relay-information-document">Relay Information Document</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Relays may provide server metadata to clients to inform them of
+capabilities, administrative contacts, and various server attributes.
+This is made available as a JSON document over HTTP, on the same URI as
+the relay&#x2019;s websocket.</p>
+<p>When a relay receives an HTTP(s) request with an <code>Accept</code>
+header of <code>application/nostr+json</code> to a URI supporting
+WebSocket upgrades, they SHOULD return a document with the following
+structure.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">identifying</span> <span class="er">relay&gt;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">with</span> <span class="er">detailed</span> <span class="er">information&gt;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="er">&lt;administrative</span> <span class="er">contact</span> <span class="er">pubkey&gt;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;contact&quot;</span><span class="fu">:</span> <span class="er">&lt;administrative</span> <span class="er">alternate</span> <span class="er">contact&gt;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;supported_nips&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">NIP</span> <span class="er">numbers</span> <span class="er">supported</span> <span class="er">by</span> <span class="er">the</span> <span class="er">relay&gt;</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;software&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">identifying</span> <span class="er">relay</span> <span class="er">software</span> <span class="er">URL&gt;</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">version</span> <span class="er">identifier&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Any field may be omitted, and clients MUST ignore any additional
+fields they do not understand. Relays MUST accept CORS requests by
+sending <code>Access-Control-Allow-Origin</code>,
+<code>Access-Control-Allow-Headers</code>, and
+<code>Access-Control-Allow-Methods</code> headers.</p>
+<h2 id="field-descriptions">Field Descriptions</h2>
+<h3 id="name">Name</h3>
+<p>A relay may select a <code>name</code> for use in client software.
+This is a string, and SHOULD be less than 30 characters to avoid client
+truncation.</p>
+<h3 id="description">Description</h3>
+<p>Detailed plain-text information about the relay may be contained in
+the <code>description</code> string. It is recommended that this contain
+no markup, formatting or line breaks for word wrapping, and simply use
+double newline characters to separate paragraphs. There are no
+limitations on length.</p>
+<h3 id="pubkey">Pubkey</h3>
+<p>An administrative contact may be listed with a <code>pubkey</code>,
+in the same format as Nostr events (32-byte hex for a
+<code>secp256k1</code> public key). If a contact is listed, this
+provides clients with a recommended address to send encrypted direct
+messages (See <a href="17.md.html">NIP-17</a>) to a system administrator.
+Expected uses of this address are to report abuse or illegal content,
+file bug reports, or request other technical assistance.</p>
+<p>Relay operators have no obligation to respond to direct messages.</p>
+<h3 id="contact">Contact</h3>
+<p>An alternative contact may be listed under the <code>contact</code>
+field as well, with the same purpose as <code>pubkey</code>. Use of a
+Nostr public key and direct message SHOULD be preferred over this.
+Contents of this field SHOULD be a URI, using schemes such as
+<code>mailto</code> or <code>https</code> to provide users with a means
+of contact.</p>
+<h3 id="supported-nips">Supported NIPs</h3>
+<p>As the Nostr protocol evolves, some functionality may only be
+available by relays that implement a specific <code>NIP</code>. This
+field is an array of the integer identifiers of <code>NIP</code>s that
+are implemented in the relay. Examples would include <code>1</code>, for
+<code>"NIP-01"</code> and <code>9</code>, for <code>"NIP-09"</code>.
+Client-side <code>NIPs</code> SHOULD NOT be advertised, and can be
+ignored by clients.</p>
+<h3 id="software">Software</h3>
+<p>The relay server implementation MAY be provided in the
+<code>software</code> attribute. If present, this MUST be a URL to the
+project&#x2019;s homepage.</p>
+<h3 id="version">Version</h3>
+<p>The relay MAY choose to publish its software version as a string
+attribute. The string format is defined by the relay implementation. It
+is recommended this be a version number or commit identifier.</p>
+<h2 id="extra-fields">Extra Fields</h2>
+<h3 id="server-limitations">Server Limitations</h3>
+<p>These are limitations imposed by the relay on clients. Your client
+should expect that requests which exceed these <em>practical</em>
+limitations are rejected or fail immediately.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;limitation&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_message_length&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_subscriptions&quot;</span><span class="fu">:</span> <span class="dv">20</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_filters&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_limit&quot;</span><span class="fu">:</span> <span class="dv">5000</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_subid_length&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_event_tags&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_content_length&quot;</span><span class="fu">:</span> <span class="dv">8196</span><span class="fu">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;min_pow_difficulty&quot;</span><span class="fu">:</span> <span class="dv">30</span><span class="fu">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;auth_required&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;payment_required&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;restricted_writes&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at_lower_limit&quot;</span><span class="fu">:</span> <span class="dv">31536000</span><span class="fu">,</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at_upper_limit&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><p><code>max_message_length</code>: this is the maximum number of
+bytes for incoming JSON that the relay will attempt to decode and act
+upon. When you send large subscriptions, you will be limited by this
+value. It also effectively limits the maximum size of any event. Value
+is calculated from <code>[</code> to <code>]</code> and is after UTF-8
+serialization (so some unicode characters will cost 2-3 bytes). It is
+equal to the maximum size of the WebSocket message frame.</p></li>
+<li><p><code>max_subscriptions</code>: total number of subscriptions
+that may be active on a single websocket connection to this relay. It&#x2019;s
+possible that authenticated clients with a (paid) relationship to the
+relay may have higher limits.</p></li>
+<li><p><code>max_filters</code>: maximum number of filter values in each
+subscription. Must be one or higher.</p></li>
+<li><p><code>max_subid_length</code>: maximum length of subscription id
+as a string.</p></li>
+<li><p><code>max_limit</code>: the relay server will clamp each filter&#x2019;s
+<code>limit</code> value to this number. This means the client won&#x2019;t be
+able to get more than this number of events from a single subscription
+filter. This clamping is typically done silently by the relay, but with
+this number, you can know that there are additional results if you
+narrowed your filter&#x2019;s time range or other parameters.</p></li>
+<li><p><code>max_event_tags</code>: in any event, this is the maximum
+number of elements in the <code>tags</code> list.</p></li>
+<li><p><code>max_content_length</code>: maximum number of characters in
+the <code>content</code> field of any event. This is a count of unicode
+characters. After serializing into JSON it may be larger (in bytes), and
+is still subject to the <code>max_message_length</code>, if
+defined.</p></li>
+<li><p><code>min_pow_difficulty</code>: new events will require at least
+this difficulty of PoW, based on <a href="13.md.html">NIP-13</a>, or they
+will be rejected by this server.</p></li>
+<li><p><code>auth_required</code>: this relay requires <a
+href="42.md.html">NIP-42</a> authentication to happen before a new connection
+may perform any other action. Even if set to False, authentication may
+be required for specific actions.</p></li>
+<li><p><code>payment_required</code>: this relay requires payment before
+a new connection may perform any action.</p></li>
+<li><p><code>restricted_writes</code>: this relay requires some kind of
+condition to be fulfilled in order to accept events (not necessarily,
+but including <code>payment_required</code> and
+<code>min_pow_difficulty</code>). This should only be set to
+<code>true</code> when users are expected to know the relay policy
+before trying to write to it &#x2013; like belonging to a special pubkey-based
+whitelist or writing only events of a specific niche kind or content.
+Normal anti-spam heuristics, for example, do not qualify.</p></li>
+<li><p><code>created_at_lower_limit</code>: &#x2018;created_at&#x2019; lower
+limit</p></li>
+<li><p><code>created_at_upper_limit</code>: &#x2018;created_at&#x2019; upper
+limit</p></li>
+</ul>
+<h3 id="event-retention">Event Retention</h3>
+<p>There may be a cost associated with storing data forever, so relays
+may wish to state retention times. The values stated here are defaults
+for unauthenticated users and visitors. Paid users would likely have
+other policies.</p>
+<p>Retention times are given in seconds, with <code>null</code>
+indicating infinity. If zero is provided, this means the event will not
+be stored at all, and preferably an error will be provided when those
+are received.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;retention&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="ot">[</span><span class="dv">5</span><span class="ot">,</span> <span class="dv">7</span><span class="ot">],</span> <span class="ot">[</span><span class="dv">40</span><span class="ot">,</span> <span class="dv">49</span><span class="ot">]]</span><span class="fu">,</span> <span class="dt">&quot;time&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">40000</span><span class="ot">,</span> <span class="dv">49999</span><span class="ot">]]</span><span class="fu">,</span> <span class="dt">&quot;time&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">30000</span><span class="ot">,</span> <span class="dv">39999</span><span class="ot">]]</span><span class="fu">,</span> <span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="dv">1000</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;time&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span> <span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="dv">10000</span><span class="fu">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><code>retention</code> is a list of specifications: each will apply
+to either all kinds, or a subset of kinds. Ranges may be specified for
+the kind field as a tuple of inclusive start and end values. Events of
+indicated kind (or all) are then limited to a <code>count</code> and/or
+time period.</p>
+<p>It is possible to effectively blacklist Nostr-based protocols that
+rely on a specific <code>kind</code> number, by giving a retention time
+of zero for those <code>kind</code> values. While that is unfortunate,
+it does allow clients to discover servers that will support their
+protocol quickly via a single HTTP fetch.</p>
+<p>There is no need to specify retention times for <em>ephemeral
+events</em> since they are not retained.</p>
+<h3 id="content-limitations">Content Limitations</h3>
+<p>Some relays may be governed by the arbitrary laws of a nation state.
+This may limit what content can be stored in cleartext on those relays.
+All clients are encouraged to use encryption to work around this
+limitation.</p>
+<p>It is not possible to describe the limitations of each country&#x2019;s laws
+and policies which themselves are typically vague and constantly
+shifting.</p>
+<p>Therefore, this field allows the relay operator to indicate which
+countries&#x2019; laws might end up being enforced on them, and then indirectly
+on their users&#x2019; content.</p>
+<p>Users should be able to avoid relays in countries they don&#x2019;t like,
+and/or select relays in more favourable zones. Exposing this flexibility
+is up to the client software.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;relay_countries&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;CA&quot;</span><span class="ot">,</span> <span class="st">&quot;US&quot;</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>relay_countries</code>: a list of two-level ISO country codes
+(ISO 3166-1 alpha-2) whose laws and policies may affect this relay.
+<code>EU</code> may be used for European Union countries.</li>
+</ul>
+<p>Remember that a relay may be hosted in a country which is not the
+country of the legal entities who own the relay, so it&#x2019;s very likely a
+number of countries are involved.</p>
+<h3 id="community-preferences">Community Preferences</h3>
+<p>For public text notes at least, a relay may try to foster a local
+community. This would encourage users to follow the global feed on that
+relay, in addition to their usual individual follows. To support this
+goal, relays MAY specify some of the following values.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;language_tags&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;en&quot;</span><span class="ot">,</span> <span class="st">&quot;en-419&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;sfw-only&quot;</span><span class="ot">,</span> <span class="st">&quot;bitcoin-only&quot;</span><span class="ot">,</span> <span class="st">&quot;anime&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;posting_policy&quot;</span><span class="fu">:</span> <span class="st">&quot;https://example.com/posting-policy.html&quot;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><p><code>language_tags</code> is an ordered list of <a
+href="https://en.wikipedia.org/wiki/IETF_language_tag">IETF language
+tags</a> indicating the major languages spoken on the relay.</p></li>
+<li><p><code>tags</code> is a list of limitations on the topics to be
+discussed. For example <code>sfw-only</code> indicates that only &#x201C;Safe
+For Work&#x201D; content is encouraged on this relay. This relies on
+assumptions of what the &#x201C;work&#x201D; &#x201C;community&#x201D; feels &#x201C;safe&#x201D; talking about.
+In time, a common set of tags may emerge that allow users to find relays
+that suit their needs, and client software will be able to parse these
+tags easily. The <code>bitcoin-only</code> tag indicates that any
+<em>altcoin</em>, <em>&#x201C;crypto&#x201D;</em> or <em>blockchain</em> comments will
+be ridiculed without mercy.</p></li>
+<li><p><code>posting_policy</code> is a link to a human-readable page
+which specifies the community policies for the relay. In cases where
+<code>sfw-only</code> is True, it&#x2019;s important to link to a page which
+gets into the specifics of your posting policy.</p></li>
+</ul>
+<p>The <code>description</code> field should be used to describe your
+community goals and values, in brief. The <code>posting_policy</code> is
+for additional detail and legal terms. Use the <code>tags</code> field
+to signify limitations on content, or topics to be discussed, which
+could be machine processed by appropriate client software.</p>
+<h3 id="pay-to-relay">Pay-to-Relay</h3>
+<p>Relays that require payments may want to expose their fee
+schedules.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;payments_url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://my-relay/payments&quot;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;fees&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;admission&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="dv">1000000</span><span class="fu">,</span> <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;msats&quot;</span> <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;subscription&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="dv">5000000</span><span class="fu">,</span> <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;msats&quot;</span><span class="fu">,</span> <span class="dt">&quot;period&quot;</span><span class="fu">:</span> <span class="dv">2592000</span> <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;publication&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">4</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span> <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;msats&quot;</span> <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="icon">Icon</h3>
+<p>A URL pointing to an image to be used as an icon for the relay.
+Recommended to be squared in shape.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;icon&quot;</span><span class="fu">:</span> <span class="st">&quot;https://nostr.build/i/53866b44135a27d624e99c6165cabd76ac8f72797209700acb189fce75021f47.jpg&quot;</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="examples">Examples</h3>
+<p>As of 2 May 2023 the following command provided these results:</p>
+<p>``` ~&gt; curl -H &#x201C;Accept: application/nostr+json&#x201D;
+https://eden.nostr.land | jq</p>
+<p>{ &#x201C;description&#x201D;: &#x201C;nostr.land family of relays (us-or-01)&#x201D;, &#x201C;name&#x201D;:
+&#x201C;nostr.land&#x201D;, &#x201C;pubkey&#x201D;:
+&#x201C;52b4a076bcbbbdc3a1aefa3735816cf74993b1b8db202b01c883c58be7fad8bd&#x201D;,
+&#x201C;software&#x201D;: &#x201C;custom&#x201D;, &#x201C;supported_nips&#x201D;: [ 1, 2, 4, 9, 11, 12, 16, 20,
+22, 28, 33, 40 ], &#x201C;version&#x201D;: &#x201C;1.0.1&#x201D;, &#x201C;limitation&#x201D;: {
+&#x201C;payment_required&#x201D;: true, &#x201C;max_message_length&#x201D;: 65535, &#x201C;max_event_tags&#x201D;:
+2000, &#x201C;max_subscriptions&#x201D;: 20, &#x201C;auth_required&#x201D;: false }, &#x201C;payments_url&#x201D;:
+&#x201C;https://eden.nostr.land&#x201D;, &#x201C;fees&#x201D;: { &#x201C;subscription&#x201D;: [ { &#x201C;amount&#x201D;:
+2500000, &#x201C;unit&#x201D;: &#x201C;msats&#x201D;, &#x201C;period&#x201D;: 2592000 } ] }, }</p>
