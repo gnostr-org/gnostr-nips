@@ -1,0 +1,127 @@
+<h1 id="nip-28">NIP-28</h1>
+<h2 id="public-chat">Public Chat</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines new event kinds for public chat channels, channel
+messages, and basic client-side moderation.</p>
+<p>It reserves five event kinds (40-44) for immediate use:</p>
+<ul>
+<li><code>40 - channel create</code></li>
+<li><code>41 - channel metadata</code></li>
+<li><code>42 - channel message</code></li>
+<li><code>43 - hide message</code></li>
+<li><code>44 - mute user</code></li>
+</ul>
+<p>Client-centric moderation gives client developers discretion over
+what types of content they want included in their apps, while imposing
+no additional requirements on relays.</p>
+<h2 id="kind-40-create-channel">Kind 40: Create channel</h2>
+<p>Create a public chat channel.</p>
+<p>In the channel creation <code>content</code> field, Client SHOULD
+include basic channel metadata (<code>name</code>, <code>about</code>,
+<code>picture</code> and <code>relays</code> as specified in kind
+41).</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;{</span><span class="ch">\&quot;</span><span class="st">name</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">Demo Channel</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">about</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">A test channel.</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">picture</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">https://placekitten.com/200/200</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">relays</span><span class="ch">\&quot;</span><span class="st">: [</span><span class="ch">\&quot;</span><span class="st">wss://nos.lol</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">wss://nostr.mom</span><span class="ch">\&quot;</span><span class="st">]}&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="kind-41-set-channel-metadata">Kind 41: Set channel metadata</h2>
+<p>Update a channel&#x2019;s public metadata.</p>
+<p>Clients and relays SHOULD handle kind 41 events similar to kind 33
+replaceable events, where the information is used to update the
+metadata, without modifying the event id for the channel.Only the most
+recent kind 41 is needed to be stored.</p>
+<p>Clients SHOULD ignore kind 41s from pubkeys other than the kind 40
+pubkey.</p>
+<p>Clients SHOULD support basic metadata fields:</p>
+<ul>
+<li><code>name</code> - string - Channel name</li>
+<li><code>about</code> - string - Channel description</li>
+<li><code>picture</code> - string - URL of channel picture</li>
+<li><code>relays</code> - array - List of relays to download and
+broadcast events to</li>
+</ul>
+<p>Clients MAY add additional metadata fields.</p>
+<p>Clients SHOULD use <a href="10.md.html">NIP-10</a> marked &#x201C;e&#x201D; tags to
+recommend a relay.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;{</span><span class="ch">\&quot;</span><span class="st">name</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">Updated Demo Channel</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">about</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">Updating a test channel.</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">picture</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">https://placekitten.com/201/201</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">relays</span><span class="ch">\&quot;</span><span class="st">: [</span><span class="ch">\&quot;</span><span class="st">wss://nos.lol</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">wss://nostr.mom</span><span class="ch">\&quot;</span><span class="st">]}&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;channel_create_event_id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="kind-42-create-channel-message">Kind 42: Create channel
+message</h2>
+<p>Send a text message to a channel.</p>
+<p>Clients SHOULD use <a href="10.md.html">NIP-10</a> marked &#x201C;e&#x201D; tags to
+recommend a relay and specify whether it is a reply or root message.</p>
+<p>Clients SHOULD append <a href="10.md.html">NIP-10</a> &#x201C;p&#x201D; tags to
+replies.</p>
+<p>Root message:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">&lt;string&gt;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;kind_</span><span class="dv">40</span><span class="er">_event_id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">,</span> <span class="st">&quot;root&quot;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Reply to another message:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">&lt;string&gt;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;kind_</span><span class="dv">40</span><span class="er">_event_id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">,</span> <span class="st">&quot;root&quot;</span><span class="ot">],</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;kind_</span><span class="dv">42</span><span class="er">_event_id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">,</span> <span class="st">&quot;reply&quot;</span><span class="ot">],</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey&gt;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">],</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="er">...</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="kind-43-hide-message">Kind 43: Hide message</h2>
+<p>User no longer wants to see a certain message.</p>
+<p>The <code>content</code> may optionally include metadata such as a
+<code>reason</code>.</p>
+<p>Clients SHOULD hide event 42s shown to a given user, if there is an
+event 43 from that user matching the event 42 <code>id</code>.</p>
+<p>Clients MAY hide event 42s for other users other than the user who
+sent the event 43.</p>
+<p>(For example, if three users &#x2018;hide&#x2019; an event giving a reason that
+includes the word &#x2018;pornography&#x2019;, a Nostr client that is an iOS app may
+choose to hide that message for all iOS clients.)</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;{</span><span class="ch">\&quot;</span><span class="st">reason</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">Dick pic</span><span class="ch">\&quot;</span><span class="st">}&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;kind_</span><span class="dv">42</span><span class="er">_event_id&gt;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="kind-44-mute-user">Kind 44: Mute user</h2>
+<p>User no longer wants to see messages from another user.</p>
+<p>The <code>content</code> may optionally include metadata such as a
+<code>reason</code>.</p>
+<p>Clients SHOULD hide event 42s shown to a given user, if there is an
+event 44 from that user matching the event 42 <code>pubkey</code>.</p>
+<p>Clients MAY hide event 42s for users other than the user who sent the
+event 44.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;{</span><span class="ch">\&quot;</span><span class="st">reason</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">Posting dick pics</span><span class="ch">\&quot;</span><span class="st">}&quot;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey&gt;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="relay-recommendations">Relay recommendations</h2>
+<p>Clients SHOULD use the relay URLs of the metadata events.</p>
+<p>Clients MAY use any relay URL. For example, if a relay hosting the
+original kind 40 event for a channel goes offline, clients could instead
+fetch channel data from a backup relay, or a relay that clients trust
+more than the original relay.</p>
+<h2 id="motivation">Motivation</h2>
+<p>If we&#x2019;re solving censorship-resistant communication for social media,
+we may as well solve it also for Telegram-style messaging.</p>
+<p>We can bring the global conversation out from walled gardens into a
+true public square open to all.</p>
+<h2 id="additional-info">Additional info</h2>
+<ul>
+<li><a href="https://github.com/ArcadeCity/arcade/pull/28">Chat demo PR
+with fiatjaf+jb55 comments</a></li>
+<li><a href="https://t.me/nostr_protocol/29566">Conversation about
+NIP16</a></li>
+</ul>
