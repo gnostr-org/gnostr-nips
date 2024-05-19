@@ -1,0 +1,137 @@
+<h1 id="nip-32">NIP-32</h1>
+<h2 id="labeling">Labeling</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>A label is a <code>kind 1985</code> event that is used to label other
+entities. This supports a number of use cases, including distributed
+moderation, collection management, license assignment, and content
+classification.</p>
+<p>This NIP introduces two new tags:</p>
+<ul>
+<li><code>L</code> denotes a label namespace</li>
+<li><code>l</code> denotes a label</li>
+</ul>
+<h2 id="label-namespace-tag">Label Namespace Tag</h2>
+<p>An <code>L</code> tag can be any string, but publishers SHOULD ensure
+they are unambiguous by using a well-defined namespace (such as an ISO
+standard) or reverse domain name notation.</p>
+<p><code>L</code> tags are REQUIRED in order to support searching by
+namespace rather than by a specific tag. The special <code>ugc</code>
+(&#x201C;user generated content&#x201D;) namespace MAY be used when the label content
+is provided by an end user.</p>
+<p><code>L</code> tags starting with <code>#</code> indicate that the
+label target should be associated with the label&#x2019;s value. This is a way
+of attaching standard nostr tags to events, pubkeys, relays, urls,
+etc.</p>
+<h2 id="label-tag">Label Tag</h2>
+<p>An <code>l</code> tag&#x2019;s value can be any string. <code>l</code> tags
+MUST include a <code>mark</code> matching an <code>L</code> tag value in
+the same event.</p>
+<h2 id="label-target">Label Target</h2>
+<p>The label event MUST include one or more tags representing the object
+or objects being labeled: <code>e</code>, <code>p</code>,
+<code>a</code>, <code>r</code>, or <code>t</code> tags. This allows for
+labeling of events, people, relays, or topics respectively. As with
+NIP-01, a relay hint SHOULD be included when using <code>e</code> and
+<code>p</code> tags.</p>
+<h2 id="content">Content</h2>
+<p>Labels should be short, meaningful strings. Longer discussions, such
+as for a review, or an explanation of why something was labeled the way
+it was, should go in the event&#x2019;s <code>content</code> field.</p>
+<h2 id="self-reporting">Self-Reporting</h2>
+<p><code>l</code> and <code>L</code> tags MAY be added to other event
+kinds to support self-reporting. For events with a kind other than 1985,
+labels refer to the event itself.</p>
+<h2 id="example-events">Example events</h2>
+<p>A suggestion that multiple pubkeys be associated with the
+<code>permies</code> topic.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1985</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;L&quot;</span><span class="ot">,</span> <span class="st">&quot;#t&quot;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;l&quot;</span><span class="ot">,</span> <span class="st">&quot;permies&quot;</span><span class="ot">,</span> <span class="st">&quot;#t&quot;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey1&gt;</span><span class="ot">,</span> <span class="er">&lt;relay_url&gt;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey2&gt;</span><span class="ot">,</span> <span class="er">&lt;relay_url&gt;</span><span class="ot">]</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>A report flagging violence toward a human being as defined by
+ontology.example.com.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1985</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;L&quot;</span><span class="ot">,</span> <span class="st">&quot;com.example.ontology&quot;</span><span class="ot">],</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;l&quot;</span><span class="ot">,</span> <span class="st">&quot;VI-hum&quot;</span><span class="ot">,</span> <span class="st">&quot;com.example.ontology&quot;</span><span class="ot">],</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey1&gt;</span><span class="ot">,</span> <span class="er">&lt;relay_url&gt;</span><span class="ot">],</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey2&gt;</span><span class="ot">,</span> <span class="er">&lt;relay_url&gt;</span><span class="ot">]</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>A moderation suggestion for a chat event.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1985</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;L&quot;</span><span class="ot">,</span> <span class="st">&quot;nip28.moderation&quot;</span><span class="ot">],</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;l&quot;</span><span class="ot">,</span> <span class="st">&quot;approve&quot;</span><span class="ot">,</span> <span class="st">&quot;nip28.moderation&quot;</span><span class="ot">],</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;kind40_event_id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay_url&gt;</span><span class="ot">]</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Assignment of a license to an event.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1985</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;L&quot;</span><span class="ot">,</span> <span class="st">&quot;license&quot;</span><span class="ot">],</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;l&quot;</span><span class="ot">,</span> <span class="st">&quot;MIT&quot;</span><span class="ot">,</span> <span class="st">&quot;license&quot;</span><span class="ot">],</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;event_id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay_url&gt;</span><span class="ot">]</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Publishers can self-label by adding <code>l</code> tags to their own
+non-1985 events. In this case, the kind 1 event&#x2019;s author is labeling
+their note as being related to Milan, Italy using ISO 3166-2.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;L&quot;</span><span class="ot">,</span> <span class="st">&quot;ISO-3166-2&quot;</span><span class="ot">],</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;l&quot;</span><span class="ot">,</span> <span class="st">&quot;IT-MI&quot;</span><span class="ot">,</span> <span class="st">&quot;ISO-3166-2&quot;</span><span class="ot">]</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;It&#39;s beautiful here in Milan!&quot;</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="other-notes">Other Notes</h2>
+<p>When using this NIP to bulk-label many targets at once, events may be
+deleted and a replacement may be published. We have opted not to use
+parameterizable/replaceable events for this due to the complexity in
+coming up with a standard <code>d</code> tag. In order to avoid
+ambiguity when querying, publishers SHOULD limit labeling events to a
+single namespace.</p>
+<p>Before creating a vocabulary, explore how your use case may have
+already been designed and imitate that design if possible. Reverse
+domain name notation is encouraged to avoid namespace clashes, but for
+the sake of interoperability all namespaces should be considered open
+for public use, and not proprietary. In other words, if there is a
+namespace that fits your use case, use it even if it points to someone
+else&#x2019;s domain name.</p>
+<p>Vocabularies MAY choose to fully qualify all labels within a
+namespace (for example,
+<code>["l", "com.example.vocabulary:my-label"]</code>. This may be
+preferred when defining more formal vocabularies that should not be
+confused with another namespace when querying without an <code>L</code>
+tag. For these vocabularies, all labels SHOULD include the namespace
+(rather than mixing qualified and unqualified labels).</p>
+<p>A good heuristic for whether a use case fits this NIP is whether
+labels would ever be unique. For example, many events might be labeled
+with a particular place, topic, or pubkey, but labels with specific
+values like &#x201C;John Doe&#x201D; or &#x201C;3.18743&#x201D; are not labels, they are values, and
+should be handled in some other way.</p>
+<h2 id="appendix-known-ontologies">Appendix: Known Ontologies</h2>
+<p>Below is a non-exhaustive list of ontologies currently in widespread
+use.</p>
+<ul>
+<li>(social.ontolo.categories)[https://ontolo.social/]</li>
+</ul>
