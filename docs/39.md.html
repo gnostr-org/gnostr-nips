@@ -1,0 +1,70 @@
+<h1 id="nip-39">NIP-39</h1>
+<h2 id="external-identities-in-profiles">External Identities in
+Profiles</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2 id="abstract">Abstract</h2>
+<p>Nostr protocol users may have other online identities such as
+usernames, profile pages, keypairs etc. they control and they may want
+to include this data in their profile metadata so clients can parse,
+validate and display this information.</p>
+<h2 id="i-tag-on-a-metadata-event"><code>i</code> tag on a metadata
+event</h2>
+<p>A new optional <code>i</code> tag is introduced for
+<code>kind 0</code> metadata event contents in addition to name, about,
+picture fields as included in <a
+href="https://github.com/nostr-protocol/nips/blob/master/01.md.html">NIP-01</a>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;github:semisol&quot;</span><span class="ot">,</span> <span class="st">&quot;9721ce4ee4fceb91c9711ca2a6c9a5ab&quot;</span><span class="ot">],</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;twitter:semisol_public&quot;</span><span class="ot">,</span> <span class="st">&quot;1619358434134196225&quot;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;mastodon:bitcoinhackers.org/@semisol&quot;</span><span class="ot">,</span> <span class="st">&quot;109775066355589974&quot;</span><span class="ot">]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;telegram:1087295469&quot;</span><span class="ot">,</span> <span class="st">&quot;nostrdirectory/770&quot;</span><span class="ot">]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>An <code>i</code> tag will have two parameters, which are defined as
+the following: 1. <code>platform:identity</code>: This is the platform
+name (for example <code>github</code>) and the identity on that platform
+(for example <code>semisol</code>) joined together with <code>:</code>.
+2. <code>proof</code>: String or object that points to the proof of
+owning this identity.</p>
+<p>Clients SHOULD process any <code>i</code> tags with more than 2
+values for future extensibility. Identity provider names SHOULD only
+include <code>a-z</code>, <code>0-9</code> and the characters
+<code>._-/</code> and MUST NOT include <code>:</code>. Identity names
+SHOULD be normalized if possible by replacing uppercase letters with
+lowercase letters, and if there are multiple aliases for an entity the
+primary one should be used.</p>
+<h2 id="claim-types">Claim types</h2>
+<h3 id="github"><code>github</code></h3>
+<p>Identity: A GitHub username.</p>
+<p>Proof: A GitHub Gist ID. This Gist should be created by
+<code>&lt;identity&gt;</code> with a single file that has the text
+<code>Verifying that I control the following Nostr public key: &lt;npub encoded public key&gt;</code>.
+This can be located at
+<code>https://gist.github.com/&lt;identity&gt;/&lt;proof&gt;</code>.</p>
+<h3 id="twitter"><code>twitter</code></h3>
+<p>Identity: A Twitter username.</p>
+<p>Proof: A Tweet ID. The tweet should be posted by
+<code>&lt;identity&gt;</code> and have the text
+<code>Verifying my account on nostr My Public Key: "&lt;npub encoded public key&gt;"</code>.
+This can be located at
+<code>https://twitter.com/&lt;identity&gt;/status/&lt;proof&gt;</code>.</p>
+<h3 id="mastodon"><code>mastodon</code></h3>
+<p>Identity: A Mastodon instance and username in the format
+<code>&lt;instance&gt;/@&lt;username&gt;</code>.</p>
+<p>Proof: A Mastodon post ID. This post should be published by
+<code>&lt;username&gt;@&lt;instance&gt;</code> and have the text
+<code>Verifying that I control the following Nostr public key: "&lt;npub encoded public key&gt;"</code>.
+This can be located at
+<code>https://&lt;identity&gt;/&lt;proof&gt;</code>.</p>
+<h3 id="telegram"><code>telegram</code></h3>
+<p>Identity: A Telegram user ID.</p>
+<p>Proof: A string in the format <code>&lt;ref&gt;/&lt;id&gt;</code>
+which points to a message published in the public channel or group with
+name <code>&lt;ref&gt;</code> and message ID <code>&lt;id&gt;</code>.
+This message should be sent by user ID <code>&lt;identity&gt;</code> and
+have the text
+<code>Verifying that I control the following Nostr public key: "&lt;npub encoded public key&gt;"</code>.
+This can be located at <code>https://t.me/&lt;proof&gt;</code>.</p>
