@@ -1,0 +1,155 @@
+<h1 id="nip-89">NIP-89</h1>
+<h2 id="recommended-application-handlers">Recommended Application
+Handlers</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP describes <code>kind:31989</code> and
+<code>kind:31990</code>: a way to discover applications that can handle
+unknown event-kinds.</p>
+<h2 id="rationale">Rationale</h2>
+<p>Nostr&#x2019;s discoverability and transparent event interaction is one of
+its most interesting/novel mechanics. This NIP provides a simple way for
+clients to discover applications that handle events of a specific kind
+to ensure smooth cross-client and cross-kind interactions.</p>
+<h3 id="parties-involved">Parties involved</h3>
+<p>There are three actors to this workflow:</p>
+<ul>
+<li>application that handles a specific event kind (note that an
+application doesn&#x2019;t necessarily need to be a distinct entity and it
+could just be the same pubkey as user A)
+<ul>
+<li>Publishes <code>kind:31990</code>, detailing how apps should
+redirect to it</li>
+</ul></li>
+<li>user A, who recommends an app that handles a specific event kind
+<ul>
+<li>Publishes <code>kind:31989</code></li>
+</ul></li>
+<li>user B, who seeks a recommendation for an app that handles a
+specific event kind
+<ul>
+<li>Queries for <code>kind:31989</code> and, based on results, queries
+for <code>kind:31990</code></li>
+</ul></li>
+</ul>
+<h2 id="events">Events</h2>
+<h3 id="recommendation-event">Recommendation event</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">31989</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="er">&lt;recommender-user-pubkey&gt;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="er">&lt;supported-event-kind&gt;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;31990:app1-pubkey:&lt;d-identifier&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay1&quot;</span><span class="ot">,</span> <span class="st">&quot;ios&quot;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;31990:app2-pubkey:&lt;d-identifier&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay2&quot;</span><span class="ot">,</span> <span class="st">&quot;web&quot;</span><span class="ot">]</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>The <code>d</code> tag in <code>kind:31989</code> is the supported
+event kind this event is recommending.</p>
+<p>Multiple <code>a</code> tags can appear on the same
+<code>kind:31989</code>.</p>
+<p>The second value of the tag SHOULD be a relay hint. The third value
+of the tag SHOULD be the platform where this recommendation might
+apply.</p>
+<h2 id="handler-information">Handler information</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">31990</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;application-pubkey&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;optional-kind:0-style-metadata&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="er">&lt;random-id&gt;</span><span class="ot">],</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;k&quot;</span><span class="ot">,</span> <span class="er">&lt;supported-event-kind&gt;</span><span class="ot">],</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;web&quot;</span><span class="ot">,</span> <span class="st">&quot;https://..../a/&lt;bech32&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;nevent&quot;</span><span class="ot">],</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;web&quot;</span><span class="ot">,</span> <span class="st">&quot;https://..../p/&lt;bech32&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;nprofile&quot;</span><span class="ot">],</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;web&quot;</span><span class="ot">,</span> <span class="st">&quot;https://..../e/&lt;bech32&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;ios&quot;</span><span class="ot">,</span> <span class="st">&quot;.../&lt;bech32&gt;&quot;</span><span class="ot">]</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>content</code> is an optional <code>metadata</code>-like
+stringified JSON object, as described in NIP-01. This content is useful
+when the pubkey creating the <code>kind:31990</code> is not an
+application. If <code>content</code> is empty, the <code>kind:0</code>
+of the pubkey should be used to display application information
+(e.g.&#xA0;name, picture, web, LUD16, etc.)</li>
+<li><code>k</code> tags&#x2019; value is the event kind that is supported by
+this <code>kind:31990</code>. Using a <code>k</code> tag(s) (instead of
+having the kind of the <code>d</code> tag) provides:
+<ul>
+<li>Multiple <code>k</code> tags can exist in the same event if the
+application supports more than one event kind and their handler URLs are
+the same.</li>
+<li>The same pubkey can have multiple events with different apps that
+handle the same event kind.</li>
+</ul></li>
+<li><code>bech32</code> in a URL MUST be replaced by clients with the
+NIP-19-encoded entity that should be loaded by the application.</li>
+</ul>
+<p>Multiple tags might be registered by the app, following NIP-19
+nomenclature as the second value of the array.</p>
+<p>A tag without a second value in the array SHOULD be considered a
+generic handler for any NIP-19 entity that is not handled by a different
+tag.</p>
+<h1 id="client-tag">Client tag</h1>
+<p>When publishing events, clients MAY include a <code>client</code>
+tag. Identifying the client that published the note. This tag is a tuple
+of <code>name</code>, <code>address</code> identifying a handler event
+and, a relay <code>hint</code> for finding the handler event. This has
+privacy implications for users, so clients SHOULD allow users to opt-out
+of using this tag.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;client&quot;</span><span class="ot">,</span> <span class="st">&quot;My Client&quot;</span><span class="ot">,</span> <span class="st">&quot;31990:app1-pubkey:&lt;d-identifier&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay1&quot;</span><span class="ot">]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="user-flow">User flow</h2>
+<p>A user A who uses a non-<code>kind:1</code>-centric nostr app could
+choose to announce/recommend a certain kind-handler application.</p>
+<p>When user B sees an unknown event kind, e.g.&#xA0;in a social-media
+centric nostr client, the client would allow user B to interact with the
+unknown-kind event (e.g.&#xA0;tapping on it).</p>
+<p>The client MIGHT query for the user&#x2019;s and the user&#x2019;s follows
+handler.</p>
+<h2 id="example">Example</h2>
+<h3 id="user-a-recommends-a-kind31337-handler">User A recommends a
+<code>kind:31337</code>-handler</h3>
+<p>User A might be a user of Zapstr, a <code>kind:31337</code>-centric
+client (tracks). Using Zapstr, user A publishes an event recommending
+Zapstr as a <code>kind:31337</code>-handler.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">31989</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;31337&quot;</span><span class="ot">],</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;31990:1743058db7078661b94aaf4286429d97ee5257d14a86d6bfa54cb0482b876fb0:abcd&quot;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">,</span> <span class="st">&quot;web&quot;</span><span class="ot">]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="user-b-interacts-with-a-kind31337-handler">User B interacts with
+a <code>kind:31337</code>-handler</h3>
+<p>User B might see in their timeline an event referring to a
+<code>kind:31337</code> event (e.g.&#xA0;a <code>kind:1</code> tagging a
+<code>kind:31337</code>).</p>
+<p>User B&#x2019;s client, not knowing how to handle a <code>kind:31337</code>
+might display the event using its <code>alt</code> tag (as described in
+NIP-31). When the user clicks on the event, the application queries for
+a handler for this <code>kind</code>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;REQ&quot;</span><span class="ot">,</span> <span class="er">&lt;id&gt;</span><span class="ot">,</span> <span class="er">&#39;</span><span class="ot">[</span><span class="fu">{</span> <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">31989</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">&quot;#d&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;31337&quot;</span><span class="ot">]</span><span class="fu">,</span> <span class="er">&#39;authors&#39;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">&lt;user&gt;</span><span class="ot">,</span> <span class="er">&lt;users-contact-list&gt;</span><span class="ot">]</span> <span class="fu">}</span><span class="ot">]</span><span class="er">&#39;</span><span class="ot">]</span></span></code></pre></div>
+<p>User B, who follows User A, sees that <code>kind:31989</code> event
+and fetches the <code>a</code>-tagged event for the app and handler
+information.</p>
+<p>User B&#x2019;s client sees the application&#x2019;s <code>kind:31990</code> which
+includes the information to redirect the user to the relevant URL with
+the desired entity replaced in the URL.</p>
+<h3 id="alternative-query-bypassing-kind31989">Alternative query
+bypassing <code>kind:31989</code></h3>
+<p>Alternatively, users might choose to query directly for
+<code>kind:31990</code> for an event kind. Clients SHOULD be careful
+doing this and use spam-prevention mechanisms or querying high-quality
+restricted relays to avoid directing users to malicious handlers.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;REQ&quot;</span><span class="ot">,</span> <span class="er">&lt;id&gt;</span><span class="ot">,</span> <span class="er">&#39;</span><span class="ot">[</span><span class="fu">{</span> <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">31990</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">&quot;#k&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">&lt;desired-event-kind&gt;</span><span class="ot">]</span><span class="fu">,</span> <span class="er">&#39;authors&#39;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="fu">}</span><span class="ot">]</span><span class="er">&#39;</span><span class="ot">]</span></span></code></pre></div>
