@@ -1,0 +1,40 @@
+<h1 id="nip-92">NIP-92</h1>
+<h2 id="media-attachments">Media Attachments</h2>
+<p>Media attachments (images, videos, and other files) may be added to
+events by including a URL in the event content, along with a matching
+<code>imeta</code> tag.</p>
+<p><code>imeta</code> (&#x201C;inline metadata&#x201D;) tags add information about
+media URLs in the event&#x2019;s content. Each <code>imeta</code> tag SHOULD
+match a URL in the event content. Clients may replace imeta URLs with
+rich previews.</p>
+<p>The <code>imeta</code> tag is variadic, and each entry is a
+space-delimited key/value pair. Each <code>imeta</code> tag MUST have a
+<code>url</code>, and at least one other field. <code>imeta</code> may
+include any field specified by <a href="./94.md.html">NIP 94</a>. There
+SHOULD be only one <code>imeta</code> tag per URL.</p>
+<h2 id="example">Example</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;More image metadata tests don&#x2019;t mind me https://nostr.build/i/my-image.jpg&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;imeta&quot;</span><span class="ot">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;url https://nostr.build/i/my-image.jpg&quot;</span><span class="ot">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;m image/jpeg&quot;</span><span class="ot">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;blurhash eVF$^OI:${M{o#*0-nNFxakD-?xVM}WEWB%iNKxvR-oetmo#R-aen$&quot;</span><span class="ot">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;dim 3024x4032&quot;</span><span class="ot">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;alt A scenic photo overlooking the coast of Costa Rica&quot;</span><span class="ot">,</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;x &lt;sha256 hash as specified in NIP 94&gt;&quot;</span><span class="ot">,</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;fallback https://nostrcheck.me/alt1.jpg&quot;</span><span class="ot">,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;fallback https://void.cat/alt1.jpg&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="recommended-client-behavior">Recommended client behavior</h2>
+<p>When uploading files during a new post, clients MAY include this
+metadata after the file is uploaded and included in the post.</p>
+<p>When pasting URLs during post composition, the client MAY download
+the file and add this metadata before the post is sent.</p>
+<p>The client MAY ignore <code>imeta</code> tags that do not match the
+URL in the event content.</p>
