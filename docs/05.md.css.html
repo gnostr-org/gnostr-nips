@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="nip-05">NIP-05</h1>
+<h2 id="mapping-nostr-keys-to-dns-based-internet-identifiers">Mapping
+Nostr keys to DNS-based internet identifiers</h2>
+<p><code>final</code> <code>optional</code></p>
+<p>On events of kind <code>0</code> (<code>metadata</code>) one can
+specify the key <code>"nip05"</code> with an <a
+href="https://datatracker.ietf.org/doc/html/rfc5322#section-3.4.1">internet
+identifier</a> (an email-like address) as the value. Although there is a
+link to a very liberal “internet identifier” specification above, NIP-05
+assumes the <code>&lt;local-part&gt;</code> part will be restricted to
+the characters <code>a-z0-9-_.</code>, case-insensitive.</p>
+<p>Upon seeing that, the client splits the identifier into
+<code>&lt;local-part&gt;</code> and <code>&lt;domain&gt;</code> and use
+these values to make a GET request to
+<code>https://&lt;domain&gt;/.well-known/nostr.json?name=&lt;local-part&gt;</code>.</p>
+<p>The result should be a JSON document object with a key
+<code>"names"</code> that should then be a mapping of names to hex
+formatted public keys. If the public key for the given
+<code>&lt;name&gt;</code> matches the <code>pubkey</code> from the
+<code>metadata</code> event, the client then concludes that the given
+pubkey can indeed be referenced by its identifier.</p>
+<h3 id="example">Example</h3>
+<p>If a client sees an event like this:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;{</span><span class="ch">\&quot;</span><span class="st">name</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">bob</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">nip05</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">bob@example.com</span><span class="ch">\&quot;</span><span class="st">}&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>It will make a GET request to
+<code>https://example.com/.well-known/nostr.json?name=bob</code> and get
+back a response that will look like</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;names&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;bob&quot;</span><span class="fu">:</span> <span class="st">&quot;b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>or with the <strong>recommended</strong> <code>"relays"</code>
+attribute:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;names&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;bob&quot;</span><span class="fu">:</span> <span class="st">&quot;b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;relays&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;wss://relay.example.com&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay2.example.com&quot;</span> <span class="ot">]</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>If the pubkey matches the one given in <code>"names"</code> (as in
+the example above) that means the association is right and the
+<code>"nip05"</code> identifier is valid and can be displayed.</p>
+<p>The recommended <code>"relays"</code> attribute may contain an object
+with public keys as properties and arrays of relay URLs as values. When
+present, that can be used to help clients learn in which relays the
+specific user may be found. Web servers which serve
+<code>/.well-known/nostr.json</code> files dynamically based on the
+query string SHOULD also serve the relays data for any name they serve
+in the same reply when that is available.</p>
+<h2 id="finding-users-from-their-nip-05-identifier">Finding users from
+their NIP-05 identifier</h2>
+<p>A client may implement support for finding users’ public keys from
+<em>internet identifiers</em>, the flow is the same as above, but
+reversed: first the client fetches the <em>well-known</em> URL and from
+there it gets the public key of the user, then it tries to fetch the
+kind <code>0</code> event for that user and check if it has a matching
+<code>"nip05"</code>.</p>
+<h2 id="notes">Notes</h2>
+<h3
+id="clients-must-always-follow-public-keys-not-nip-05-addresses">Clients
+must always follow public keys, not NIP-05 addresses</h3>
+<p>For example, if after finding that <code>bob@bob.com</code> has the
+public key <code>abc...def</code>, the user clicks a button to follow
+that profile, the client must keep a primary reference to
+<code>abc...def</code>, not <code>bob@bob.com</code>. If, for any
+reason, the address
+<code>https://bob.com/.well-known/nostr.json?name=bob</code> starts
+returning the public key <code>1d2...e3f</code> at any time in the
+future, the client must not replace <code>abc...def</code> in his list
+of followed profiles for the user (but it should stop displaying
+“bob@bob.com” for that user, as that will have become an invalid
+<code>"nip05"</code> property).</p>
+<h3 id="public-keys-must-be-in-hex-format">Public keys must be in hex
+format</h3>
+<p>Keys must be returned in hex format. Keys in NIP-19 <code>npub</code>
+format are only meant to be used for display in client UIs, not in this
+NIP.</p>
+<h3 id="user-discovery-implementation-suggestion">User Discovery
+implementation suggestion</h3>
+<p>A client can also use this to allow users to search other profiles.
+If a client has a search box or something like that, a user may be able
+to type “bob@example.com” there and the client would recognize that and
+do the proper queries to obtain a pubkey and suggest that to the
+user.</p>
+<h3 id="showing-just-the-domain-as-an-identifier">Showing just the
+domain as an identifier</h3>
+<p>Clients may treat the identifier <code>_@domain</code> as the “root”
+identifier, and choose to display it as just the
+<code>&lt;domain&gt;</code>. For example, if Bob owns
+<code>bob.com</code>, he may not want an identifier like
+<code>bob@bob.com</code> as that is redundant. Instead, Bob can use the
+identifier <code>_@bob.com</code> and expect Nostr clients to show and
+treat that as just <code>bob.com</code> for all purposes.</p>
+<h3
+id="reasoning-for-the-.well-knownnostr.jsonnamelocal-part-format">Reasoning
+for the <code>/.well-known/nostr.json?name=&lt;local-part&gt;</code>
+format</h3>
+<p>By adding the <code>&lt;local-part&gt;</code> as a query string
+instead of as part of the path, the protocol can support both dynamic
+servers that can generate JSON on-demand and static servers with a JSON
+file in it that may contain multiple names.</p>
+<h3 id="allowing-access-from-javascript-apps">Allowing access from
+JavaScript apps</h3>
+<p>JavaScript Nostr apps may be restricted by browser <a
+href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a>
+policies that prevent them from accessing
+<code>/.well-known/nostr.json</code> on the user’s domain. When CORS
+prevents JS from loading a resource, the JS program sees it as a network
+failure identical to the resource not existing, so it is not possible
+for a pure-JS app to tell the user for certain that the failure was
+caused by a CORS issue. JS Nostr apps that see network failures
+requesting <code>/.well-known/nostr.json</code> files may want to
+recommend to users that they check the CORS policy of their servers,
+e.g.:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-sI</span> https://example.com/.well-known/nostr.json<span class="pp">?</span>name=bob <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> ^Access-Control</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Access-Control-Allow-Origin:</span> <span class="pp">*</span></span></code></pre></div>
+<p>Users should ensure that their <code>/.well-known/nostr.json</code>
+is served with the HTTP header
+<code>Access-Control-Allow-Origin: *</code> to ensure it can be
+validated by pure JS apps running in modern browsers.</p>
+<h3 id="security-constraints">Security Constraints</h3>
+<p>The <code>/.well-known/nostr.json</code> endpoint MUST NOT return any
+HTTP redirects.</p>
+<p>Fetchers MUST ignore any HTTP redirects given by the
+<code>/.well-known/nostr.json</code> endpoint.</p>
+</body>
+</html>
