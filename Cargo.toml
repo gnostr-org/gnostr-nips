@@ -1,0 +1,23 @@
+[package]
+name = "nips"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+keywords = { workspace = true }
+readme = { workspace = true }
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+comrak = "0.23.0"
+include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
+indicatif = "0.17.8"
+markdown = { version = "1.0.0-alpha.17", features = ["json", "log", "serde"] }
+markdown2html-converter = "1.1.12"
+
+[build-dependencies]
+include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
+markdown = "1.0.0-alpha.17"
