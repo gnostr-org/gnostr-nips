@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>47</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="nip-47">NIP-47</h1>
+<h2 id="nostr-wallet-connect">Nostr Wallet Connect</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2 id="rationale">Rationale</h2>
+<p>This NIP describes a way for clients to access a remote Lightning
+wallet through a standardized protocol. Custodians may implement this,
+or the user may run a bridge that bridges their wallet/node and the
+Nostr Wallet Connect protocol.</p>
+<h2 id="terms">Terms</h2>
+<ul>
+<li><strong>client</strong>: Nostr app on any platform that wants to pay
+Lightning invoices.</li>
+<li><strong>user</strong>: The person using the <strong>client</strong>,
+and want’s to connect their wallet app to their
+<strong>client</strong>.</li>
+<li><strong>wallet service</strong>: Nostr app that typically runs on an
+always-on computer (eg. in the cloud or on a Raspberry Pi). This app has
+access to the APIs of the wallets it serves.</li>
+</ul>
+<h2 id="theory-of-operation">Theory of Operation</h2>
+<ol type="1">
+<li><p><strong>Users</strong> who wish to use this NIP to send lightning
+payments to other nostr users must first acquire a special “connection”
+URI from their NIP-47 compliant wallet application. The wallet
+application may provide this URI using a QR screen, or a pasteable
+string, or some other means.</p></li>
+<li><p>The <strong>user</strong> should then copy this URI into their
+<strong>client(s)</strong> by pasting, or scanning the QR, etc. The
+<strong>client(s)</strong> should save this URI and use it later
+whenever the <strong>user</strong> makes a payment. The
+<strong>client</strong> should then request an <code>info</code> (13194)
+event from the relay(s) specified in the URI. The <strong>wallet
+service</strong> will have sent that event to those relays earlier, and
+the relays will hold it as a replaceable event.</p></li>
+<li><p>When the <strong>user</strong> initiates a payment their nostr
+<strong>client</strong> create a <code>pay_invoice</code> request,
+encrypts it using a token from the URI, and sends it (kind 23194) to the
+relay(s) specified in the connection URI. The <strong>wallet
+service</strong> will be listening on those relays and will decrypt the
+request and then contact the <strong>user’s</strong> wallet application
+to send the payment. The <strong>wallet service</strong> will know how
+to talk to the wallet application because the connection URI specified
+relay(s) that have access to the wallet app API.</p></li>
+<li><p>Once the payment is complete the <strong>wallet service</strong>
+will send an encrypted <code>response</code> (kind 23195) to the
+<strong>user</strong> over the relay(s) in the URI.</p></li>
+</ol>
+<h2 id="events">Events</h2>
+<p>There are three event kinds: - <code>NIP-47 info event</code>: 13194
+- <code>NIP-47 request</code>: 23194 - <code>NIP-47 response</code>:
+23195</p>
+<p>The info event should be a replaceable event that is published by the
+<strong>wallet service</strong> on the relay to indicate which commands
+it supports. The content should be a plaintext string with the supported
+commands, space-separated, eg. <code>pay_invoice get_balance</code>.
+Only the <code>pay_invoice</code> command is described in this NIP, but
+other commands might be defined in different NIPs.</p>
+<p>Both the request and response events SHOULD contain one
+<code>p</code> tag, containing the public key of the <strong>wallet
+service</strong> if this is a request, and the public key of the
+<strong>user</strong> if this is a response. The response event SHOULD
+contain an <code>e</code> tag with the id of the request event it is
+responding to. Optionally, a request can have an <code>expiration</code>
+tag that has a unix timestamp in seconds. If the request is received
+after this timestamp, it should be ignored.</p>
+<p>The content of requests and responses is encrypted with <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP04</a>,
+and is a JSON-RPCish object with a semi-fixed structure:</p>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;pay_invoice&quot;, // method, string
+    &quot;params&quot;: { // params, object
+        &quot;invoice&quot;: &quot;lnbc50n1...&quot; // command-related data
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;pay_invoice&quot;, //indicates the structure of the result field
+    &quot;error&quot;: { //object, non-null in case of error
+        &quot;code&quot;: &quot;UNAUTHORIZED&quot;, //string error code, see below
+        &quot;message&quot;: &quot;human readable error message&quot;
+    },
+    &quot;result&quot;: { // result, object. null in case of error.
+        &quot;preimage&quot;: &quot;0123456789abcdef...&quot; // command-related data
+    }
+}</code></pre>
+<p>The <code>result_type</code> field MUST contain the name of the
+method that this event is responding to. The <code>error</code> field
+MUST contain a <code>message</code> field with a human readable error
+message and a <code>code</code> field with the error code if the command
+was not successful. If the command was successful, the
+<code>error</code> field must be null.</p>
+<h3 id="error-codes">Error codes</h3>
+<ul>
+<li><code>RATE_LIMITED</code>: The client is sending commands too fast.
+It should retry in a few seconds.</li>
+<li><code>NOT_IMPLEMENTED</code>: The command is not known or is
+intentionally not implemented.</li>
+<li><code>INSUFFICIENT_BALANCE</code>: The wallet does not have enough
+funds to cover a fee reserve or the payment amount.</li>
+<li><code>QUOTA_EXCEEDED</code>: The wallet has exceeded its spending
+quota.</li>
+<li><code>RESTRICTED</code>: This public key is not allowed to do this
+operation.</li>
+<li><code>UNAUTHORIZED</code>: This public key has no wallet
+connected.</li>
+<li><code>INTERNAL</code>: An internal error.</li>
+<li><code>OTHER</code>: Other error.</li>
+</ul>
+<h2 id="nostr-wallet-connect-uri">Nostr Wallet Connect URI</h2>
+<p><strong>client</strong> discovers <strong>wallet service</strong> by
+scanning a QR code, handling a deeplink or pasting in a URI.</p>
+<p>The <strong>wallet service</strong> generates this connection URI
+with protocol <code>nostr+walletconnect://</code> and base path it’s
+hex-encoded <code>pubkey</code> with the following query string
+parameters:</p>
+<ul>
+<li><code>relay</code> Required. URL of the relay where the
+<strong>wallet service</strong> is connected and will be listening for
+events. May be more than one.</li>
+<li><code>secret</code> Required. 32-byte randomly generated hex encoded
+string. The <strong>client</strong> MUST use this to sign events and
+encrypt payloads when communicating with the <strong>wallet
+service</strong>.
+<ul>
+<li>Authorization does not require passing keys back and forth.</li>
+<li>The user can have different keys for different applications. Keys
+can be revoked and created at will and have arbitrary constraints (eg.
+budgets).</li>
+<li>The key is harder to leak since it is not shown to the user and
+backed up.</li>
+<li>It improves privacy because the user’s main key would not be linked
+to their payments.</li>
+</ul></li>
+<li><code>lud16</code> Recommended. A lightning address that clients can
+use to automatically setup the <code>lud16</code> field on the user’s
+profile if they have none configured.</li>
+</ul>
+<p>The <strong>client</strong> should then store this connection and use
+it when the user wants to perform actions like paying an invoice. Due to
+this NIP using ephemeral events, it is recommended to pick relays that
+do not close connections on inactivity to not drop events.</p>
+<h3 id="example-connection-string">Example connection string</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nostr+walletconnect://b889ff5b1513b641e2a139f661a661364979c5beee91842f8f0ef42ab558e9d4?relay=wss%3A%2F%2Frelay.damus.io</span><span class="kw">&amp;</span><span class="va">secret</span><span class="op">=</span>71a8c14c1407c113601079c4302dab36460f0ccd0ad506f1f2dc73b5100e4f3c</span></code></pre></div>
+<h2 id="commands">Commands</h2>
+<h3 id="pay_invoice"><code>pay_invoice</code></h3>
+<p>Description: Requests payment of an invoice.</p>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;pay_invoice&quot;,
+    &quot;params&quot;: {
+        &quot;invoice&quot;: &quot;lnbc50n1...&quot;, // bolt11 invoice
+        &quot;amount&quot;: 123, // invoice amount in msats, optional
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;pay_invoice&quot;,
+    &quot;result&quot;: {
+        &quot;preimage&quot;: &quot;0123456789abcdef...&quot; // preimage of the payment
+    }
+}</code></pre>
+<p>Errors: - <code>PAYMENT_FAILED</code>: The payment failed. This may
+be due to a timeout, exhausting all routes, insufficient capacity or
+similar.</p>
+<h3 id="multi_pay_invoice"><code>multi_pay_invoice</code></h3>
+<p>Description: Requests payment of multiple invoices.</p>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;multi_pay_invoice&quot;,
+    &quot;params&quot;: {
+        &quot;invoices&quot;: [
+          {&quot;id&quot;:&quot;4da52c32a1&quot;, &quot;invoice&quot;: &quot;lnbc1...&quot;, &quot;amount&quot;: 123}, // bolt11 invoice and amount in msats, amount is optional
+          {&quot;id&quot;:&quot;3da52c32a1&quot;, &quot;invoice&quot;: &quot;lnbc50n1...&quot;},
+        ],
+    }
+}</code></pre>
+<p>Response:</p>
+<p>For every invoice in the request, a separate response event is sent.
+To differentiate between the responses, each response event contains an
+<code>d</code> tag with the id of the invoice it is responding to, if no
+id was given, then the payment hash of the invoice should be used.</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;multi_pay_invoice&quot;,
+    &quot;result&quot;: {
+        &quot;preimage&quot;: &quot;0123456789abcdef...&quot; // preimage of the payment
+    }
+}</code></pre>
+<p>Errors: - <code>PAYMENT_FAILED</code>: The payment failed. This may
+be due to a timeout, exhausting all routes, insufficient capacity or
+similar.</p>
+<h3 id="pay_keysend"><code>pay_keysend</code></h3>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;pay_keysend&quot;,
+    &quot;params&quot;: {
+        &quot;amount&quot;: 123, // invoice amount in msats, required
+        &quot;pubkey&quot;: &quot;03...&quot;, // payee pubkey, required
+        &quot;preimage&quot;: &quot;0123456789abcdef...&quot;, // preimage of the payment, optional
+        &quot;tlv_records: [ // tlv records, optional
+            {
+                &quot;type&quot;: 5482373484, // tlv type
+                &quot;value&quot;: &quot;0123456789abcdef&quot; // hex encoded tlv value
+            }
+        ]
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;pay_keysend&quot;,
+    &quot;result&quot;: {
+        &quot;preimage&quot;: &quot;0123456789abcdef...&quot;, // preimage of the payment
+    }
+}</code></pre>
+<p>Errors: - <code>PAYMENT_FAILED</code>: The payment failed. This may
+be due to a timeout, exhausting all routes, insufficient capacity or
+similar.</p>
+<h3 id="multi_pay_keysend"><code>multi_pay_keysend</code></h3>
+<p>Description: Requests multiple keysend payments.</p>
+<p>Has an array of keysends, these follow the same semantics as
+<code>pay_keysend</code>, just done in a batch</p>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;multi_pay_keysend&quot;,
+    &quot;params&quot;: {
+        &quot;keysends&quot;: [
+          {&quot;id&quot;: &quot;4c5b24a351&quot;, pubkey&quot;: &quot;03...&quot;, &quot;amount&quot;: 123},
+          {&quot;id&quot;: &quot;3da52c32a1&quot;, &quot;pubkey&quot;: &quot;02...&quot;, &quot;amount&quot;: 567, &quot;preimage&quot;: &quot;abc123..&quot;, &quot;tlv_records&quot;: [{&quot;type&quot;: 696969, &quot;value&quot;: &quot;77616c5f6872444873305242454d353736&quot;}]},
+        ],
+    }
+}</code></pre>
+<p>Response:</p>
+<p>For every keysend in the request, a separate response event is sent.
+To differentiate between the responses, each response event contains an
+<code>d</code> tag with the id of the keysend it is responding to, if no
+id was given, then the pubkey should be used.</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;multi_pay_keysend&quot;,
+    &quot;result&quot;: {
+        &quot;preimage&quot;: &quot;0123456789abcdef...&quot; // preimage of the payment
+    }
+}</code></pre>
+<p>Errors: - <code>PAYMENT_FAILED</code>: The payment failed. This may
+be due to a timeout, exhausting all routes, insufficient capacity or
+similar.</p>
+<h3 id="make_invoice"><code>make_invoice</code></h3>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;make_invoice&quot;,
+    &quot;params&quot;: {
+        &quot;amount&quot;: 123, // value in msats
+        &quot;description&quot;: &quot;string&quot;, // invoice&#39;s description, optional
+        &quot;description_hash&quot;: &quot;string&quot;, // invoice&#39;s description hash, optional
+        &quot;expiry&quot;: 213 // expiry in seconds from time invoice is created, optional
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;make_invoice&quot;,
+    &quot;result&quot;: {
+        &quot;type&quot;: &quot;incoming&quot;, // &quot;incoming&quot; for invoices, &quot;outgoing&quot; for payments
+        &quot;invoice&quot;: &quot;string&quot;, // encoded invoice, optional
+        &quot;description&quot;: &quot;string&quot;, // invoice&#39;s description, optional
+        &quot;description_hash&quot;: &quot;string&quot;, // invoice&#39;s description hash, optional
+        &quot;preimage&quot;: &quot;string&quot;, // payment&#39;s preimage, optional if unpaid
+        &quot;payment_hash&quot;: &quot;string&quot;, // Payment hash for the payment
+        &quot;amount&quot;: 123, // value in msats
+        &quot;fees_paid&quot;: 123, // value in msats
+        &quot;created_at&quot;: unixtimestamp, // invoice/payment creation time
+        &quot;expires_at&quot;: unixtimestamp, // invoice expiration time, optional if not applicable
+        &quot;metadata&quot;: {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+    }
+}</code></pre>
+<h3 id="lookup_invoice"><code>lookup_invoice</code></h3>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;lookup_invoice&quot;,
+    &quot;params&quot;: {
+        &quot;payment_hash&quot;: &quot;31afdf1..&quot;, // payment hash of the invoice, one of payment_hash or invoice is required
+        &quot;invoice&quot;: &quot;lnbc50n1...&quot; // invoice to lookup
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;lookup_invoice&quot;,
+    &quot;result&quot;: {
+        &quot;type&quot;: &quot;incoming&quot;, // &quot;incoming&quot; for invoices, &quot;outgoing&quot; for payments
+        &quot;invoice&quot;: &quot;string&quot;, // encoded invoice, optional
+        &quot;description&quot;: &quot;string&quot;, // invoice&#39;s description, optional
+        &quot;description_hash&quot;: &quot;string&quot;, // invoice&#39;s description hash, optional
+        &quot;preimage&quot;: &quot;string&quot;, // payment&#39;s preimage, optional if unpaid
+        &quot;payment_hash&quot;: &quot;string&quot;, // Payment hash for the payment
+        &quot;amount&quot;: 123, // value in msats
+        &quot;fees_paid&quot;: 123, // value in msats
+        &quot;created_at&quot;: unixtimestamp, // invoice/payment creation time
+        &quot;expires_at&quot;: unixtimestamp, // invoice expiration time, optional if not applicable
+        &quot;settled_at&quot;: unixtimestamp, // invoice/payment settlement time, optional if unpaid
+        &quot;metadata&quot;: {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+    }
+}</code></pre>
+<p>Errors: - <code>NOT_FOUND</code>: The invoice could not be found by
+the given parameters.</p>
+<h3 id="list_transactions"><code>list_transactions</code></h3>
+<p>Lists invoices and payments. If <code>type</code> is not specified,
+both invoices and payments are returned. The <code>from</code> and
+<code>until</code> parameters are timestamps in seconds since epoch. If
+<code>from</code> is not specified, it defaults to 0. If
+<code>until</code> is not specified, it defaults to the current time.
+Transactions are returned in descending order of creation time.</p>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;list_transactions&quot;,
+    &quot;params&quot;: {
+        &quot;from&quot;: 1693876973, // starting timestamp in seconds since epoch (inclusive), optional
+        &quot;until&quot;: 1703225078, // ending timestamp in seconds since epoch (inclusive), optional
+        &quot;limit&quot;: 10, // maximum number of invoices to return, optional
+        &quot;offset&quot;: 0, // offset of the first invoice to return, optional
+        &quot;unpaid&quot;: true, // include unpaid invoices, optional, default false
+        &quot;type&quot;: &quot;incoming&quot;, // &quot;incoming&quot; for invoices, &quot;outgoing&quot; for payments, undefined for both
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;list_transactions&quot;,
+    &quot;result&quot;: {
+        &quot;transactions&quot;: [
+            {
+               &quot;type&quot;: &quot;incoming&quot;, // &quot;incoming&quot; for invoices, &quot;outgoing&quot; for payments
+               &quot;invoice&quot;: &quot;string&quot;, // encoded invoice, optional
+               &quot;description&quot;: &quot;string&quot;, // invoice&#39;s description, optional
+               &quot;description_hash&quot;: &quot;string&quot;, // invoice&#39;s description hash, optional
+               &quot;preimage&quot;: &quot;string&quot;, // payment&#39;s preimage, optional if unpaid
+               &quot;payment_hash&quot;: &quot;string&quot;, // Payment hash for the payment
+               &quot;amount&quot;: 123, // value in msats
+               &quot;fees_paid&quot;: 123, // value in msats
+               &quot;created_at&quot;: unixtimestamp, // invoice/payment creation time
+               &quot;expires_at&quot;: unixtimestamp, // invoice expiration time, optional if not applicable
+               &quot;settled_at&quot;: unixtimestamp, // invoice/payment settlement time, optional if unpaid
+               &quot;metadata&quot;: {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+           }
+        ],
+    },
+}</code></pre>
+<h3 id="get_balance"><code>get_balance</code></h3>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;get_balance&quot;,
+    &quot;params&quot;: {
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;get_balance&quot;,
+    &quot;result&quot;: {
+        &quot;balance&quot;: 10000, // user&#39;s balance in msats
+    }
+}</code></pre>
+<h3 id="get_info"><code>get_info</code></h3>
+<p>Request:</p>
+<pre class="jsonc"><code>{
+    &quot;method&quot;: &quot;get_info&quot;,
+    &quot;params&quot;: {
+    }
+}</code></pre>
+<p>Response:</p>
+<pre class="jsonc"><code>{
+    &quot;result_type&quot;: &quot;get_info&quot;,
+    &quot;result&quot;: {
+            &quot;alias&quot;: &quot;string&quot;,
+            &quot;color&quot;: &quot;hex string&quot;,
+            &quot;pubkey&quot;: &quot;hex string&quot;,
+            &quot;network&quot;: &quot;string&quot;, // mainnet, testnet, signet, or regtest
+            &quot;block_height&quot;: 1,
+            &quot;block_hash&quot;: &quot;hex string&quot;,
+            &quot;methods&quot;: [&quot;pay_invoice&quot;, &quot;get_balance&quot;, &quot;make_invoice&quot;, &quot;lookup_invoice&quot;, &quot;list_transactions&quot;, &quot;get_info&quot;], // list of supported methods for this connection
+    }
+}</code></pre>
+<h2 id="example-pay-invoice-flow">Example pay invoice flow</h2>
+<ol start="0" type="1">
+<li>The user scans the QR code generated by the <strong>wallet
+service</strong> with their <strong>client</strong> application, they
+follow a <code>nostr+walletconnect://</code> deeplink or configure the
+connection details manually.</li>
+<li><strong>client</strong> sends an event to the <strong>wallet
+service</strong> with kind <code>23194</code>. The content is a
+<code>pay_invoice</code> request. The private key is the secret from the
+connection string above.</li>
+<li><strong>wallet service</strong> verifies that the author’s key is
+authorized to perform the payment, decrypts the payload and sends the
+payment.</li>
+<li><strong>wallet service</strong> responds to the event by sending an
+event with kind <code>23195</code> and content being a response either
+containing an error message or a preimage.</li>
+</ol>
+<h2 id="using-a-dedicated-relay">Using a dedicated relay</h2>
+<p>This NIP does not specify any requirements on the type of relays
+used. However, if the user is using a custodial service it might make
+sense to use a relay that is hosted by the custodial service. The relay
+may then enforce authentication to prevent metadata leaks. Not depending
+on a 3rd party relay would also improve reliability in this case.</p>
+</body>
+</html>
