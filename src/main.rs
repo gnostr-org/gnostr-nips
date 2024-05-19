@@ -44,7 +44,8 @@ fn main() {
 
 fn print_entries<const BOUND: u8>() -> () {
     let mut count: u8 = 0;
-    let glob = "**/*.html";
+    //let glob = "**/*.html";
+    let glob = "**/*.md";
     let mut nip_vec = Vec::<String>::new(); // Create an empty Vec
 
     for entry in PROJECT_DIR.find(glob).unwrap() {
