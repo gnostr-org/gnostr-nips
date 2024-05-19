@@ -1,0 +1,52 @@
+<h1 id="nip-50">NIP-50</h1>
+<h2 id="search-capability">Search Capability</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2 id="abstract">Abstract</h2>
+<p>Many Nostr use cases require some form of general search feature, in
+addition to structured queries by tags or ids. Specifics of the search
+algorithms will differ between event kinds, this NIP only describes a
+general extensible framework for performing such queries.</p>
+<h2 id="search-filter-field"><code>search</code> filter field</h2>
+<p>A new <code>search</code> field is introduced for <code>REQ</code>
+messages from clients:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;search&quot;</span><span class="fu">:</span> <span class="er">&lt;string&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><code>search</code> field is a string describing a query in a
+human-readable form, i.e.&#xA0;&#x201C;best nostr apps&#x201D;. Relays SHOULD interpret the
+query to the best of their ability and return events that match it.
+Relays SHOULD perform matching against <code>content</code> event field,
+and MAY perform matching against other fields if that makes sense in the
+context of a specific kind.</p>
+<p>A query string may contain <code>key:value</code> pairs (two words
+separated by colon), these are extensions, relays SHOULD ignore
+extensions they don&#x2019;t support.</p>
+<p>Clients may specify several search filters,
+i.e.&#xA0;<code>["REQ", "", { "search": "orange" }, { "kinds": [1, 2], "search": "purple" }]</code>.
+Clients may include <code>kinds</code>, <code>ids</code> and other
+filter field to restrict the search results to particular event
+kinds.</p>
+<p>Clients SHOULD use the supported_nips field to learn if a relay
+supports <code>search</code> filter. Clients MAY send
+<code>search</code> filter queries to any relay, if they are prepared to
+filter out extraneous responses from relays that do not support this
+NIP.</p>
+<p>Clients SHOULD query several relays supporting this NIP to compensate
+for potentially different implementation details between relays.</p>
+<p>Clients MAY verify that events returned by a relay match the
+specified query in a way that suits the client&#x2019;s use case, and MAY stop
+querying relays that have low precision.</p>
+<p>Relays SHOULD exclude spam from search results by default if they
+support some form of spam filtering.</p>
+<h2 id="extensions">Extensions</h2>
+<p>Relay MAY support these extensions: - <code>include:spam</code> -
+turn off spam filtering, if it was enabled by default -
+<code>domain:&lt;domain&gt;</code> - include only events from users
+whose valid nip05 domain matches the domain -
+<code>language:&lt;two letter ISO 639-1 language code&gt;</code> -
+include only events of a specified language -
+<code>sentiment:&lt;negative/neutral/positive&gt;</code> - include only
+events of a specific sentiment - <code>nsfw:&lt;true/false&gt;</code> -
+include or exclude nsfw events (default: true)</p>
