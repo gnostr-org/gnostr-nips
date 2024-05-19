@@ -3,6 +3,7 @@ extern crate comrak;
 
 use comrak::nodes::NodeValue;
 use comrak::{format_html, parse_document, Arena, Options};
+use markdown::to_html;
 
 //static GIT_REMOTE: &str = "http://github.com/nostr-protocol/nips.git";
 
@@ -43,7 +44,7 @@ fn main() {
 
 fn print_entries<const BOUND: u8>() -> () {
     let mut count: u8 = 0;
-    let glob = "**/*.md";
+    let glob = "**/*.html";
     let mut nip_vec = Vec::<String>::new(); // Create an empty Vec
 
     for entry in PROJECT_DIR.find(glob).unwrap() {
@@ -54,58 +55,74 @@ fn print_entries<const BOUND: u8>() -> () {
         //nip_vec.push("md content".to_string());
         let mut md_content = PROJECT_DIR.get_file(entry.path()).unwrap();
         let content = md_content.contents_utf8().unwrap();
-        println!("\n{}", content);
+        //println!("\n{}", content);
+        println!("{}", markdown::to_html(content));
     }
+    //std::process::exit(0);
 
-    println!("count={}", count); //original document count
+    //println!("count={}", count); //original document count
 
     //README.md
     let (first, remainder) = nip_vec.split_at(1);
     //println!("a={:}", format!("{:?}",a[0]));
     let mut readme = PROJECT_DIR.get_file(first[0].clone()).unwrap();
     let readme_md = readme.contents_utf8().unwrap();
-    println!("\n{}", readme_md);
+    //println!("\n{}", readme_md);
+    println!("{}", markdown::to_html(readme_md));
 
     count = count - 1;
-    println!("count={}", count);
+    //println!("count={}", count);
+
+    //std::process::exit(0);
 
     //second
     //BREAKING.md
     let mut breaking = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
     let breaking_md = breaking.contents_utf8().unwrap();
-    println!("\n{}", breaking_md);
+    //println!("\n{}", breaking_md);
+    println!("{}", markdown::to_html(breaking_md));
 
     //REMAINDERS
     //count variable based on new documents added to nips repo
 
     //traverse documents from last to no more remainders
     count = count - 1;
+    //print!("count={}",count);
 
+    //std::process::exit(0);
 
-    print!("count={}",count);
+    count = count - 1;
+    //println!("count={}", count);
+    let (mut last, remainder) = remainder.split_at(1);
+    let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
+    let last_md = last.contents_utf8().unwrap();
+    //println!("\n=====================\nlast_md={}\n===================",
+    // last_md); println!("\n=====================\nremainder={:?}\
+    // n===================", remainder);
+    println!("{}", markdown::to_html(last_md));
+    //println!("{}", markdown::to_html(remainder));
+
+    //print!("count={}",count);
     count = count - 1;
     println!("count={}", count);
     let (mut last, remainder) = remainder.split_at(1);
     let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
     let last_md = last.contents_utf8().unwrap();
-    println!("\n=====================\nlast_md={}\n===================", last_md);
-    println!("\n=====================\nremainder={:?}\n===================", remainder);
+    //println!("\n=====================\nlast_md={}\n===================",
+    // last_md); println!("\n=====================\nremainder={:?}\
+    // n===================", remainder);
+    println!("{}", markdown::to_html(last_md));
+    //println!("{}", markdown::to_html(remainder));
 
-    print!("count={}",count);
+    print!("count={}", count);
     count = count - 1;
-    println!("count={}", count);
+    //println!("count={}", count);
     let (mut last, remainder) = remainder.split_at(1);
     let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
     let last_md = last.contents_utf8().unwrap();
-    println!("\n=====================\nlast_md={}\n===================", last_md);
-    println!("\n=====================\nremainder={:?}\n===================", remainder);
-
-    print!("count={}",count);
-    count = count - 1;
-    println!("count={}", count);
-    let (mut last, remainder) = remainder.split_at(1);
-    let mut last = PROJECT_DIR.get_file(remainder[0].clone()).unwrap();
-    let last_md = last.contents_utf8().unwrap();
-    println!("\n=====================\nlast_md={}\n===================", last_md);
-    println!("\n=====================\nremainder={:?}\n===================", remainder);
+    //println!("\n=====================\nlast_md={}\n===================",
+    // last_md); println!("\n=====================\nremainder={:?}\
+    // n===================", remainder);
+    println!("{}", markdown::to_html(last_md));
+    //println!("{}", markdown::to_html(remainder));
 }

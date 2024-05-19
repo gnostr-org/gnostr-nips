@@ -14,4 +14,9 @@ readme = { workspace = true }
 [dependencies]
 comrak = "0.23.0"
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
+markdown = { version = "1.0.0-alpha.17", features = ["json", "log", "serde"] }
 markdown2html-converter = "1.1.12"
+
+[build-dependencies]
+include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
+markdown = "1.0.0-alpha.17"
