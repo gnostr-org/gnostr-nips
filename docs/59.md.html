@@ -1,0 +1,248 @@
+<h1 id="nip-59">NIP-59</h1>
+<h2 id="gift-wrap">Gift Wrap</h2>
+<p><code>optional</code></p>
+<p>This NIP defines a protocol for encapsulating any nostr event. This
+makes it possible to obscure most metadata for a given event, perform
+collaborative signing, and more.</p>
+<p>This NIP <em>does not</em> define any messaging protocol.
+Applications of this NIP should be defined separately.</p>
+<p>This NIP relies on <a href="./44.md.html">NIP-44</a>&#x2019;s versioned
+encryption algorithms.</p>
+<h1 id="overview">Overview</h1>
+<p>This protocol uses three main concepts to protect the transmission of
+a target event: <code>rumor</code>s, <code>seal</code>s, and
+<code>gift wrap</code>s.</p>
+<ul>
+<li>A <code>rumor</code> is a regular nostr event, but is <strong>not
+signed</strong>. This means that if it is leaked, it cannot be
+verified.</li>
+<li>A <code>rumor</code> is serialized to JSON, encrypted, and placed in
+the <code>content</code> field of a <code>seal</code>. The
+<code>seal</code> is then signed by the author of the note. The only
+information publicly available on a <code>seal</code> is who signed it,
+but not what was said.</li>
+<li>A <code>seal</code> is serialized to JSON, encrypted, and placed in
+the <code>content</code> field of a <code>gift wrap</code>.</li>
+</ul>
+<p>This allows the isolation of concerns across layers:</p>
+<ul>
+<li>A rumor carries the content but is unsigned, which means if leaked
+it will be rejected by relays and clients, and can&#x2019;t be authenticated.
+This provides a measure of deniability.</li>
+<li>A seal identifies the author without revealing the content or the
+recipient.</li>
+<li>A gift wrap can add metadata (recipient, tags, a different author)
+without revealing the true author.</li>
+</ul>
+<h1 id="protocol-description">Protocol Description</h1>
+<h2 id="the-rumor-event-kind">1. The Rumor Event Kind</h2>
+<p>A <code>rumor</code> is the same thing as an unsigned event. Any
+event kind can be made a <code>rumor</code> by removing the
+signature.</p>
+<h2 id="the-seal-event-kind">2. The Seal Event Kind</h2>
+<p>A <code>seal</code> is a <code>kind:13</code> event that wraps a
+<code>rumor</code> with the sender&#x2019;s regular key. The <code>seal</code>
+is <strong>always</strong> encrypted to a receiver&#x2019;s pubkey but there is
+no <code>p</code> tag pointing to the receiver. There is no way to know
+who the rumor is for without the receiver&#x2019;s or the sender&#x2019;s private key.
+The only public information in this event is who is signing it.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;id&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;id&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pubkey&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;real author&#39;s pubkey&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;encrypted rumor&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">13</span><span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;created_at&quot;</span><span class="op">:</span> <span class="dv">1686840217</span><span class="op">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> []<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;sig&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;real author&#39;s pubkey signature&gt;&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Tags MUST must always be empty in a <code>kind:13</code>. The inner
+event MUST always be unsigned.</p>
+<h2 id="gift-wrap-event-kind">3. Gift Wrap Event Kind</h2>
+<p>A <code>gift wrap</code> event is a <code>kind:1059</code> event that
+wraps any other event. <code>tags</code> SHOULD include any information
+needed to route the event to its intended recipient, including the
+recipient&#x2019;s <code>p</code> tag or <a href="13.md.html">NIP-13</a> proof of
+work.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;id&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;id&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pubkey&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;random, one-time-use pubkey&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;encrypted kind 13&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">1059</span><span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;created_at&quot;</span><span class="op">:</span> <span class="dv">1686840217</span><span class="op">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [[<span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;recipient pubkey&gt;&quot;</span>]]<span class="op">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;sig&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;random, one-time-use pubkey signature&gt;&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h1 id="encrypting-payloads">Encrypting Payloads</h1>
+<p>Encryption is done following <a href="44.md.html">NIP-44</a> on the
+JSON-encoded event. Place the encryption payload in the
+<code>.content</code> of the wrapper event (either a <code>seal</code>
+or a <code>gift wrap</code>).</p>
+<h1 id="other-considerations">Other Considerations</h1>
+<p>If a <code>rumor</code> is intended for more than one party, or if
+the author wants to retain an encrypted copy, a single
+<code>rumor</code> may be wrapped and addressed for each recipient
+individually.</p>
+<p>The canonical <code>created_at</code> time belongs to the
+<code>rumor</code>. All other timestamps SHOULD be tweaked to thwart
+time-analysis attacks. Note that some relays don&#x2019;t serve events dated in
+the future, so all timestamps SHOULD be in the past.</p>
+<p>Relays may choose not to store gift wrapped events due to them not
+being publicly useful. Clients MAY choose to attach a certain amount of
+proof-of-work to the wrapper event per <a href="13.md.html">NIP-13</a> in a
+bid to demonstrate that the event is not spam or a denial-of-service
+attack.</p>
+<p>To protect recipient metadata, relays SHOULD guard access to
+<code>kind 1059</code> events based on user AUTH. When possible, clients
+should only send wrapped events to relays that offer this
+protection.</p>
+<p>To protect recipient metadata, relays SHOULD only serve
+<code>kind 1059</code> events intended for the marked recipient. When
+possible, clients should only send wrapped events to <code>read</code>
+relays for the recipient that implement AUTH, and refuse to serve
+wrapped events to non-recipients.</p>
+<h1 id="an-example">An Example</h1>
+<p>Let&#x2019;s send a wrapped <code>kind 1</code> message between two parties
+asking &#x201C;Are you going to the party tonight?&#x201D;</p>
+<ul>
+<li>Author private key:
+<code>0beebd062ec8735f4243466049d7747ef5d6594ee838de147f8aab842b15e273</code></li>
+<li>Recipient private key:
+<code>e108399bd8424357a710b606ae0c13166d853d327e47a6e5e038197346bdbf45</code></li>
+<li>Ephemeral wrapper key:
+<code>4f02eac59266002db5801adc5270700ca69d5b8f761d8732fab2fbf233c90cbd</code></li>
+</ul>
+<p>Note that this messaging protocol should not be used in practice,
+this is just an example. Refer to other NIPs for concrete messaging
+protocols that depend on gift wraps.</p>
+<h2 id="create-an-event">1. Create an event</h2>
+<p>Create a <code>kind 1</code> event with the message, the receivers,
+and any other tags you want, signed by the author. Do not sign the
+event.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1691518405</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Are you going to the party tonight?&quot;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;611df01bfcf85c26ae65453b772d8f1dfd25c264621c0277e1fc1518686faef9&quot;</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;9dd003c6d3b73b74a85a9ab099469ce251653a7af76f523671ab828acd2a0ef9&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="seal-the-rumor">2. Seal the rumor</h2>
+<p>Encrypt the JSON-encoded <code>rumor</code> with a conversation key
+derived using the author&#x2019;s private key and the recipient&#x2019;s public key.
+Place the result in the <code>content</code> field of a
+<code>kind 13</code> <code>seal</code> event. Sign it with the author&#x2019;s
+key.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;AqBCdwoS7/tPK+QGkPCadJTn8FxGkd24iApo3BR9/M0uw6n4RFAFSPAKKMgkzVMoRyR3ZS/aqATDFvoZJOkE9cPG/TAzmyZvr/WUIS8kLmuI1dCA+itFF6+ULZqbkWS0YcVU0j6UDvMBvVlGTzHz+UHzWYJLUq2LnlynJtFap5k8560+tBGtxi9Gx2NIycKgbOUv0gEqhfVzAwvg1IhTltfSwOeZXvDvd40rozONRxwq8hjKy+4DbfrO0iRtlT7G/eVEO9aJJnqagomFSkqCscttf/o6VeT2+A9JhcSxLmjcKFG3FEK3Try/WkarJa1jM3lMRQqVOZrzHAaLFW/5sXano6DqqC5ERD6CcVVsrny0tYN4iHHB8BHJ9zvjff0NjLGG/v5Wsy31+BwZA8cUlfAZ0f5EYRo9/vKSd8TV0wRb9DQ=&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">13</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1703015180</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;611df01bfcf85c26ae65453b772d8f1dfd25c264621c0277e1fc1518686faef9&quot;</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;28a87d7c074d94a58e9e89bb3e9e4e813e2189f285d797b1c56069d36f59eaa7&quot;</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;02fc3facf6621196c32912b1ef53bac8f8bfe9db51c0e7102c073103586b0d29c3f39bdaa1e62856c20e90b6c7cc5dc34ca8bb6a528872cf6e65e6284519ad73&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="wrap-the-seal">3. Wrap the seal</h2>
+<p>Encrypt the JSON-encoded <code>kind 13</code> event with your
+ephemeral, single-use random key. Place the result in the
+<code>content</code> field of a <code>kind 1059</code>. Add a single
+<code>p</code> tag containing the recipient&#x2019;s public key. Sign the
+<code>gift wrap</code> using the random key generated in the previous
+step.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;AhC3Qj/QsKJFWuf6xroiYip+2yK95qPwJjVvFujhzSguJWb/6TlPpBW0CGFwfufCs2Zyb0JeuLmZhNlnqecAAalC4ZCugB+I9ViA5pxLyFfQjs1lcE6KdX3euCHBLAnE9GL/+IzdV9vZnfJH6atVjvBkNPNzxU+OLCHO/DAPmzmMVx0SR63frRTCz6Cuth40D+VzluKu1/Fg2Q1LSst65DE7o2efTtZ4Z9j15rQAOZfE9jwMCQZt27rBBK3yVwqVEriFpg2mHXc1DDwHhDADO8eiyOTWF1ghDds/DxhMcjkIi/o+FS3gG1dG7gJHu3KkGK5UXpmgyFKt+421m5o++RMD/BylS3iazS1S93IzTLeGfMCk+7IKxuSCO06k1+DaasJJe8RE4/rmismUvwrHu/HDutZWkvOAhd4z4khZo7bJLtiCzZCZ74lZcjOB4CYtuAX2ZGpc4I1iOKkvwTuQy9BWYpkzGg3ZoSWRD6ty7U+KN+fTTmIS4CelhBTT15QVqD02JxfLF7nA6sg3UlYgtiGw61oH68lSbx16P3vwSeQQpEB5JbhofW7t9TLZIbIW/ODnI4hpwj8didtk7IMBI3Ra3uUP7ya6vptkd9TwQkd/7cOFaSJmU+BIsLpOXbirJACMn+URoDXhuEtiO6xirNtrPN8jYqpwvMUm5lMMVzGT3kMMVNBqgbj8Ln8VmqouK0DR+gRyNb8fHT0BFPwsHxDskFk5yhe5c/2VUUoKCGe0kfCcX/EsHbJLUUtlHXmTqaOJpmQnW1tZ/siPwKRl6oEsIJWTUYxPQmrM2fUpYZCuAo/29lTLHiHMlTbarFOd6J/ybIbICy2gRRH/LFSryty3Cnf6aae+A9uizFBUdCwTwffc3vCBae802+R92OL78bbqHKPbSZOXNC+6ybqziezwG+OPWHx1Qk39RYaF0aFsM4uZWrFic97WwVrH5i+/Nsf/OtwWiuH0gV/SqvN1hnkxCTF/+XNn/laWKmS3e7wFzBsG8+qwqwmO9aVbDVMhOmeUXRMkxcj4QreQkHxLkCx97euZpC7xhvYnCHarHTDeD6nVK+xzbPNtzeGzNpYoiMqxZ9bBJwMaHnEoI944Vxoodf51cMIIwpTmmRvAzI1QgrfnOLOUS7uUjQ/IZ1Qa3lY08Nqm9MAGxZ2Ou6R0/Z5z30ha/Q71q6meAs3uHQcpSuRaQeV29IASmye2A2Nif+lmbhV7w8hjFYoaLCRsdchiVyNjOEM4VmxUhX4VEvw6KoCAZ/XvO2eBF/SyNU3Of4SO&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1059</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1703021488</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;18b1a75918f1f2c90c23da616bce317d36e348bcf5f7ba55e75949319210c87c&quot;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;5c005f3ccf01950aa8d131203248544fb1e41a0d698e846bd419cec3890903ac&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;35fabdae4634eb630880a1896a886e40fd6ea8a60958e30b89b33a93e6235df750097b04f9e13053764251b8bc5dd7e8e0794a3426a90b6bcc7e5ff660f54259&quot;</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;166bf3765ebd1fc55decfe395beff2ea3b2a4e0a8946e7eb578512b555737c99&quot;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="broadcast-selectively">4. Broadcast Selectively</h2>
+<p>Broadcast the <code>kind 1059</code> event to the recipient&#x2019;s relays
+only. Delete all the other events.</p>
+<h1 id="code-samples">Code Samples</h1>
+<h2 id="javascript">JavaScript</h2>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {bytesToHex} <span class="im">from</span> <span class="st">&quot;@noble/hashes/utils&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> type {EventTemplate<span class="op">,</span> UnsignedEvent<span class="op">,</span> <span class="bu">Event</span>} <span class="im">from</span> <span class="st">&quot;nostr-tools&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {getPublicKey<span class="op">,</span> getEventHash<span class="op">,</span> nip19<span class="op">,</span> nip44<span class="op">,</span> finalizeEvent<span class="op">,</span> generateSecretKey} <span class="im">from</span> <span class="st">&quot;nostr-tools&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>type Rumor <span class="op">=</span> UnsignedEvent <span class="op">&amp;</span> {<span class="dt">id</span><span class="op">:</span> string}</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> TWO_DAYS <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> <span class="dv">24</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">60</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> now <span class="op">=</span> () <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">/</span> <span class="dv">1000</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> randomNow <span class="op">=</span> () <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="fu">now</span>() <span class="op">-</span> (<span class="bu">Math</span><span class="op">.</span><span class="fu">random</span>() <span class="op">*</span> TWO_DAYS))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> nip44ConversationKey <span class="op">=</span> (privateKey<span class="op">:</span> <span class="bu">Uint8Array</span><span class="op">,</span> publicKey<span class="op">:</span> string) <span class="kw">=&gt;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  nip44<span class="op">.</span><span class="at">v2</span><span class="op">.</span><span class="at">utils</span><span class="op">.</span><span class="fu">getConversationKey</span>(<span class="fu">bytesToHex</span>(privateKey)<span class="op">,</span> publicKey)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> nip44Encrypt <span class="op">=</span> (data<span class="op">:</span> EventTemplate<span class="op">,</span> privateKey<span class="op">:</span> <span class="bu">Uint8Array</span><span class="op">,</span> publicKey<span class="op">:</span> string) <span class="kw">=&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  nip44<span class="op">.</span><span class="at">v2</span><span class="op">.</span><span class="fu">encrypt</span>(<span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data)<span class="op">,</span> <span class="fu">nip44ConversationKey</span>(privateKey<span class="op">,</span> publicKey))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> nip44Decrypt <span class="op">=</span> (data<span class="op">:</span> <span class="bu">Event</span><span class="op">,</span> privateKey<span class="op">:</span> <span class="bu">Uint8Array</span>) <span class="kw">=&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(nip44<span class="op">.</span><span class="at">v2</span><span class="op">.</span><span class="fu">decrypt</span>(data<span class="op">.</span><span class="at">content</span><span class="op">,</span> <span class="fu">nip44ConversationKey</span>(privateKey<span class="op">,</span> data<span class="op">.</span><span class="at">pubkey</span>)))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> createRumor <span class="op">=</span> (<span class="bu">event</span><span class="op">:</span> Partial<span class="op">&lt;</span>UnsignedEvent<span class="op">&gt;,</span> privateKey<span class="op">:</span> <span class="bu">Uint8Array</span>) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rumor <span class="op">=</span> {</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">created_at</span><span class="op">:</span> <span class="fu">now</span>()<span class="op">,</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">content</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">tags</span><span class="op">:</span> []<span class="op">,</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span><span class="bu">event</span><span class="op">,</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">pubkey</span><span class="op">:</span> <span class="fu">getPublicKey</span>(privateKey)<span class="op">,</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  } <span class="im">as</span> any</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  rumor<span class="op">.</span><span class="at">id</span> <span class="op">=</span> <span class="fu">getEventHash</span>(rumor)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> rumor <span class="im">as</span> Rumor</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> createSeal <span class="op">=</span> (rumor<span class="op">:</span> Rumor<span class="op">,</span> privateKey<span class="op">:</span> <span class="bu">Uint8Array</span><span class="op">,</span> recipientPublicKey<span class="op">:</span> string) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">finalizeEvent</span>(</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>      <span class="dt">kind</span><span class="op">:</span> <span class="dv">13</span><span class="op">,</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>      <span class="dt">content</span><span class="op">:</span> <span class="fu">nip44Encrypt</span>(rumor<span class="op">,</span> privateKey<span class="op">,</span> recipientPublicKey)<span class="op">,</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="dt">created_at</span><span class="op">:</span> <span class="fu">randomNow</span>()<span class="op">,</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tags</span><span class="op">:</span> []<span class="op">,</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    privateKey</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="im">as</span> <span class="bu">Event</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> createWrap <span class="op">=</span> (<span class="bu">event</span><span class="op">:</span> <span class="bu">Event</span><span class="op">,</span> recipientPublicKey<span class="op">:</span> string) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> randomKey <span class="op">=</span> <span class="fu">generateSecretKey</span>()</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">finalizeEvent</span>(</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>      <span class="dt">kind</span><span class="op">:</span> <span class="dv">1059</span><span class="op">,</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">content</span><span class="op">:</span> <span class="fu">nip44Encrypt</span>(<span class="bu">event</span><span class="op">,</span> randomKey<span class="op">,</span> recipientPublicKey)<span class="op">,</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>      <span class="dt">created_at</span><span class="op">:</span> <span class="fu">randomNow</span>()<span class="op">,</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tags</span><span class="op">:</span> [[<span class="st">&quot;p&quot;</span><span class="op">,</span> recipientPublicKey]]<span class="op">,</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    randomKey</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>  ) <span class="im">as</span> <span class="bu">Event</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="co">// Test case using the above example</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> senderPrivateKey <span class="op">=</span> nip19<span class="op">.</span><span class="fu">decode</span>(<span class="vs">`nsec1p0ht6p3wepe47sjrgesyn4m50m6avk2waqudu9rl324cg2c4ufesyp6rdg`</span>)<span class="op">.</span><span class="at">data</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> recipientPrivateKey <span class="op">=</span> nip19<span class="op">.</span><span class="fu">decode</span>(<span class="vs">`nsec1uyyrnx7cgfp40fcskcr2urqnzekc20fj0er6de0q8qvhx34ahazsvs9p36`</span>)<span class="op">.</span><span class="at">data</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> recipientPublicKey <span class="op">=</span> <span class="fu">getPublicKey</span>(recipientPrivateKey)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rumor <span class="op">=</span> <span class="fu">createRumor</span>(</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    <span class="dt">kind</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    <span class="dt">content</span><span class="op">:</span> <span class="st">&quot;Are you going to the party tonight?&quot;</span><span class="op">,</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>  senderPrivateKey</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> seal <span class="op">=</span> <span class="fu">createSeal</span>(rumor<span class="op">,</span> senderPrivateKey<span class="op">,</span> recipientPublicKey)</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> wrap <span class="op">=</span> <span class="fu">createWrap</span>(seal<span class="op">,</span> recipientPublicKey)</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="co">// Recipient unwraps with his/her private key.</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> unwrappedSeal <span class="op">=</span> <span class="fu">nip44Decrypt</span>(wrap<span class="op">,</span> recipientPrivateKey)</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> unsealedRumor <span class="op">=</span> <span class="fu">nip44Decrypt</span>(unwrappedSeal<span class="op">,</span> recipientPrivateKey)</span></code></pre></div>
