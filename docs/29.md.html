@@ -1,0 +1,266 @@
+<h1 id="nip-29">NIP-29</h1>
+<h2 id="relay-based-groups">Relay-based Groups</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines a standard for groups that are only writable by a
+closed set of users. They can be public for reading by external users or
+not.</p>
+<p>Groups are identified by a random string of any length that serves as
+an <em>id</em>.</p>
+<p>There is no way to create a group, what happens is just that relays
+(most likely when asked by users) will create rules around some specific
+ids so these ids can serve as an actual group, henceforth messages sent
+to that group will be subject to these rules.</p>
+<p>Normally a group will originally belong to one specific relay, but
+the community may choose to move the group to other relays or even fork
+the group so it exists in different forms &#x2013; still using the same
+<em>id</em> &#x2013; across different relays.</p>
+<h2 id="relay-generated-events">Relay-generated events</h2>
+<p>Relays are supposed to generate the events that describe group
+metadata and group admins. These are parameterized replaceable events
+signed by the relay keypair directly, with the group <em>id</em> as the
+<code>d</code> tag.</p>
+<h2 id="group-identifier">Group identifier</h2>
+<p>A group may be identified by a string in the format
+<code>&lt;host&gt;'&lt;group-id&gt;</code>. For example, a group with
+<em>id</em> <code>abcdef</code> hosted at the relay
+<code>wss://groups.nostr.com</code> would be identified by the string
+<code>groups.nostr.com'abcdef</code>.</p>
+<h2 id="the-h-tag">The <code>h</code> tag</h2>
+<p>Events sent by users to groups (chat messages, text notes, moderation
+events etc) must have an <code>h</code> tag with the value set to the
+group <em>id</em>.</p>
+<h2 id="timeline-references">Timeline references</h2>
+<p>In order to not be used out of context, events sent to these groups
+may contain references to previous events seen from the same relay in
+the <code>previous</code> tag. The choice of which previous events to
+pick belongs to the clients. The references are to be made using the
+first 8 characters (4 bytes) of any event in the last 50 events seen by
+the user in the relay, excluding events by themselves. There can be any
+number of references (including zero), but it&#x2019;s recommended that clients
+include at least 3 and that relays enforce this.</p>
+<p>This is a hack to prevent messages from being broadcasted to external
+relays that have forks of one group out of context. Relays are expected
+to reject any events that contain timeline references to events not
+found in their own database. Clients should also check these to keep
+relays honest about them.</p>
+<h2 id="late-publication">Late publication</h2>
+<p>Relays should prevent late publication (messages published now with a
+timestamp from days or even hours ago) unless they are open to receive a
+group forked or moved from another relay.</p>
+<h2 id="event-definitions">Event definitions</h2>
+<ul>
+<li><em>text root note</em> (<code>kind:11</code>)</li>
+</ul>
+<p>This is the basic unit of a &#x201C;microblog&#x201D; root text note sent to a
+group.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">11</span><span class="op">,</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;hello my friends lovers of pizza&quot;</span><span class="op">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;h&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span>]<span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;previous&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;event-id-first-chars&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;event-id-first-chars&gt;&quot;</span><span class="op">,</span> <span class="op">...</span>]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span></code></pre></div>
+<ul>
+<li><em>threaded text reply</em> (<code>kind:12</code>)</li>
+</ul>
+<p>This is the basic unit of a &#x201C;microblog&#x201D; reply note sent to a group.
+It&#x2019;s the same as <code>kind:11</code>, except for the fact that it must
+be used whenever it&#x2019;s in reply to some other note (either in reply to a
+<code>kind:11</code> or a <code>kind:12</code>). <code>kind:12</code>
+events SHOULD use NIP-10 markers, leaving an empty relay url:</p>
+<ul>
+<li><p><code>["e", "&lt;kind-11-root-id&gt;", "", "root"]</code></p></li>
+<li><p><code>["e", "&lt;kind-12-event-id&gt;", "", "reply"]</code></p></li>
+<li><p><em>chat message</em> (<code>kind:9</code>)</p></li>
+</ul>
+<p>This is the basic unit of a <em>chat message</em> sent to a
+group.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">9</span><span class="op">,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;hello my friends lovers of pizza&quot;</span><span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;h&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span>]<span class="op">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;previous&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;event-id-first-chars&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;event-id-first-chars&gt;&quot;</span><span class="op">,</span> <span class="op">...</span>]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span></code></pre></div>
+<ul>
+<li><em>chat message threaded reply</em> (<code>kind:10</code>)</li>
+</ul>
+<p>Similar to <code>kind:12</code>, this is the basic unit of a chat
+message sent to a group. This is intended for in-chat threads that may
+be hidden by default. Not all in-chat replies MUST use
+<code>kind:10</code>, only when the intention is to create a hidden
+thread that isn&#x2019;t part of the normal flow of the chat (although clients
+are free to display those by default too).</p>
+<p><code>kind:10</code> SHOULD use NIP-10 markers, just like
+<code>kind:12</code>.</p>
+<ul>
+<li><em>join request</em> (<code>kind:9021</code>)</li>
+</ul>
+<p>Any user can send one of these events to the relay in order to be
+automatically or manually added to the group. If the group is
+<code>open</code> the relay will automatically issue a
+<code>kind:9000</code> in response adding this user. Otherwise group
+admins may choose to query for these requests and act upon them.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">9021</span><span class="op">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;optional reason&quot;</span><span class="op">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;h&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<ul>
+<li><em>moderation events</em> (<code>kinds:9000-9020</code>)
+(optional)</li>
+</ul>
+<p>Clients can send these events to a relay in order to accomplish a
+moderation action. Relays must check if the pubkey sending the event is
+capable of performing the given action. The relay may discard the event
+after taking action or keep it as a moderation log.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">90</span><span class="er">xx</span><span class="op">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;optional reason&quot;</span><span class="op">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;h&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span>]<span class="op">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;previous&quot;</span><span class="op">,</span> <span class="op">...</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Each moderation action uses a different kind and requires different
+arguments, which are given as tags. These are defined in the following
+table:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>kind</th>
+<th>name</th>
+<th>tags</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>9000</td>
+<td><code>add-user</code></td>
+<td><code>p</code> (pubkey hex)</td>
+</tr>
+<tr class="even">
+<td>9001</td>
+<td><code>remove-user</code></td>
+<td><code>p</code> (pubkey hex)</td>
+</tr>
+<tr class="odd">
+<td>9002</td>
+<td><code>edit-metadata</code></td>
+<td><code>name</code>, <code>about</code>, <code>picture</code>
+(string)</td>
+</tr>
+<tr class="even">
+<td>9003</td>
+<td><code>add-permission</code></td>
+<td><code>p</code> (pubkey), <code>permission</code> (name)</td>
+</tr>
+<tr class="odd">
+<td>9004</td>
+<td><code>remove-permission</code></td>
+<td><code>p</code> (pubkey), <code>permission</code> (name)</td>
+</tr>
+<tr class="even">
+<td>9005</td>
+<td><code>delete-event</code></td>
+<td><code>e</code> (id hex)</td>
+</tr>
+<tr class="odd">
+<td>9006</td>
+<td><code>edit-group-status</code></td>
+<td><code>public</code> or <code>private</code>, <code>open</code> or
+<code>closed</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><em>group metadata</em> (<code>kind:39000</code>) (optional)</li>
+</ul>
+<p>This event defines the metadata for the group &#x2013; basically how clients
+should display it. It must be generated and signed by the relay in which
+is found. Relays shouldn&#x2019;t accept these events if they&#x2019;re signed by
+anyone else.</p>
+<p>If the group is forked and hosted in multiple relays, there will be
+multiple versions of this event in each different relay and so on.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">39000</span><span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;name&quot;</span><span class="op">,</span> <span class="st">&quot;Pizza Lovers&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;picture&quot;</span><span class="op">,</span> <span class="st">&quot;https://pizza.com/pizza.png&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;about&quot;</span><span class="op">,</span> <span class="st">&quot;a group for people who love pizza&quot;</span>]<span class="op">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;public&quot;</span>]<span class="op">,</span> <span class="co">// or [&quot;private&quot;]</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;open&quot;</span>] <span class="co">// or [&quot;closed&quot;]</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>name</code>, <code>picture</code> and <code>about</code> are
+basic metadata for the group for display purposes. <code>public</code>
+signals the group can be <em>read</em> by anyone, while
+<code>private</code> signals that only AUTHed users can read.
+<code>open</code> signals that anyone can request to join and the
+request will be automatically granted, while <code>closed</code> signals
+that members must be pre-approved or that requests to join will be
+manually handled.</p>
+<ul>
+<li><em>group admins</em> (<code>kind:39001</code>) (optional)</li>
+</ul>
+<p>Similar to the group metadata, this event is supposed to be generated
+by relays that host the group.</p>
+<p>Each admin gets a label that is only used for display purposes, and a
+list of permissions it has are listed afterwards. These permissions can
+inform client building UI, but ultimately are evaluated by the relay in
+order to become effective.</p>
+<p>The list of capabilities, as defined by this NIP, for now, is the
+following:</p>
+<ul>
+<li><code>add-user</code></li>
+<li><code>edit-metadata</code></li>
+<li><code>delete-event</code></li>
+<li><code>remove-user</code></li>
+<li><code>add-permission</code></li>
+<li><code>remove-permission</code></li>
+<li><code>edit-group-status</code></li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">39001</span><span class="op">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;list of admins for the pizza lovers group&quot;</span><span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span>]<span class="op">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;pubkey1-as-hex&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;ceo&quot;</span><span class="op">,</span> <span class="st">&quot;add-user&quot;</span><span class="op">,</span> <span class="st">&quot;edit-metadata&quot;</span><span class="op">,</span> <span class="st">&quot;delete-event&quot;</span><span class="op">,</span> <span class="st">&quot;remove-user&quot;</span>]<span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;pubkey2-as-hex&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;secretary&quot;</span><span class="op">,</span> <span class="st">&quot;add-user&quot;</span><span class="op">,</span> <span class="st">&quot;delete-event&quot;</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<ul>
+<li><em>group members</em> (<code>kind:39002</code>) (optional)</li>
+</ul>
+<p>Similar to <em>group admins</em>, this event is supposed to be
+generated by relays that host the group.</p>
+<p>It&#x2019;s a NIP-51-like list of pubkeys that are members of the group.
+Relays might choose to not to publish this information or to restrict
+what pubkeys can fetch it.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">39002</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;list of members for the pizza lovers group&quot;</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;group-id&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;admin1&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;member-pubkey1&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;member-pubkey2&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="storing-the-list-of-groups-a-user-belongs-to">Storing the list
+of groups a user belongs to</h2>
+<p>A definition for kind <code>10009</code> was included in <a
+href="51.md.html">NIP-51</a> that allows clients to store the list of groups
+a user wants to remember being in.</p>
