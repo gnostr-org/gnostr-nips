@@ -1,0 +1,36 @@
+<h1 id="nip-03">NIP-03</h1>
+<h2 id="opentimestamps-attestations-for-events">OpenTimestamps
+Attestations for Events</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines an event with <code>kind:1040</code> that can
+contain an <a href="https://opentimestamps.org/">OpenTimestamps</a>
+proof for any other event:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1040</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="er">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;event-id&gt;</span><span class="ot">,</span> <span class="er">&lt;relay-url&gt;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;alt&quot;</span><span class="ot">,</span> <span class="st">&quot;opentimestamps attestation&quot;</span><span class="ot">]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">&lt;base64-encoded</span> <span class="er">OTS</span> <span class="er">file</span> <span class="er">data&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li>The OpenTimestamps proof MUST prove the referenced <code>e</code>
+event id as its digest.</li>
+<li>The <code>content</code> MUST be the full content of an
+<code>.ots</code> file containing at least one Bitcoin attestation. This
+file SHOULD contain a <strong>single</strong> Bitcoin attestation (as
+not more than one valid attestation is necessary and less bytes is
+better than more) and no reference to &#x201C;pending&#x201D; attestations since they
+are useless in this context.</li>
+</ul>
+<h3 id="example-opentimestamps-proof-verification-flow">Example
+OpenTimestamps proof verification flow</h3>
+<p>Using <a href="https://github.com/fiatjaf/nak"><code>nak</code></a>,
+<a href="https://jqlang.github.io/jq/"><code>jq</code></a> and <a
+href="https://github.com/fiatjaf/ots"><code>ots</code></a>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~</span><span class="op">&gt;</span> nak req <span class="at">-i</span> e71c6ea722987debdb60f81f9ea4f604b5ac0664120dd64fb9d23abc4ec7c323 wss://nostr-pub.wellorder.net <span class="kw">|</span> <span class="ex">jq</span> <span class="at">-r</span> .content <span class="kw">|</span> <span class="ex">ots</span> verify</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> using <span class="ex">an</span> esplora server at https://blockstream.info/api</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> sequence ending on block 810391 is valid</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">timestamp</span> validated at block <span class="pp">[</span><span class="ss">810391</span><span class="pp">]</span></span></code></pre></div>
