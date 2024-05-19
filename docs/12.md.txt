@@ -1,0 +1,7 @@
+NIP-12
+
+Generic Tag Queries
+
+final mandatory
+
+Moved to NIP-01.
