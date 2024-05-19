@@ -1,0 +1,324 @@
+<h1 id="nip-90">NIP-90</h1>
+<h2 id="data-vending-machine">Data Vending Machine</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines the interaction between customers and Service
+Providers for performing on-demand computation.</p>
+<p>Money in, data out.</p>
+<h2 id="kinds">Kinds</h2>
+<p>This NIP reserves the range <code>5000-7000</code> for data vending
+machine use.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Kind</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5000-5999</td>
+<td>Job request kinds</td>
+</tr>
+<tr class="even">
+<td>6000-6999</td>
+<td>Job result</td>
+</tr>
+<tr class="odd">
+<td>7000</td>
+<td>Job feedback</td>
+</tr>
+</tbody>
+</table>
+<p>Job results always use a kind number that is <code>1000</code> higher
+than the job request kind. (e.g.&#xA0;request: <code>kind:5001</code> gets a
+result: <code>kind:6001</code>).</p>
+<p>Job request types are defined <a
+href="https://github.com/nostr-protocol/data-vending-machines/tree/master/kinds">separately</a>.</p>
+<h2 id="rationale">Rationale</h2>
+<p>Nostr can act as a marketplace for data processing, where users
+request jobs to be processed in certain ways (e.g., &#x201C;speech-to-text&#x201D;,
+&#x201C;summarization&#x201D;, etc.), but they don&#x2019;t necessarily care about &#x201C;who&#x201D;
+processes the data.</p>
+<p>This NIP is not to be confused with a 1:1 marketplace; instead, it
+describes a flow where a user announces a desired output, willingness to
+pay, and service providers compete to fulfill the job requirement in the
+best way possible.</p>
+<h3 id="actors">Actors</h3>
+<p>There are two actors in the workflow described in this NIP: *
+Customers (npubs who request a job) * Service providers (npubs who
+fulfill jobs)</p>
+<h2 id="job-request-kind5000-5999">Job request
+(<code>kind:5000-5999</code>)</h2>
+<p>A request to process data, published by a customer. This event
+signals that a customer is interested in receiving the result of some
+kind of compute.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="er">xxx</span><span class="fu">,</span> <span class="er">//</span> <span class="er">kind</span> <span class="er">in</span> <span class="er">5000-5999</span> <span class="er">range</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span> <span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;data&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;input-type&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;marker&gt;&quot;</span> <span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span> <span class="st">&quot;output&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;mime-type&gt;&quot;</span> <span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span> <span class="st">&quot;relays&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://...&quot;</span> <span class="ot">],</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span> <span class="st">&quot;bid&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;msat-amount&gt;&quot;</span> <span class="ot">],</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span> <span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="st">&quot;bitcoin&quot;</span> <span class="ot">]</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>All tags are optional.</p>
+<ul>
+<li><code>i</code> tag: Input data for the job (zero or more inputs)
+<ul>
+<li><code>&lt;data&gt;</code>: The argument for the input</li>
+<li><code>&lt;input-type&gt;</code>: The way this argument should be
+interpreted. MUST be one of:
+<ul>
+<li><code>url</code>: A URL to be fetched of the data that should be
+processed.</li>
+<li><code>event</code>: A Nostr event ID.</li>
+<li><code>job</code>: The output of a previous job with the specified
+event ID. The dermination of which output to build upon is up to the
+service provider to decide (e.g.&#xA0;waiting for a signaling from the
+customer, waiting for a payment, etc.)</li>
+<li><code>text</code>: <code>&lt;data&gt;</code> is the value of the
+input, no resolution is needed</li>
+</ul></li>
+<li><code>&lt;relay&gt;</code>: If <code>event</code> or
+<code>job</code> input-type, the relay where the event/job was
+published, otherwise optional or empty string</li>
+<li><code>&lt;marker&gt;</code>: An optional field indicating how this
+input should be used within the context of the job</li>
+</ul></li>
+<li><code>output</code>: Expected output format. Different job request
+<code>kind</code> defines this more precisely.</li>
+<li><code>param</code>: Optional parameters for the job as key (first
+argument)/value (second argument). Different job request
+<code>kind</code> defines this more precisely.
+(e.g.&#xA0;<code>[ "param", "lang", "es" ]</code>)</li>
+<li><code>bid</code>: Customer MAY specify a maximum amount (in
+millisats) they are willing to pay</li>
+<li><code>relays</code>: List of relays where Service Providers SHOULD
+publish responses to</li>
+<li><code>p</code>: Service Providers the customer is interested in.
+Other SPs MIGHT still choose to process the job</li>
+</ul>
+<h2 id="encrypted-params">Encrypted Params</h2>
+<p>If the user wants to keep the input parameters a secret, they can
+encrypt the <code>i</code> and <code>param</code> tags with the service
+provider&#x2019;s &#x2018;p&#x2019; tag and add it to the content field. Add a tag
+<code>encrypted</code> as tags. Encryption for private tags will use <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.html">NIP-04 -
+Encrypted Direct Message encryption</a>, using the user&#x2019;s private and
+service provider&#x2019;s public key for the shared secret</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;what is the capital of France? &quot;</span><span class="ot">,</span> <span class="st">&quot;text&quot;</span><span class="ot">],</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;param&quot;</span><span class="ot">,</span> <span class="st">&quot;model&quot;</span><span class="ot">,</span> <span class="st">&quot;LLaMA-2&quot;</span><span class="ot">],</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;param&quot;</span><span class="ot">,</span> <span class="st">&quot;max_tokens&quot;</span><span class="ot">,</span> <span class="st">&quot;512&quot;</span><span class="ot">],</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;param&quot;</span><span class="ot">,</span> <span class="st">&quot;temperature&quot;</span><span class="ot">,</span> <span class="st">&quot;0.5&quot;</span><span class="ot">],</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;param&quot;</span><span class="ot">,</span> <span class="st">&quot;top-k&quot;</span><span class="ot">,</span> <span class="st">&quot;50&quot;</span><span class="ot">],</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;param&quot;</span><span class="ot">,</span> <span class="st">&quot;top-p&quot;</span><span class="ot">,</span> <span class="st">&quot;0.7&quot;</span><span class="ot">],</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;param&quot;</span><span class="ot">,</span> <span class="st">&quot;frequency_penalty&quot;</span><span class="ot">,</span> <span class="st">&quot;1&quot;</span><span class="ot">]</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<p>This param data will be encrypted and added to the
+<code>content</code> field and <code>p</code> tag should be present</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;BE2Y4xvS6HIY7TozIgbEl3sAHkdZoXyLRRkZv4fLPh3R7LtviLKAJM5qpkC7D6VtMbgIt4iNcMpLtpo...&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;04f74530a6ede6b24731b976b8e78fb449ea61f40ff10e3d869a3030c4edc91f&quot;</span><span class="ot">],</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;encrypted&quot;</span><span class="ot">]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="job-result-kind6000-6999">Job result
+(<code>kind:6000-6999</code>)</h2>
+<p>Service providers publish job results, providing the output of the
+job result. They should tag the original job request event id as well as
+the customer&#x2019;s pubkey.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;service-provider pubkey&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;payload&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="er">xxx</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;request&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;job-request&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;job-request-id&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-hint&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;input-data&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;customer&#39;s-pubkey&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;amount&quot;</span><span class="ot">,</span> <span class="st">&quot;requested-payment-amount&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;optional-bolt11&gt;&quot;</span><span class="ot">]</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>request</code>: The job request event stringified-JSON.</li>
+<li><code>amount</code>: millisats that the Service Provider is
+requesting to be paid. An optional third value can be a bolt11
+invoice.</li>
+<li><code>i</code>: The original input(s) specified in the request.</li>
+</ul>
+<h2 id="encrypted-output">Encrypted Output</h2>
+<p>If the request has encrypted params, then output should be encrypted
+and placed in <code>content</code> field. If the output is encrypted,
+then avoid including <code>i</code> tag with input-data as clear text.
+Add a tag encrypted to mark the output content as
+<code>encrypted</code></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;service-provider pubkey&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;encrypted payload&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="er">xxx</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;request&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;job-request&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;job-request-id&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-hint&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;customer&#39;s-pubkey&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;amount&quot;</span><span class="ot">,</span> <span class="st">&quot;requested-payment-amount&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;optional-bolt11&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;encrypted&quot;</span><span class="ot">]</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="job-feedback">Job feedback</h2>
+<p>Service providers can give feedback about a job back to the
+customer.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">7000</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;empty-or-payload&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;status&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;status&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;extra-info&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;amount&quot;</span><span class="ot">,</span> <span class="st">&quot;requested-payment-amount&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;bolt11&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;job-request-id&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-hint&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;customer&#39;s-pubkey&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><p><code>content</code>: Either empty or a job-result (e.g.&#xA0;for
+partial-result samples)</p></li>
+<li><p><code>amount</code> tag: as defined in the <a
+href="#job-result-kind6000-6999">Job Result</a> section.</p></li>
+<li><p><code>status</code> tag: Service Providers SHOULD indicate what
+this feedback status refers to. <a href="#job-feedback-status">Job
+Feedback Status</a> defines status. Extra human-readable information can
+be added as an extra argument.</p></li>
+<li><p>NOTE: If the input params requires input to be encrypted, then
+<code>content</code> field will have encrypted payload with
+<code>p</code> tag as key.</p></li>
+</ul>
+<h3 id="job-feedback-status">Job feedback status</h3>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>status</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>payment-required</code></td>
+<td>Service Provider requires payment before continuing.</td>
+</tr>
+<tr class="even">
+<td><code>processing</code></td>
+<td>Service Provider is processing the job.</td>
+</tr>
+<tr class="odd">
+<td><code>error</code></td>
+<td>Service Provider was unable to process the job.</td>
+</tr>
+<tr class="even">
+<td><code>success</code></td>
+<td>Service Provider successfully processed the job.</td>
+</tr>
+<tr class="odd">
+<td><code>partial</code></td>
+<td>Service Provider partially processed the job. The
+<code>.content</code> might include a sample of the partial
+results.</td>
+</tr>
+</tbody>
+</table>
+<p>Any job feedback event MIGHT include results in the
+<code>.content</code> field, as described in the <a
+href="#job-result-kind6000-6999">Job Result</a> section. This is useful
+for service providers to provide a sample of the results that have been
+processed so far.</p>
+<h1 id="protocol-flow">Protocol Flow</h1>
+<ul>
+<li>Customer publishes a job request (e.g.&#xA0;<code>kind:5000</code>
+speech-to-text).</li>
+<li>Service Providers MAY submit <code>kind:7000</code> job-feedback
+events (e.g.&#xA0;<code>payment-required</code>, <code>processing</code>,
+<code>error</code>, etc.).</li>
+<li>Upon completion, the service provider publishes the result of the
+job with a <code>kind:6000</code> job-result event.</li>
+<li>At any point, if there is an <code>amount</code> pending to be paid
+as instructed by the service provider, the user can pay the included
+<code>bolt11</code> or zap the job result event the service provider has
+sent to the user</li>
+</ul>
+<p>Job feedback (<code>kind:7000</code>) and Job Results
+(<code>kind:6000-6999</code>) events MAY include an <code>amount</code>
+tag, this can be interpreted as a suggestion to pay. Service Providers
+MUST use the <code>payment-required</code> feedback event to signal that
+a payment is required and no further actions will be performed until the
+payment is sent.</p>
+<p>Customers can always either pay the included <code>bolt11</code>
+invoice or zap the event requesting the payment and service providers
+should monitor for both if they choose to include a bolt11 invoice.</p>
+<h2 id="notes-about-the-protocol-flow">Notes about the protocol
+flow</h2>
+<p>The flow is deliberately ambiguous, allowing vast flexibility for the
+interaction between customers and service providers so that service
+providers can model their behavior based on their own
+decisions/perceptions of risk.</p>
+<p>Some service providers might choose to submit a
+<code>payment-required</code> as the first reaction before sending a
+<code>processing</code> or before delivering results, some might choose
+to serve partial results for the job (e.g.&#xA0;a sample), send a
+<code>payment-required</code> to deliver the rest of the results, and
+some service providers might choose to assess likelihood of payment
+based on an npub&#x2019;s past behavior and thus serve the job results before
+requesting payment for the best possible UX.</p>
+<p>It&#x2019;s not up to this NIP to define how individual vending machines
+should choose to run their business.</p>
+<h1 id="cancellation">Cancellation</h1>
+<p>A job request might be canceled by publishing a <code>kind:5</code>
+delete request event tagging the job request event.</p>
+<h1 id="appendix-1-job-chaining">Appendix 1: Job chaining</h1>
+<p>A Customer MAY request multiple jobs to be processed as a chain,
+where the output of a job is the input of another job. (e.g.&#xA0;podcast
+transcription -&gt; summarization of the transcription). This is done by
+specifying as input an event id of a different job with the
+<code>job</code> type.</p>
+<p>Service Providers MAY begin processing a subsequent job the moment
+they see the prior job&#x2019;s result, but they will likely wait for a zap to
+be published first. This introduces a risk that Service Provider of job
+#1 might delay publishing the zap event in order to have an advantage.
+This risk is up to Service Providers to mitigate or to decide whether
+the service provider of job #1 tends to have good-enough results so as
+to not wait for an explicit zap to assume the job was accepted.</p>
+<p>This gives a higher level of flexibility to service providers (which
+sophisticated service providers would take anyway).</p>
+<h1 id="appendix-2-service-provider-discoverability">Appendix 2: Service
+provider discoverability</h1>
+<p>Service Providers MAY use NIP-89 announcements to advertise their
+support for job kinds:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">31990</span><span class="op">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pubkey&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;pubkey&gt;&quot;</span><span class="op">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    \<span class="st">&quot;name</span><span class="sc">\&quot;</span><span class="st">: </span><span class="sc">\&quot;</span><span class="st">Translating DVM</span><span class="sc">\&quot;</span><span class="st">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    \<span class="st">&quot;about</span><span class="sc">\&quot;</span><span class="st">: </span><span class="sc">\&quot;</span><span class="st">I&#39;m a DVM specialized in translating Bitcoin content.</span><span class="sc">\&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  }<span class="st">&quot;,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;k&quot;</span><span class="op">,</span> <span class="st">&quot;5005&quot;</span>]<span class="op">,</span> <span class="co">// e.g. translation</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;t&quot;</span><span class="op">,</span> <span class="st">&quot;bitcoin&quot;</span>] <span class="co">// e.g. optionally advertises it specializes in bitcoin audio transcription that won&#39;t confuse &quot;Drivechains&quot; with &quot;Ridechains&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Customers can use NIP-89 to see what service providers their follows
+use.</p>
