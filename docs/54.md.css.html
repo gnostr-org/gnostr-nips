@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>54</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="nip-54">NIP-54</h1>
+<h2 id="wiki">Wiki</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:30818</code> (a <em>parameterized
+replaceable event</em>) for long-form text content similar to <a
+href="23.md.css.html">NIP-23</a>, but with one important difference: articles are
+meant to be descriptions, or encyclopedia entries, of particular
+subjects, and it’s expected that multiple people will write articles
+about the exact same subjects, with either small variations or
+completely independent content.</p>
+<p>Articles are identified by lowercase, normalized ascii <code>d</code>
+tags.</p>
+<h3 id="articles">Articles</h3>
+<pre class="jsonc"><code>{
+  &quot;content&quot;: &quot;A wiki is a hypertext publication collaboratively edited and managed by its own audience.&quot;,
+  &quot;tags&quot;: [
+    [&quot;d&quot;, &quot;wiki&quot;],
+    [&quot;title&quot;, &quot;Wiki&quot;],
+  ]
+}</code></pre>
+<h3 id="d-tag-normalization-rules"><code>d</code> tag normalization
+rules</h3>
+<ul>
+<li>Any non-letter character MUST be converted to a <code>-</code>.</li>
+<li>All letters MUST be converted to lowercase.</li>
+</ul>
+<h3 id="content-rules">Content rules</h3>
+<p>The content should be Markdown, following the same rules as of <a
+href="23.md.css.html">NIP-23</a>, although it takes some extra (optional)
+metadata tags:</p>
+<ul>
+<li><code>title</code>: for when the display title should be different
+from the <code>d</code> tag.</li>
+<li><code>summary</code>: for display in lists.</li>
+<li><code>a</code> and <code>e</code>: for referencing the original
+event a wiki article was forked from.</li>
+</ul>
+<p>One extra functionality is added: <strong>wikilinks</strong>. Unlike
+normal Markdown links <code>[]()</code> that link to webpages, wikilinks
+<code>[[]]</code> link to other articles in the wiki. In this case, the
+wiki is the entirety of Nostr. Clicking on a wikilink should cause the
+client to ask relays for events with <code>d</code> tags equal to the
+target of that wikilink.</p>
+<h3 id="merge-requests">Merge Requests</h3>
+<p>Event <code>kind:818</code> represents a request to merge from a
+forked article into the source. It is directed to a pubkey and
+references the original article and the modified event.</p>
+<p>[INSERT EVENT EXAMPLE]</p>
+<h3 id="redirects">Redirects</h3>
+<p>Event <code>kind:30819</code> is also defined to stand for “wiki
+redirects”, i.e. if one thinks <code>Shell structure</code> should
+redirect to <code>Thin-shell structure</code> they can issue one of
+these events instead of replicating the content. These events can be
+used for automatically redirecting between articles on a client, but
+also for generating crowdsourced “disambiguation” pages (<a
+href="https://en.wikipedia.org/wiki/Help:Disambiguation">common in
+Wikipedia</a>).</p>
+<p>[INSERT EVENT EXAMPLE]</p>
+<h2 id="how-to-decide-what-article-to-display">How to decide what
+article to display</h2>
+<p>As there could be many articles for each given name, some kind of
+prioritization must be done by clients. Criteria for this should vary
+between users and clients, but some means that can be used are described
+below:</p>
+<h3 id="reactions">Reactions</h3>
+<p><a href="25.md.css.html">NIP-25</a> reactions are very simple and can be used
+to create a simple web-of-trust between wiki article writers and their
+content. While just counting a raw number of “likes” is unproductive,
+reacting to any wiki article event with a <code>+</code> can be
+interpreted as a recommendation for that article specifically and a
+partial recommendation of the author of that article. When 2 or 3-level
+deep recommendations are followed, suddenly a big part of all the
+articles may have some form of tagging.</p>
+<h3 id="relays">Relays</h3>
+<p><a href="51.md.css.html">NIP-51</a> lists of relays can be created with the
+kind 10102 and then used by wiki clients in order to determine where to
+query articles first and to rank these differently in relation to other
+events fetched from other relays.</p>
+<h3 id="contact-lists">Contact lists</h3>
+<p><a href="02.md.css.html">NIP-02</a> contact lists can form the basis of a
+recommendation system that is then expanded with relay lists and
+reaction lists through nested queries. These lists form a good starting
+point only because they are so widespread.</p>
+<h3 id="wiki-related-contact-lists">Wiki-related contact lists</h3>
+<p><a href="51.md.css.html">NIP-51</a> lists can also be used to create a list of
+users that are trusted only in the context of wiki authorship or wiki
+curationship.</p>
+<h2 id="forks">Forks</h2>
+<p>Wiki-events can tag other wiki-events with a <code>fork</code> marker
+to specify that this event came from a different version. Both
+<code>a</code> and <code>e</code> tags SHOULD be used and have the
+<code>fork</code> marker applied, to identify the exact version it was
+forked from.</p>
+<h2 id="deference">Deference</h2>
+<p>Wiki-events can tag other wiki-events with a <code>defer</code>
+marker to indicate that it considers someone else’s entry as a “better”
+version of itself. If using a <code>defer</code> marker both
+<code>a</code> and <code>e</code> tags SHOULD be used.</p>
+<p>This is a stronger signal of trust than a <code>+</code>
+reaction.</p>
+<p>This marker is useful when a user edits someone else’s entry; if the
+original author includes the editor’s changes and the editor doesn’t
+want to keep/maintain an independent version, the <code>link</code> tag
+could effectively be a considered a “deletion” of the editor’s version
+and putting that pubkey’s WoT weight behind the original author’s
+version.</p>
+<h2 id="why-markdown">Why Markdown?</h2>
+<p>If the idea is to make a wiki then the most obvious text format to
+use is probably the mediawiki/wikitext format used by Wikipedia since
+it’s widely deployed in all mediawiki installations and used for decades
+with great success. However, it turns out that format is very bloated
+and convoluted, has way too many features and probably because of that
+it doesn’t have many alternative implementations out there, and the ones
+that exist are not complete and don’t look very trustworthy. Also it is
+very much a centralized format that can probably be changed at the whims
+of the Wikipedia owners.</p>
+<p>On the other hand, Markdown has proven to work well for small scale
+wikis and one of the biggest wikis in the planet (which is not very
+often thought of as a wiki), <a
+href="https://stackoverflow.com">StackOverflow</a> and its child sites,
+and also one of the biggest “personal wiki” software, <a
+href="https://obsidian.md.css.html/">Obsidian</a>. Markdown can probably deliver
+95% of the functionality of wikitext. When augmented with tables,
+diagram generators and MathJax (which are common extensions that exist
+in the wild and can be included in this NIP) that rate probably goes to
+99%, and its simplicity is a huge benefit that can’t be overlooked.
+Wikitext format can also be transpíled into Markdown using Pandoc. Given
+all that, I think it’s a reasonable suspicion that mediawiki is not
+inherently better than Markdown, the success of Wikipedia probably
+cannot be predicated on the syntax language choice.</p>
+<h1 id="appendix-1-merge-requests">Appendix 1: Merge requests</h1>
+<p>Users can request other users to get their entries merged into
+someone else’s entry by creating a <code>kind:818</code> event.</p>
+<pre class="jsonc"><code>{
+  &quot;content&quot;: &quot;I added information about how to make hot ice-creams&quot;,
+  &quot;kind&quot;: 818,
+  &quot;tags&quot;: [
+    [ &quot;a&quot;, &quot;30818:&lt;destination-pubkey&gt;:hot-ice-creams&quot;, &quot;&lt;relay-url&gt;&quot; ],
+    [ &quot;e&quot;, &quot;&lt;version-against-which-the-modification-was-made&gt;&quot;, &quot;&lt;relay-url&gt;&#39; ],
+    [ &quot;p&quot;, &quot;&lt;destination-pubkey&gt;&quot; ],
+    [ &quot;e&quot;, &quot;&lt;version-to-be-merged&gt;&quot;, &quot;&lt;relay-url&gt;&quot;, &quot;source&quot; ]
+  ]
+}</code></pre>
+<p><code>.content</code>: an optional explanation detailing why this
+merge is being requested. <code>a</code> tag: tag of the article which
+should be modified (i.e. the target of this merge request).
+<code>e</code> tag: optional version of the article in which this
+modifications is based <code>e</code> tag with <code>source</code>
+marker: the ID of the event that should be merged. This event id MUST be
+of a <code>kind:30818</code> as defined in this NIP.</p>
+<p>The destination-pubkey (the pubkey being requested to merge something
+into their article can create [[NIP-25]] reactions that tag the
+<code>kind:818</code> event with <code>+</code> or <code>-</code></p>
+</body>
+</html>
