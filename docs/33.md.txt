@@ -1,0 +1,7 @@
+NIP-33
+
+Parameterized Replaceable Events
+
+final mandatory
+
+Moved to NIP-01.
