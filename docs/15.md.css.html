@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>15</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="nip-15">NIP-15</h1>
+<h2 id="nostr-marketplace">Nostr Marketplace</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Based on https://github.com/lnbits/Diagon-Alley.</p>
+<p>Implemented in <a
+href="https://github.com/lnbits/nostrmarket">NostrMarket</a> and <a
+href="https://github.com/PlebeianTech/plebeian-market">Plebeian
+Market</a>.</p>
+<h2 id="terms">Terms</h2>
+<ul>
+<li><code>merchant</code> - seller of products with NOSTR key-pair</li>
+<li><code>customer</code> - buyer of products with NOSTR key-pair</li>
+<li><code>product</code> - item for sale by the
+<code>merchant</code></li>
+<li><code>stall</code> - list of products controlled by
+<code>merchant</code> (a <code>merchant</code> can have multiple
+stalls)</li>
+<li><code>marketplace</code> - clientside software for searching
+<code>stalls</code> and purchasing <code>products</code></li>
+</ul>
+<h2 id="nostr-marketplace-clients">Nostr Marketplace Clients</h2>
+<h3 id="merchant-admin">Merchant admin</h3>
+<p>Where the <code>merchant</code> creates, updates and deletes
+<code>stalls</code> and <code>products</code>, as well as where they
+manage sales, payments and communication with
+<code>customers</code>.</p>
+<p>The <code>merchant</code> admin software can be purely clientside,
+but for <code>convenience</code> and uptime, implementations will likely
+have a server client listening for NOSTR events.</p>
+<h3 id="marketplace">Marketplace</h3>
+<p><code>Marketplace</code> software should be entirely clientside,
+either as a stand-alone app, or as a purely frontend webpage. A
+<code>customer</code> subscribes to different merchant NOSTR public
+keys, and those <code>merchants</code> <code>stalls</code> and
+<code>products</code> become listed and searchable. The marketplace
+client is like any other ecommerce site, with basket and checkout.
+<code>Marketplaces</code> may also wish to include a
+<code>customer</code> support area for direct message communication with
+<code>merchants</code>.</p>
+<h2
+id="merchant-publishingupdating-products-event"><code>Merchant</code>
+publishing/updating products (event)</h2>
+<p>A merchant can publish these events: | Kind | | Description | | ——— |
+—————— | ————————————————————————————————————— | | <code>0</code> |
+<code>set_meta</code> | The merchant description (similar with any
+<code>nostr</code> public key). | | <code>30017</code> |
+<code>set_stall</code> | Create or update a stall. | |
+<code>30018</code> | <code>set_product</code> | Create or update a
+product. | | <code>4</code> | <code>direct_message</code> | Communicate
+with the customer. The messages can be plain-text or JSON. | |
+<code>5</code> | <code>delete</code> | Delete a product or a stall.
+|</p>
+<h3 id="event-30017-create-or-update-a-stall.">Event <code>30017</code>:
+Create or update a stall.</h3>
+<p><strong>Event Content</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">generated</span> <span class="er">by</span> <span class="er">the</span> <span class="er">merchant.</span> <span class="er">Sequential</span> <span class="er">IDs</span> <span class="er">(`0`</span><span class="fu">,</span> <span class="er">`1`</span><span class="fu">,</span> <span class="er">`2`...)</span> <span class="er">are</span> <span class="er">discouraged&gt;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">stall</span> <span class="er">name&gt;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">stall</span> <span class="er">description&gt;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;currency&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">currency</span> <span class="er">used&gt;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;shipping&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">the</span> <span class="er">shipping</span> <span class="er">zone</span><span class="fu">,</span> <span class="er">generated</span> <span class="er">by</span> <span class="er">the</span> <span class="er">merchant&gt;</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">zone</span> <span class="er">name&gt;</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;cost&quot;</span><span class="fu">:</span> <span class="er">&lt;float</span><span class="fu">,</span> <span class="er">base</span> <span class="er">cost</span> <span class="er">for</span> <span class="er">shipping.</span> <span class="er">The</span> <span class="er">currency</span> <span class="er">is</span> <span class="er">defined</span> <span class="er">at</span> <span class="er">the</span> <span class="er">stall</span> <span class="er">level&gt;</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;regions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">&lt;string</span><span class="ot">,</span> <span class="er">regions</span> <span class="er">included</span> <span class="er">in</span> <span class="er">this</span> <span class="er">zone&gt;</span><span class="ot">]</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Fields that are not self-explanatory: - <code>shipping</code>: - an
+array with possible shipping zones for this stall. - the customer MUST
+choose exactly one of those shipping zones. - shipping to different
+zones can have different costs. For some goods (digital for example) the
+cost can be zero. - the <code>id</code> is an internal value used by the
+merchant. This value must be sent back as the customer selection. - each
+shipping zone contains the base cost for orders made to that shipping
+zone, but a specific shipping cost per product can also be specified if
+the shipping cost for that product is higher than what’s specified by
+the base cost.</p>
+<p><strong>Event Tags</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="er">&lt;string</span><span class="ot">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">stall</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li>the <code>d</code> tag is required, its value MUST be the same as
+the stall <code>id</code>.</li>
+</ul>
+<h3 id="event-30018-create-or-update-a-product">Event
+<code>30018</code>: Create or update a product</h3>
+<p><strong>Event Content</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">generated</span> <span class="er">by</span> <span class="er">the</span> <span class="er">merchant</span> <span class="er">(sequential</span> <span class="er">ids</span> <span class="er">are</span> <span class="er">discouraged)&gt;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;stall_id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">the</span> <span class="er">stall</span> <span class="er">to</span> <span class="er">which</span> <span class="er">this</span> <span class="er">product</span> <span class="er">belong</span> <span class="er">to&gt;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">product</span> <span class="er">name&gt;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">product</span> <span class="er">description&gt;</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;images&quot;</span><span class="fu">:</span> <span class="er">&lt;</span><span class="ot">[</span><span class="er">string</span><span class="ot">]</span><span class="fu">,</span> <span class="er">array</span> <span class="er">of</span> <span class="er">image</span> <span class="er">URLs</span><span class="fu">,</span> <span class="er">optional&gt;</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;currency&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">currency</span> <span class="er">used&gt;</span><span class="fu">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="er">&lt;float</span><span class="fu">,</span> <span class="er">cost</span> <span class="er">of</span> <span class="er">product&gt;</span><span class="fu">,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;quantity&quot;</span><span class="fu">:</span> <span class="er">&lt;int</span> <span class="er">or</span> <span class="kw">null</span><span class="fu">,</span> <span class="er">available</span> <span class="er">items&gt;</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;specs&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="er">&lt;string</span><span class="ot">,</span> <span class="er">spec</span> <span class="er">key&gt;</span><span class="ot">,</span> <span class="er">&lt;string</span><span class="ot">,</span> <span class="er">spec</span> <span class="er">value&gt;</span><span class="ot">]</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;shipping&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">the</span> <span class="er">shipping</span> <span class="er">zone</span> <span class="er">(must</span> <span class="er">match</span> <span class="er">one</span> <span class="er">of</span> <span class="er">the</span> <span class="er">zones</span> <span class="er">defined</span> <span class="er">for</span> <span class="er">the</span> <span class="er">stall)&gt;</span><span class="fu">,</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;cost&quot;</span><span class="fu">:</span> <span class="er">&lt;float</span><span class="fu">,</span> <span class="er">extra</span> <span class="er">cost</span> <span class="er">for</span> <span class="er">shipping.</span> <span class="er">The</span> <span class="er">currency</span> <span class="er">is</span> <span class="er">defined</span> <span class="er">at</span> <span class="er">the</span> <span class="er">stall</span> <span class="er">level&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Fields that are not self-explanatory: - <code>quantity</code> can be
+null in the case of items with unlimited availability, like digital
+items, or services - <code>specs</code>: - an optional array of key pair
+values. It allows for the Customer UI to present product specifications
+in a structure mode. It also allows comparison between products - eg:
+<code>[["operating_system", "Android 12.0"], ["screen_size", "6.4 inches"], ["connector_type", "USB Type C"]]</code></p>
+<pre><code>_Open_: better to move `spec` in the `tags` section of the event?</code></pre>
+<ul>
+<li><code>shipping</code>:
+<ul>
+<li>an <em>optional</em> array of extra costs to be used per shipping
+zone, only for products that require special shipping costs to be added
+to the base shipping cost defined in the stall</li>
+<li>the <code>id</code> should match the id of the shipping zone, as
+defined in the <code>shipping</code> field of the stall</li>
+<li>to calculate the total cost of shipping for an order, the user will
+choose a shipping option during checkout, and then the client must
+consider this costs:
+<ul>
+<li>the <code>base cost from the stall</code> for the chosen shipping
+option</li>
+<li>the result of multiplying the product units by the
+<code>shipping costs specified in the product</code>, if any.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>Event Tags</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="er">&quot;tags&quot;:</span> <span class="ot">[</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="er">&lt;string</span><span class="ot">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">product</span><span class="ot">],</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="ot">,</span> <span class="er">product</span> <span class="er">category</span><span class="ot">],</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="ot">,</span> <span class="er">product</span> <span class="er">category</span><span class="ot">],</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="er">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span></code></pre></div>
+<ul>
+<li>the <code>d</code> tag is required, its value MUST be the same as
+the product <code>id</code>.</li>
+<li>the <code>t</code> tag is as searchable tag, it represents different
+categories that the product can be part of (<code>food</code>,
+<code>fruits</code>). Multiple <code>t</code> tags can be present.</li>
+</ul>
+<h2 id="checkout-events">Checkout events</h2>
+<p>All checkout events are sent as JSON strings using (<a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>).</p>
+<p>The <code>merchant</code> and the <code>customer</code> can exchange
+JSON messages that represent different actions. Each <code>JSON</code>
+message <code>MUST</code> have a <code>type</code> field indicating the
+what the JSON represents. Possible types:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Message Type</th>
+<th>Sent By</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>Customer</td>
+<td>New Order</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>Merchant</td>
+<td>Payment Request</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>Merchant</td>
+<td>Order Status Update</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-1-customer-order-event">Step 1: <code>customer</code> order
+(event)</h3>
+<p>The below JSON goes in content of <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">generated</span> <span class="er">by</span> <span class="er">the</span> <span class="er">customer&gt;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">???&gt;</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;address&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">for</span> <span class="er">physical</span> <span class="er">goods</span> <span class="er">an</span> <span class="er">address</span> <span class="er">should</span> <span class="er">be</span> <span class="er">provided&gt;</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;string (optional), message for merchant&gt;,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;</span><span class="er">contact</span><span class="st">&quot;: {</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;</span><span class="er">nostr</span><span class="st">&quot;: &lt;32-bytes hex of a pubkey&gt;,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;</span><span class="er">phone</span><span class="st">&quot;: &lt;string (optional), if the customer wants to be contacted by phone&gt;,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;</span><span class="er">email</span><span class="st">&quot;: &lt;string (optional), if the customer wants to be contacted by email&gt;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">  },</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;</span><span class="er">items</span><span class="st">&quot;: [</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">      &quot;</span><span class="er">product_id</span><span class="st">&quot;: &lt;string, id of the product&gt;,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">      &quot;</span><span class="er">quantity</span><span class="st">&quot;: &lt;int, how many products the customer is ordering&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="st">  ],</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;</span><span class="er">shipping_id</span><span class="st">&quot;: &lt;string, id of the shipping zone&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span></code></pre></div>
+<p><em>Open</em>: is <code>contact.nostr</code> required?</p>
+<h3 id="step-2-merchant-request-payment-event">Step 2:
+<code>merchant</code> request payment (event)</h3>
+<p>Sent back from the merchant for payment. Any payment option is valid
+that the merchant can check.</p>
+<p>The below JSON goes in <code>content</code> of <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>.</p>
+<p><code>payment_options</code>/<code>type</code> include:</p>
+<ul>
+<li><code>url</code> URL to a payment page, stripe, paypal,
+btcpayserver, etc</li>
+<li><code>btc</code> onchain bitcoin address</li>
+<li><code>ln</code> bitcoin lightning invoice</li>
+<li><code>lnurl</code> bitcoin lnurl-pay</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">the</span> <span class="er">order&gt;</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">message</span> <span class="er">to</span> <span class="er">customer</span><span class="fu">,</span> <span class="er">optional&gt;</span><span class="fu">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;payment_options&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">option</span> <span class="er">type&gt;</span><span class="fu">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">url</span><span class="fu">,</span> <span class="er">btc</span> <span class="er">address</span><span class="fu">,</span> <span class="er">ln</span> <span class="er">invoice</span><span class="fu">,</span> <span class="er">etc&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">option</span> <span class="er">type&gt;</span><span class="fu">,</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">url</span><span class="fu">,</span> <span class="er">btc</span> <span class="er">address</span><span class="fu">,</span> <span class="er">ln</span> <span class="er">invoice</span><span class="fu">,</span> <span class="er">etc&gt;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">option</span> <span class="er">type&gt;</span><span class="fu">,</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">url</span><span class="fu">,</span> <span class="er">btc</span> <span class="er">address</span><span class="fu">,</span> <span class="er">ln</span> <span class="er">invoice</span><span class="fu">,</span> <span class="er">etc&gt;</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="step-3-merchant-verify-paymentshipped-event">Step 3:
+<code>merchant</code> verify payment/shipped (event)</h3>
+<p>Once payment has been received and processed.</p>
+<p>The below JSON goes in <code>content</code> of <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">id</span> <span class="er">of</span> <span class="er">the</span> <span class="er">order&gt;</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span><span class="fu">,</span> <span class="er">message</span> <span class="er">to</span> <span class="er">customer&gt;</span><span class="fu">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;paid&quot;</span><span class="fu">:</span> <span class="er">&lt;bool:</span> <span class="er">has</span> <span class="er">received</span> <span class="er">payment&gt;</span><span class="fu">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;shipped&quot;</span><span class="fu">:</span> <span class="er">&lt;bool:</span> <span class="er">has</span> <span class="er">been</span> <span class="er">shipped&gt;</span><span class="fu">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="customize-marketplace">Customize Marketplace</h2>
+<p>Create a customized user experience using the <code>naddr</code> from
+<a
+href="https://github.com/nostr-protocol/nips/blob/master/19.md.css.html#shareable-identifiers-with-extra-metadata">NIP-19</a>.
+The use of <code>naddr</code> enables easy sharing of marketplace events
+while incorporating a rich set of metadata. This metadata can include
+relays, merchant profiles, and more. Subsequently, it allows merchants
+to be grouped into a market, empowering the market creator to configure
+the marketplace’s user interface and user experience, and share that
+marketplace. This customization can encompass elements such as market
+name, description, logo, banner, themes, and even color schemes,
+offering a tailored and unique marketplace experience.</p>
+<h3 id="event-30019-create-or-update-marketplace-uiux">Event
+<code>30019</code>: Create or update marketplace UI/UX</h3>
+<p><strong>Event Content</strong></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">market</span> <span class="er">name&gt;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;about&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">market</span> <span class="er">description&gt;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ui&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;picture&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">market</span> <span class="er">logo</span> <span class="er">image</span> <span class="er">URL&gt;</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;banner&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">market</span> <span class="er">logo</span> <span class="er">banner</span> <span class="er">URL&gt;</span><span class="fu">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;theme&quot;</span><span class="fu">:</span> <span class="er">&lt;string</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">market</span> <span class="er">theme&gt;</span><span class="fu">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;darkMode&quot;</span><span class="fu">:</span> <span class="er">&lt;bool</span><span class="fu">,</span> <span class="er">true/false&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;merchants&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">array</span> <span class="er">of</span> <span class="er">pubkeys</span> <span class="er">(optional)</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>This event leverages naddr to enable comprehensive customization and
+sharing of marketplace configurations, fostering a unique and engaging
+marketplace environment.</p>
+<h2 id="auctions">Auctions</h2>
+<h3 id="event-30020-create-or-update-a-product-sold-as-an-auction">Event
+<code>30020</code>: Create or update a product sold as an auction</h3>
+<p><strong>Event Content</strong>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span><span class="fu">,</span> <span class="er">UUID</span> <span class="er">generated</span> <span class="er">by</span> <span class="er">the</span> <span class="er">merchant.</span> <span class="er">Sequential</span> <span class="er">IDs</span> <span class="er">(`0`</span><span class="fu">,</span> <span class="er">`1`</span><span class="fu">,</span> <span class="er">`2`...)</span> <span class="er">are</span> <span class="er">discouraged&gt;</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;stall_id&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span><span class="fu">,</span> <span class="er">UUID</span> <span class="er">of</span> <span class="er">the</span> <span class="er">stall</span> <span class="er">to</span> <span class="er">which</span> <span class="er">this</span> <span class="er">product</span> <span class="er">belong</span> <span class="er">to&gt;</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span><span class="fu">,</span> <span class="er">product</span> <span class="er">name&gt;</span><span class="fu">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">product</span> <span class="er">description&gt;</span><span class="fu">,</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;images&quot;</span><span class="fu">:</span> <span class="er">&lt;</span><span class="ot">[</span><span class="er">String</span><span class="ot">]</span><span class="fu">,</span> <span class="er">array</span> <span class="er">of</span> <span class="er">image</span> <span class="er">URLs</span><span class="fu">,</span> <span class="er">optional&gt;</span><span class="fu">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;starting_bid&quot;</span><span class="fu">:</span> <span class="er">&lt;int&gt;</span><span class="fu">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;start_date&quot;</span><span class="fu">:</span> <span class="er">&lt;int</span> <span class="er">(optional)</span> <span class="er">UNIX</span> <span class="er">timestamp</span><span class="fu">,</span> <span class="er">date</span> <span class="er">the</span> <span class="er">auction</span> <span class="er">started</span> <span class="er">/</span> <span class="er">will</span> <span class="er">start&gt;</span><span class="fu">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;duration&quot;</span><span class="fu">:</span> <span class="er">&lt;int</span><span class="fu">,</span> <span class="er">number</span> <span class="er">of</span> <span class="er">seconds</span> <span class="er">the</span> <span class="er">auction</span> <span class="er">will</span> <span class="er">run</span> <span class="er">for</span><span class="fu">,</span> <span class="er">excluding</span> <span class="er">eventual</span> <span class="er">time</span> <span class="er">extensions</span> <span class="er">that</span> <span class="er">might</span> <span class="er">happen&gt;</span><span class="fu">,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;specs&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="er">&lt;String</span><span class="ot">,</span> <span class="er">spec</span> <span class="er">key&gt;</span><span class="ot">,</span> <span class="er">&lt;String</span><span class="ot">,</span> <span class="er">spec</span> <span class="er">value&gt;</span><span class="ot">]</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;shipping&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span><span class="fu">,</span> <span class="er">UUID</span> <span class="er">of</span> <span class="er">the</span> <span class="er">shipping</span> <span class="er">zone.</span> <span class="er">Must</span> <span class="er">match</span> <span class="er">one</span> <span class="er">of</span> <span class="er">the</span> <span class="er">zones</span> <span class="er">defined</span> <span class="er">for</span> <span class="er">the</span> <span class="er">stall&gt;</span><span class="fu">,</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;cost&quot;</span><span class="fu">:</span> <span class="er">&lt;float</span><span class="fu">,</span> <span class="er">extra</span> <span class="er">cost</span> <span class="er">for</span> <span class="er">shipping.</span> <span class="er">The</span> <span class="er">currency</span> <span class="er">is</span> <span class="er">defined</span> <span class="er">at</span> <span class="er">the</span> <span class="er">stall</span> <span class="er">level&gt;</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<blockquote>
+<p>[!NOTE] Items sold as an auction are very similar in structure to
+fixed-price items, with some important differences worth noting.</p>
+</blockquote>
+<ul>
+<li><p>The <code>start_date</code> can be set to a date in the future if
+the auction is scheduled to start on that date, or can be omitted if the
+start date is unknown/hidden. If the start date is not specified, the
+auction will have to be edited later to set an actual date.</p></li>
+<li><p>The auction runs for an initial number of seconds after the
+<code>start_date</code>, specified by <code>duration</code>.</p></li>
+</ul>
+<h3 id="event-1021-bid">Event <code>1021</code>: Bid</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">&lt;int</span><span class="fu">,</span> <span class="er">amount</span> <span class="er">of</span> <span class="er">sats&gt;</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;event</span> <span class="er">ID</span> <span class="er">of</span> <span class="er">the</span> <span class="er">auction</span> <span class="er">to</span> <span class="er">bid</span> <span class="er">on&gt;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Bids are simply events of kind <code>1021</code> with a
+<code>content</code> field specifying the amount, in the currency of the
+auction. Bids must reference an auction.</p>
+<blockquote>
+<p>[!NOTE] Auctions can be edited as many times as desired (they are
+“parameterized replaceable events”) by the author - even after the
+start_date, but they cannot be edited after they have received the first
+bid! This is enforced by the fact that bids reference the event ID of
+the auction (rather than the product UUID), which changes with every new
+version of the auctioned product. So a bid is always attached to one
+“version”. Editing the auction after a bid would result in the new
+product losing the bid!</p>
+</blockquote>
+<h3 id="event-1022-bid-confirmation">Event <code>1022</code>: Bid
+confirmation</h3>
+<p><strong>Event Content</strong>:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span><span class="fu">,</span> <span class="dt">&quot;accepted&quot;</span> <span class="er">|</span> <span class="dt">&quot;rejected&quot;</span> <span class="er">|</span> <span class="dt">&quot;pending&quot;</span> <span class="er">|</span> <span class="dt">&quot;winner&quot;</span><span class="er">&gt;</span><span class="fu">,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="er">&lt;String</span> <span class="er">(optional)&gt;</span><span class="fu">,</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;duration_extended&quot;</span><span class="fu">:</span> <span class="er">&lt;int</span> <span class="er">(optional)</span><span class="fu">,</span> <span class="er">number</span> <span class="er">of</span> <span class="er">seconds&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Event Tags</strong>:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>  <span class="er">&quot;tags&quot;:</span> <span class="ot">[[</span><span class="st">&quot;e&quot;</span> <span class="er">&lt;event</span> <span class="er">ID</span> <span class="er">of</span> <span class="er">the</span> <span class="er">bid</span> <span class="er">being</span> <span class="er">confirmed&gt;</span><span class="ot">],</span> <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;event</span> <span class="er">ID</span> <span class="er">of</span> <span class="er">the</span> <span class="er">auction&gt;</span><span class="ot">]]</span><span class="er">,</span></span></code></pre></div>
+<p>Bids should be confirmed by the merchant before being considered as
+valid by other clients. So clients should subscribe to <em>bid
+confirmation</em> events (kind <code>1022</code>) for every auction that
+they follow, in addition to the actual bids and should check that the
+pubkey of the bid confirmation matches the pubkey of the merchant (in
+addition to checking the signature).</p>
+<p>The <code>content</code> field is a JSON which includes <em>at
+least</em> a <code>status</code>. <code>winner</code> is how the
+<em>winning bid</em> is replied to after the auction ends and the
+winning bid is picked by the merchant.</p>
+<p>The reasons for which a bid can be marked as <code>rejected</code> or
+<code>pending</code> are up to the merchant’s implementation and
+configuration - they could be anything from basic validation errors
+(amount too low) to the bidder being blacklisted or to the bidder
+lacking sufficient <em>trust</em>, which could lead to the bid being
+marked as <code>pending</code> until sufficient verification is
+performed. The difference between the two is that <code>pending</code>
+bids <em>might</em> get approved after additional steps are taken by the
+bidder, whereas <code>rejected</code> bids can not be later
+approved.</p>
+<p>An additional <code>message</code> field can appear in the
+<code>content</code> JSON to give further context as of why a bid is
+<code>rejected</code> or <code>pending</code>.</p>
+<p>Another thing that can happen is - if bids happen very close to the
+end date of the auction - for the merchant to decide to extend the
+auction duration for a few more minutes. This is done by passing a
+<code>duration_extended</code> field as part of a bid confirmation,
+which would contain a number of seconds by which the initial duration is
+extended. So the actual end date of an auction is always
+<code>start_date + duration + (SUM(c.duration_extended) FOR c in all confirmations</code>.</p>
+<h2 id="customer-support-events">Customer support events</h2>
+<p>Customer support is handled over whatever communication method was
+specified. If communicating via nostr, NIP-04 is used
+https://github.com/nostr-protocol/nips/blob/master/04.md.css.html.</p>
+<h2 id="additional">Additional</h2>
+<p>Standard data models can be found
+<a href="https://raw.githubusercontent.com/lnbits/nostrmarket/main/models.py">here</a></p>
+</body>
+</html>
