@@ -1,0 +1,313 @@
+<h1 id="nip-51">NIP-51</h1>
+<h2 id="lists">Lists</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines lists of things that users can create. Lists can
+contain references to anything, and these references can be
+<strong>public</strong> or <strong>private</strong>.</p>
+<p>Public items in a list are specified in the event <code>tags</code>
+array, while private items are specified in a JSON array that mimics the
+structure of the event <code>tags</code> array, but stringified and
+encrypted using the same scheme from <a href="04.md.html">NIP-04</a> (the
+shared key is computed using the author&#x2019;s public and private key) and
+stored in the <code>.content</code>.</p>
+<p>When new items are added to an existing list, clients SHOULD append
+them to the end of the list, so they are stored in chronological
+order.</p>
+<h2 id="types-of-lists">Types of lists</h2>
+<h2 id="standard-lists">Standard lists</h2>
+<p>Standard lists use non-parameterized replaceable events, meaning
+users may only have a single list of each kind. They have special
+meaning and clients may rely on them to augment a user&#x2019;s profile or
+browsing experience.</p>
+<p>For example, <em>mute list</em> can contain the public keys of
+spammers and bad actors users don&#x2019;t want to see in their feeds or
+receive annoying notifications from.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>name</th>
+<th>kind</th>
+<th>description</th>
+<th>expected tag items</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mute list</td>
+<td>10000</td>
+<td>things the user doesn&#x2019;t want to see in their feeds</td>
+<td><code>"p"</code> (pubkeys), <code>"t"</code> (hashtags),
+<code>"word"</code> (lowercase string), <code>"e"</code> (threads)</td>
+</tr>
+<tr class="even">
+<td>Pinned notes</td>
+<td>10001</td>
+<td>events the user intends to showcase in their profile page</td>
+<td><code>"e"</code> (kind:1 notes)</td>
+</tr>
+<tr class="odd">
+<td>Bookmarks</td>
+<td>10003</td>
+<td>uncategorized, &#x201C;global&#x201D; list of things a user wants to save</td>
+<td><code>"e"</code> (kind:1 notes), <code>"a"</code> (kind:30023
+articles), <code>"t"</code> (hashtags), <code>"r"</code> (URLs)</td>
+</tr>
+<tr class="even">
+<td>Communities</td>
+<td>10004</td>
+<td><a href="72.md.html">NIP-72</a> communities the user belongs to</td>
+<td><code>"a"</code> (kind:34550 community definitions)</td>
+</tr>
+<tr class="odd">
+<td>Public chats</td>
+<td>10005</td>
+<td><a href="28.md.html">NIP-28</a> chat channels the user is in</td>
+<td><code>"e"</code> (kind:40 channel definitions)</td>
+</tr>
+<tr class="even">
+<td>Blocked relays</td>
+<td>10006</td>
+<td>relays clients should never connect to</td>
+<td><code>"relay"</code> (relay URLs)</td>
+</tr>
+<tr class="odd">
+<td>Search relays</td>
+<td>10007</td>
+<td>relays clients should use when performing search queries</td>
+<td><code>"relay"</code> (relay URLs)</td>
+</tr>
+<tr class="even">
+<td>Simple groups</td>
+<td>10009</td>
+<td><a href="29.md.html">NIP-29</a> groups the user is in</td>
+<td><code>"group"</code> (<a href="29.md.html">NIP-29</a> group ids +
+mandatory relay URL)</td>
+</tr>
+<tr class="odd">
+<td>Interests</td>
+<td>10015</td>
+<td>topics a user may be interested in and pointers</td>
+<td><code>"t"</code> (hashtags) and <code>"a"</code> (kind:30015
+interest set)</td>
+</tr>
+<tr class="even">
+<td>Emojis</td>
+<td>10030</td>
+<td>user preferred emojis and pointers to emoji sets</td>
+<td><code>"emoji"</code> (see <a href="30.md.html">NIP-30</a>) and
+<code>"a"</code> (kind:30030 emoji set)</td>
+</tr>
+<tr class="odd">
+<td>Good wiki authors</td>
+<td>10101</td>
+<td><a href="54.md.html">NIP-54</a> user recommended wiki authors</td>
+<td><code>"p"</code> (pubkeys)</td>
+</tr>
+<tr class="even">
+<td>Good wiki relays</td>
+<td>10102</td>
+<td><a href="54.md.html">NIP-54</a> relays deemed to only host useful
+articles</td>
+<td><code>"relay"</code> (relay URLs)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sets">Sets</h2>
+<p>Sets are lists with well-defined meaning that can enhance the
+functionality and the UI of clients that rely on them. Unlike standard
+lists, users are expected to have more than one set of each kind,
+therefore each of them must be assigned a different <code>"d"</code>
+identifier.</p>
+<p>For example, <em>relay sets</em> can be displayed in a dropdown UI to
+give users the option to switch to which relays they will publish an
+event or from which relays they will read the replies to an event;
+<em>curation sets</em> can be used by apps to showcase curations made by
+others tagged to different topics.</p>
+<p>Aside from their main identifier, the <code>"d"</code> tag, sets can
+optionally have a <code>"title"</code>, an <code>"image"</code> and a
+<code>"description"</code> tags that can be used to enhance their
+UI.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>name</th>
+<th>kind</th>
+<th>description</th>
+<th>expected tag items</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Follow sets</td>
+<td>30000</td>
+<td>categorized groups of users a client may choose to check out in
+different circumstances</td>
+<td><code>"p"</code> (pubkeys)</td>
+</tr>
+<tr class="even">
+<td>Relay sets</td>
+<td>30002</td>
+<td>user-defined relay groups the user can easily pick and choose from
+during various operations</td>
+<td><code>"relay"</code> (relay URLs)</td>
+</tr>
+<tr class="odd">
+<td>Bookmark sets</td>
+<td>30003</td>
+<td>user-defined bookmarks categories , for when bookmarks must be in
+labeled separate groups</td>
+<td><code>"e"</code> (kind:1 notes), <code>"a"</code> (kind:30023
+articles), <code>"t"</code> (hashtags), <code>"r"</code> (URLs)</td>
+</tr>
+<tr class="even">
+<td>Curation sets</td>
+<td>30004</td>
+<td>groups of articles picked by users as interesting and/or belonging
+to the same category</td>
+<td><code>"a"</code> (kind:30023 articles), <code>"e"</code> (kind:1
+notes)</td>
+</tr>
+<tr class="odd">
+<td>Curation sets</td>
+<td>30005</td>
+<td>groups of videos picked by users as interesting and/or belonging to
+the same category</td>
+<td><code>"a"</code> (kind:34235 videos)</td>
+</tr>
+<tr class="even">
+<td>Interest sets</td>
+<td>30015</td>
+<td>interest topics represented by a bunch of &#x201C;hashtags&#x201D;</td>
+<td><code>"t"</code> (hashtags)</td>
+</tr>
+<tr class="odd">
+<td>Emoji sets</td>
+<td>30030</td>
+<td>categorized emoji groups</td>
+<td><code>"emoji"</code> (see <a href="30.md.html">NIP-30</a>)</td>
+</tr>
+<tr class="even">
+<td>Release artifact sets</td>
+<td>30063</td>
+<td>groups of files of a software release</td>
+<td><code>"e"</code> (kind:1063 <a href="94.md.html">file metadata</a>
+events), <code>"i"</code> (application identifier, typically reverse
+domain notation), <code>"version"</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="deprecated-standard-lists">Deprecated standard lists</h2>
+<p>Some clients have used these lists in the past, but they should work
+on transitioning to the <a href="#standard-lists">standard formats</a>
+above.</p>
+<table>
+<thead>
+<tr class="header">
+<th>kind</th>
+<th>&#x201C;d&#x201D; tag</th>
+<th>use instead</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>30000</td>
+<td><code>"mute"</code></td>
+<td>kind 10000 <em>mute list</em></td>
+</tr>
+<tr class="even">
+<td>30001</td>
+<td><code>"pin"</code></td>
+<td>kind 10001 <em>pin list</em></td>
+</tr>
+<tr class="odd">
+<td>30001</td>
+<td><code>"bookmark"</code></td>
+<td>kind 10003 <em>bookmarks list</em></td>
+</tr>
+<tr class="even">
+<td>30001</td>
+<td><code>"communities"</code></td>
+<td>kind 10004 <em>communities list</em></td>
+</tr>
+</tbody>
+</table>
+<h2 id="examples">Examples</h2>
+<h3 id="a-mute-list-with-some-public-items-and-some-encrypted-items">A
+<em>mute list</em> with some public items and some encrypted items</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;a92a316b75e44cfdc19986c634049158d4206fcc0b7b9c7ccbcdabe28beebcd0&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;854043ae8f1f97430ca8c1f1a090bdde6488bd5115c7a45307a2a212750ae4cb&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1699597889</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">10000</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;07caba282f76441955b695551c3c5c742e5b9202a3784780f8086fdcdc1da3a9&quot;</span><span class="ot">],</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;a55c15f5e41d5aebd236eca5e0142789c5385703f1a7485aa4b38d94fd18dcc4&quot;</span><span class="ot">]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;TJob1dQrf2nd.md.htmlbeGU+05HT5GMnBSx3fx8QdDY/g3NvCa7klfzgaQCmRZuo1d3WQjHDOjzSY1+MgTK5WjewFFumCcOZniWtOMSga9tJk1ky00tLoUUzyLnb1v9x95h/iT/KpkICJyAwUZ+LoJBUzLrK52wNTMt8M5jSLvCkRx8C0BmEwA/00pjOp4eRndy19H4WUUehhjfV2/VV/k4hMAjJ7Bb5Hp9xdmzmCLX9+64+MyeIQQjQAHPj8dkSsRahP7KS3MgMpjaF8nL48Bg5suZMxJayXGVp3BLtgRZx5z5nOk9xyrYk+71e2tnP9IDvSMkiSe76BcMct+m7kGVrRcavDI4n62goNNh25IpghT+a1OjjkpXt9me5wmaL7fxffV1pchdm+A7KJKIUU3kLC7QbUifF22EucRA9xiEyxETusNludBXN24O3llTbOy4vYFsq35BeZl4v1Cse7n2htZicVkItMz3wjzj1q1I1VqbnorNXFgllkRZn4/YXfTG/RMnoK/bDogRapOV+XToZ+IvsN0BqwKSUDx+ydKpci6htDRF2WDRkU+VQMqwM0CoLzy2H6A2cqyMMMD9SLRRzBg==?iv=S3rFeFr1gsYqmQA7bNnNTQ==&quot;</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;1173822c53261f8cffe7efbf43ba4a97a9198b3e402c2a1df130f42a8985a2d0d3430f4de350db184141e45ca844ab4e5364ea80f11d720e36357e1853dba6ca&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="a-curation-set-of-articles-and-notes-about-yaks">A <em>curation
+set</em> of articles and notes about yaks</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;d6dc95542e18b8b7aec2f14610f55c335abebec76f3db9e58c254661d0593a0c&quot;</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1695327657</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">30004</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;jvdy9i4&quot;</span><span class="ot">],</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;name&quot;</span><span class="ot">,</span> <span class="st">&quot;Yaks&quot;</span><span class="ot">],</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;picture&quot;</span><span class="ot">,</span> <span class="st">&quot;https://cdn.britannica.com/40/188540-050-9AC748DE/Yak-Himalayas-Nepal.jpg&quot;</span><span class="ot">],</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;about&quot;</span><span class="ot">,</span> <span class="st">&quot;The domestic yak, also known as the Tartary ox, grunting ox, or hairy cattle, is a species of long-haired domesticated cattle found throughout the Himalayan region of the Indian subcontinent, the Tibetan Plateau, Gilgit-Baltistan, Tajikistan and as far north as Mongolia and Siberia.&quot;</span><span class="ot">],</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;30023:26dc95542e18b8b7aec2f14610f55c335abebec76f3db9e58c254661d0593a0c:95ODQzw3ajNoZ8SyMDOzQ&quot;</span><span class="ot">],</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;30023:54af95542e18b8b7aec2f14610f55c335abebec76f3db9e58c254661d0593a0c:1-MYP8dAhramH9J5gJWKx&quot;</span><span class="ot">],</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;30023:f8fe95542e18b8b7aec2f14610f55c335abebec76f3db9e58c254661d0593a0c:D2Tbd38bGrFvU0bIbvSMt&quot;</span><span class="ot">],</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;d78ba0d5dce22bfff9db0a9e996c9ef27e2c91051de0c4e1da340e0326b4941e&quot;</span><span class="ot">]</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd&quot;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="a-release-artifact-set-of-an-example-app">A <em>release artifact
+set</em> of an Example App</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;d6dc95542e18b8b7aec2f14610f55c335abebec76f3db9e58c254661d0593a0c&quot;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1695327657</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">30063</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;ak8dy3v7&quot;</span><span class="ot">],</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;com.example.app&quot;</span><span class="ot">],</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;version&quot;</span><span class="ot">,</span> <span class="st">&quot;0.0.1&quot;</span><span class="ot">],</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;title&quot;</span><span class="ot">,</span> <span class="st">&quot;Example App&quot;</span><span class="ot">],</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;image&quot;</span><span class="ot">,</span> <span class="st">&quot;http://cdn.site/p/com.example.app/icon.png&quot;</span><span class="ot">],</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;d78ba0d5dce22bfff9db0a9e996c9ef27e2c91051de0c4e1da340e0326b4941e&quot;</span><span class="ot">],</span> <span class="er">//</span> <span class="er">Windows</span> <span class="er">exe</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;f27e2c91051de0c4e1da0d5dce22bfff9db0a9340e0326b4941ed78bae996c9e&quot;</span><span class="ot">],</span> <span class="er">//</span> <span class="er">MacOS</span> <span class="er">dmg</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad02332&quot;</span><span class="ot">],</span> <span class="er">//</span> <span class="er">Linux</span> <span class="er">AppImage</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;340e0326b340e0326b4941ed78ba340e0326b4941ed78ba340e0326b49ed78ba&quot;</span><span class="ot">]</span> <span class="er">//</span> <span class="er">PWA</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Example App is a decentralized marketplace for apps&quot;</span><span class="fu">,</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd&quot;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="encryption-process-pseudocode">Encryption process
+pseudocode</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> private_items <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">[</span><span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;07caba282f76441955b695551c3c5c742e5b9202a3784780f8086fdcdc1da3a9&quot;</span><span class="op">],</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">[</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;a55c15f5e41d5aebd236eca5e0142789c5385703f1a7485aa4b38d94fd18dcc4&quot;</span><span class="op">],</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> base64blob <span class="op">=</span> nip04<span class="op">.</span><span class="fu">encrypt</span><span class="op">(</span>json<span class="op">.</span><span class="fu">encode_to_string</span><span class="op">(</span>private_items<span class="op">))</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>event<span class="op">.</span>content <span class="op">=</span> base64blob</span></code></pre></div>
