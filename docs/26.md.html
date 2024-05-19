@@ -1,0 +1,104 @@
+<h1 id="nip-26">NIP-26</h1>
+<h2 id="delegated-event-signing">Delegated Event Signing</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines how events can be delegated so that they can be
+signed by other keypairs.</p>
+<p>Another application of this proposal is to abstract away the use of
+the &#x2018;root&#x2019; keypairs when interacting with clients. For example, a user
+could generate new keypairs for each client they wish to use and
+authorize those keypairs to generate events on behalf of their root
+pubkey, where the root keypair is stored in cold storage.</p>
+<h4 id="introducing-the-delegation-tag">Introducing the &#x2018;delegation&#x2019;
+tag</h4>
+<p>This NIP introduces a new tag: <code>delegation</code> which is
+formatted as follows:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;delegation&quot;</span><span class="ot">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;pubkey</span> <span class="er">of</span> <span class="er">the</span> <span class="er">delegator&gt;</span><span class="ot">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;conditions</span> <span class="er">query</span> <span class="er">string&gt;</span><span class="ot">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;delegation</span> <span class="er">token:</span> <span class="dv">64</span><span class="er">-byte</span> <span class="er">Schnorr</span> <span class="er">signature</span> <span class="er">of</span> <span class="er">the</span> <span class="er">sha256</span> <span class="er">hash</span> <span class="er">of</span> <span class="er">the</span> <span class="er">delegation</span> <span class="er">string&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<h5 id="delegation-token">Delegation Token</h5>
+<p>The <strong>delegation token</strong> should be a 64-byte Schnorr
+signature of the sha256 hash of the following string:</p>
+<pre><code>nostr:delegation:&lt;pubkey of publisher (delegatee)&gt;:&lt;conditions query string&gt;</code></pre>
+<h5 id="conditions-query-string">Conditions Query String</h5>
+<p>The following fields and operators are supported in the above query
+string:</p>
+<p><em>Fields</em>: 1. <code>kind</code> - <em>Operators</em>: -
+<code>=${KIND_NUMBER}</code> - delegatee may only sign events of this
+kind 2. <code>created_at</code> - <em>Operators</em>: -
+<code>&lt;${TIMESTAMP}</code> - delegatee may only sign events created
+<strong><em>before</em></strong> the specified timestamp -
+<code>&gt;${TIMESTAMP}</code> - delegatee may only sign events created
+<strong><em>after</em></strong> the specified timestamp</p>
+<p>In order to create a single condition, you must use a supported field
+and operator. Multiple conditions can be used in a single query string,
+including on the same field. Conditions must be combined with
+<code>&amp;</code>.</p>
+<p>For example, the following condition strings are valid:</p>
+<ul>
+<li><code>kind=1&amp;created_at&lt;1675721813</code></li>
+<li><code>kind=0&amp;kind=1&amp;created_at&gt;1675721813</code></li>
+<li><code>kind=1&amp;created_at&gt;1674777689&amp;created_at&lt;1675721813</code></li>
+</ul>
+<p>For the vast majority of use-cases, it is advisable that: 1. Query
+strings should include a <code>created_at</code>
+<strong><em>after</em></strong> condition reflecting the current time,
+to prevent the delegatee from publishing historic notes on the
+delegator&#x2019;s behalf. 2. Query strings should include a
+<code>created_at</code> <strong><em>before</em></strong> condition that
+is not empty and is not some extremely distant time in the future. If
+delegations are not limited in time scope, they expose similar security
+risks to simply using the root key for authentication.</p>
+<h4 id="example">Example</h4>
+<pre><code># Delegator:
+privkey: ee35e8bb71131c02c1d7e73231daa48e9953d329a4b701f7133c8f46dd21139c
+pubkey:  8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd
+
+# Delegatee:
+privkey: 777e4f60b4aa87937e13acc84f7abcc3c93cc035cb4c1e9f7a9086dd78fffce1
+pubkey:  477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396</code></pre>
+<p>Delegation string to grant note publishing authorization to the
+delegatee (477318cf) from now, for the next 30 days, given the current
+timestamp is <code>1674834236</code>.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="er">nostr:delegation:477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396:kind=1&amp;created_at&gt;1674834236&amp;created_at&lt;1677426236</span></span></code></pre></div>
+<p>The delegator (8e0d3d3e) then signs a SHA256 hash of the above
+delegation string, the result of which is the delegation token:</p>
+<pre><code>6f44d7fe4f1c09f3954640fb58bd12bae8bb8ff4120853c4693106c82e920e2b898f1f9ba9bd65449a987c39c0423426ab7b53910c0c6abfb41b30bc16e5f524</code></pre>
+<p>The delegatee (477318cf) can now construct an event on behalf of the
+delegator (8e0d3d3e). The delegatee then signs the event with its own
+private key and publishes.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;e93c6095c3db1c31d15ac771f8fc5fb672f6e52cd25505099f62cd055523224f&quot;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396&quot;</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1677426298</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;delegation&quot;</span><span class="ot">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd&quot;</span><span class="ot">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;kind=1&amp;created_at&gt;1674834236&amp;created_at&lt;1677426236&quot;</span><span class="ot">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;6f44d7fe4f1c09f3954640fb58bd12bae8bb8ff4120853c4693106c82e920e2b898f1f9ba9bd65449a987c39c0423426ab7b53910c0c6abfb41b30bc16e5f524&quot;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Hello, world!&quot;</span><span class="fu">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;633db60e2e7082c13a47a6b19d663d45b2a2ebdeaf0b4c35ef83be2738030c54fc7fd56d139652937cdca875ee61b51904a1d0d0588a6acd6168d7be2909d693&quot;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>The event should be considered a valid delegation if the conditions
+are satisfied (<code>kind=1</code>,
+<code>created_at&gt;1674834236</code> and
+<code>created_at&lt;1677426236</code> in this example) and, upon
+validation of the delegation token, are found to be unchanged from the
+conditions in the original delegation string.</p>
+<p>Clients should display the delegated note as if it was published
+directly by the delegator (8e0d3d3e).</p>
+<h4 id="relay-client-support">Relay &amp; Client Support</h4>
+<p>Relays should answer requests such as
+<code>["REQ", "", {"authors": ["A"]}]</code> by querying both the
+<code>pubkey</code> and delegation tags <code>[1]</code> value.</p>
+<p>Relays SHOULD allow the delegator (8e0d3d3e) to delete the events
+published by the delegatee (477318cf).</p>
