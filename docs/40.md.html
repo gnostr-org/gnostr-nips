@@ -1,0 +1,50 @@
+<h1 id="nip-40">NIP-40</h1>
+<h2 id="expiration-timestamp">Expiration Timestamp</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>The <code>expiration</code> tag enables users to specify a unix
+timestamp at which the message SHOULD be considered expired (by relays
+and clients) and SHOULD be deleted by relays.</p>
+<h4 id="spec">Spec</h4>
+<pre><code>tag: expiration
+values:
+ - [UNIX timestamp in seconds]: required</code></pre>
+<h4 id="example">Example</h4>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;pub-key&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1000000000</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;expiration&quot;</span><span class="ot">,</span> <span class="st">&quot;1600000000&quot;</span><span class="ot">]</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;This message will expire at the specified timestamp and be deleted by relays.</span><span class="ch">\n</span><span class="st">&quot;</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;event-id&gt;&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Note: The timestamp should be in the same format as the created_at
+timestamp and should be interpreted as the time at which the message
+should be deleted by relays.</p>
+<h2 id="client-behavior">Client Behavior</h2>
+<p>Clients SHOULD use the <code>supported_nips</code> field to learn if
+a relay supports this NIP. Clients SHOULD NOT send expiration events to
+relays that do not support this NIP.</p>
+<p>Clients SHOULD ignore events that have expired.</p>
+<h2 id="relay-behavior">Relay Behavior</h2>
+<p>Relays MAY NOT delete expired messages immediately on expiration and
+MAY persist them indefinitely. Relays SHOULD NOT send expired events to
+clients, even if they are stored. Relays SHOULD drop any events that are
+published to them if they are expired. An expiration timestamp does not
+affect storage of ephemeral events.</p>
+<h2 id="suggested-use-cases">Suggested Use Cases</h2>
+<ul>
+<li>Temporary announcements - This tag can be used to make temporary
+announcements. For example, an event organizer could use this tag to
+post announcements about an upcoming event.</li>
+<li>Limited-time offers - This tag can be used by businesses to make
+limited-time offers that expire after a certain amount of time. For
+example, a business could use this tag to make a special offer that is
+only available for a limited time.</li>
+</ul>
+<h4 id="warning">Warning</h4>
+<p>The events could be downloaded by third parties as they are publicly
+accessible all the time on the relays. So don&#x2019;t consider expiring
+messages as a security feature for your conversations or other uses.</p>
