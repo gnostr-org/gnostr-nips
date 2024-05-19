@@ -1,0 +1,48 @@
+<h1 id="nip-24">NIP-24</h1>
+<h2 id="extra-metadata-fields-and-tags">Extra metadata fields and
+tags</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines extra optional fields added to events.</p>
+<h1 id="kind-0">kind 0</h1>
+<p>These are extra fields not specified in NIP-01 that may be present in
+the stringified JSON of metadata events:</p>
+<ul>
+<li><code>display_name</code>: an alternative, bigger name with richer
+characters than <code>name</code>. <code>name</code> should always be
+set regardless of the presence of <code>display_name</code> in the
+metadata.</li>
+<li><code>website</code>: a web URL related in any way to the event
+author.</li>
+<li><code>banner</code>: an URL to a wide (~1024x768) picture to be
+optionally displayed in the background of a profile screen.</li>
+<li><code>bot</code>: a boolean to clarify that the content is entirely
+or partially the result of automation, such as with chatbots or
+newsfeeds.</li>
+</ul>
+<h3 id="deprecated-fields">Deprecated fields</h3>
+<p>These are fields that should be ignored or removed when found in the
+wild:</p>
+<ul>
+<li><code>displayName</code>: use <code>display_name</code>
+instead.</li>
+<li><code>username</code>: use <code>name</code> instead.</li>
+</ul>
+<h1 id="kind-3">kind 3</h1>
+<p>These are extra fields not specified in NIP-02 that may be present in
+the stringified JSON of contacts events:</p>
+<h3 id="deprecated-fields-1">Deprecated fields</h3>
+<ul>
+<li><code>{&lt;relay-url&gt;: {"read": &lt;true|false&gt;, "write": &lt;true|false&gt;}, ...}</code>:
+an object of relays used by a user to read/write. <a
+href="65.md.html">NIP-65</a> should be used instead.</li>
+</ul>
+<h1 id="tags">tags</h1>
+<p>These tags may be present in multiple event kinds. Whenever a
+different meaning is not specified by some more specific NIP, they have
+the following meanings:</p>
+<ul>
+<li><code>r</code>: a web URL the event is referring to in some way</li>
+<li><code>title</code>: name of <a href="51.md.html">NIP-51</a> sets, <a
+href="52.md.html">NIP-52</a> calendar event, <a href="53.md.html">NIP-53</a> live
+event or <a href="99.md.html">NIP-99</a> listing</li>
+</ul>
