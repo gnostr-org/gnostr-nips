@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>72</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="nip-72">NIP-72</h1>
+<h2 id="moderated-communities-reddit-style">Moderated Communities
+(Reddit Style)</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>The goal of this NIP is to create moderator-approved public
+communities around a topic. It defines the replaceable event
+<code>kind:34550</code> to define the community and the current list of
+moderators/administrators. Users that want to post into the community,
+simply tag any Nostr event with the community’s <code>a</code> tag.
+Moderators issue an approval event <code>kind:4550</code> that links the
+community with the new post.</p>
+<h1 id="community-definition">Community Definition</h1>
+<p><code>kind:34550</code> SHOULD include any field that helps define
+the community and the set of moderators. <code>relay</code> tags MAY be
+used to describe the preferred relay to download requests and
+approvals.</p>
+<pre class="jsonc"><code>{
+  &quot;created_at&quot;: &lt;Unix timestamp in seconds&gt;,
+  &quot;kind&quot;: 34550,
+  &quot;tags&quot;: [
+    [&quot;d&quot;, &quot;&lt;community-d-identifier&gt;&quot;],
+    [&quot;description&quot;, &quot;&lt;Community description&gt;&quot;],
+    [&quot;image&quot;, &quot;&lt;Community image url&gt;&quot;, &quot;&lt;Width&gt;x&lt;Height&gt;&quot;],
+
+    //.. other tags relevant to defining the community
+
+    // moderators
+    [&quot;p&quot;, &quot;&lt;32-bytes hex of a pubkey1&gt;&quot;, &quot;&lt;optional recommended relay URL&gt;&quot;, &quot;moderator&quot;],
+    [&quot;p&quot;, &quot;&lt;32-bytes hex of a pubkey2&gt;&quot;, &quot;&lt;optional recommended relay URL&gt;&quot;, &quot;moderator&quot;],
+    [&quot;p&quot;, &quot;&lt;32-bytes hex of a pubkey3&gt;&quot;, &quot;&lt;optional recommended relay URL&gt;&quot;, &quot;moderator&quot;],
+
+    // relays used by the community (w/optional marker)
+    [&quot;relay&quot;, &quot;&lt;relay hosting author kind 0&gt;&quot;, &quot;author&quot;],
+    [&quot;relay&quot;, &quot;&lt;relay where to send and receive requests&gt;&quot;, &quot;requests&quot;],
+    [&quot;relay&quot;, &quot;&lt;relay where to send and receive approvals&gt;&quot;, &quot;approvals&quot;],
+    [&quot;relay&quot;, &quot;&lt;relay where to post requests to and fetch approvals from&gt;&quot;]
+  ],
+  ...
+}</code></pre>
+<h1 id="new-post-request">New Post Request</h1>
+<p>Any Nostr event can be submitted to a community by anyone for
+approval. Clients MUST add the community’s <code>a</code> tag to the new
+post event in order to be presented for the moderator’s approval.</p>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 1,
+  &quot;tags&quot;: [
+    [&quot;a&quot;, &quot;34550:&lt;community event author pubkey&gt;:&lt;community-d-identifier&gt;&quot;, &quot;&lt;optional-relay-url&gt;&quot;],
+  ],
+  &quot;content&quot;: &quot;hello world&quot;,
+  // ...
+}</code></pre>
+<p>Community management clients MAY filter all mentions to a given
+<code>kind:34550</code> event and request moderators to approve each
+submission. Moderators MAY delete his/her approval of a post at any time
+using event deletions (See <a href="09.md.css.html">NIP-09</a>).</p>
+<h1 id="post-approval-by-moderators">Post Approval by moderators</h1>
+<p>The post-approval event MUST include <code>a</code> tags of the
+communities the moderator is posting into (one or more), the
+<code>e</code> tag of the post and <code>p</code> tag of the author of
+the post (for approval notifications). The event SHOULD also include the
+stringified <code>post request</code> event inside the
+<code>.content</code> (<a href="18.md.css.html">NIP-18-style</a>) and a
+<code>k</code> tag with the original post’s event kind to allow
+filtering of approved posts by kind.</p>
+<pre class="jsonc"><code>{
+  &quot;pubkey&quot;: &quot;&lt;32-bytes lowercase hex-encoded public key of the event creator&gt;&quot;,
+  &quot;kind&quot;: 4550,
+  &quot;tags&quot;: [
+    [&quot;a&quot;, &quot;34550:&lt;event-author-pubkey&gt;:&lt;community-d-identifier&gt;&quot;, &quot;&lt;optional-relay-url&gt;&quot;],
+    [&quot;e&quot;, &quot;&lt;post-id&gt;&quot;, &quot;&lt;optional-relay-url&gt;&quot;],
+    [&quot;p&quot;, &quot;&lt;port-author-pubkey&gt;&quot;, &quot;&lt;optional-relay-url&gt;&quot;],
+    [&quot;k&quot;, &quot;&lt;post-request-kind&gt;&quot;]
+  ],
+  &quot;content&quot;: &quot;&lt;the full approved event, JSON-encoded&gt;&quot;,
+  // ...
+}</code></pre>
+<p>It’s recommended that multiple moderators approve posts to avoid
+deleting them from the community when a moderator is removed from the
+owner’s list. In case the full list of moderators must be rotated, the
+new moderator set must sign new approvals for posts in the past or the
+community will restart. The owner can also periodically copy and re-sign
+of each moderator’s approval events to make sure posts don’t disappear
+with moderators.</p>
+<p>Post Approvals of replaceable events can be created in three ways:
+(i) by tagging the replaceable event as an <code>e</code> tag if
+moderators want to approve each individual change to the replaceable
+event; (ii) by tagging the replaceable event as an <code>a</code> tag if
+the moderator authorizes the replaceable event author to make changes
+without additional approvals and (iii) by tagging the replaceable event
+with both its <code>e</code> and <code>a</code> tag which empowers
+clients to display the original and updated versions of the event, with
+appropriate remarks in the UI. Since relays are instructed to delete old
+versions of a replaceable event, the <code>.content</code> of an
+<code>e</code>-approval MUST have the specific version of the event or
+Clients might not be able to find that version of the content
+anywhere.</p>
+<p>Clients SHOULD evaluate any non-<code>34550:*</code> <code>a</code>
+tag as posts to be included in all <code>34550:*</code> <code>a</code>
+tags.</p>
+<h1 id="displaying">Displaying</h1>
+<p>Community clients SHOULD display posts that have been approved by at
+least 1 moderator or by the community owner.</p>
+<p>The following filter displays the approved posts.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;REQ&quot;</span><span class="ot">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;_&quot;</span><span class="ot">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;authors&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;&lt;owner-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;moderator1-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;moderator2-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;moderator3-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="er">...</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">4550</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;#a&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;34550:&lt;Community event author pubkey&gt;:&lt;d-identifier of the community&gt;&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<p>Clients MAY hide approvals by blocked moderators at the user’s
+request.</p>
+</body>
+</html>
