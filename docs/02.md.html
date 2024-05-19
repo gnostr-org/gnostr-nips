@@ -1,0 +1,74 @@
+<h1 id="nip-02">NIP-02</h1>
+<h2 id="follow-list">Follow List</h2>
+<p><code>final</code> <code>optional</code></p>
+<p>A special event with kind <code>3</code>, meaning &#x201C;follow list&#x201D; is
+defined as having a list of <code>p</code> tags, one for each of the
+followed/known profiles one is following.</p>
+<p>Each tag entry should contain the key for the profile, a relay URL
+where events from that key can be found (can be set to an empty string
+if not needed), and a local name (or &#x201C;petname&#x201D;) for that profile (can
+also be set to an empty string or not provided), i.e.,
+<code>["p", &lt;32-bytes hex key&gt;, &lt;main relay URL&gt;, &lt;petname&gt;]</code>.
+The <code>content</code> can be anything and should be ignored.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;91cf9..4e5ca&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://alicerelay.com/&quot;</span><span class="ot">,</span> <span class="st">&quot;alice&quot;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;14aeb..8dad4&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://bobrelay.com/nostr&quot;</span><span class="ot">,</span> <span class="st">&quot;bob&quot;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;612ae..e610f&quot;</span><span class="ot">,</span> <span class="st">&quot;ws://carolrelay.com/ws&quot;</span><span class="ot">,</span> <span class="st">&quot;carol&quot;</span><span class="ot">]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">...other</span> <span class="er">fields</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Every new following list that gets published overwrites the past
+ones, so it should contain all entries. Relays and clients SHOULD delete
+past following lists as soon as they receive a new one.</p>
+<p>Whenever new follows are added to an existing list, clients SHOULD
+append them to the end of the list, so they are stored in chronological
+order.</p>
+<h2 id="uses">Uses</h2>
+<h3 id="follow-list-backup">Follow list backup</h3>
+<p>If one believes a relay will store their events for sufficient time,
+they can use this kind-3 event to backup their following list and
+recover on a different device.</p>
+<h3 id="profile-discovery-and-context-augmentation">Profile discovery
+and context augmentation</h3>
+<p>A client may rely on the kind-3 event to display a list of followed
+people by profiles one is browsing; make lists of suggestions on who to
+follow based on the follow lists of other people one might be following
+or browsing; or show the data in other contexts.</p>
+<h3 id="relay-sharing">Relay sharing</h3>
+<p>A client may publish a follow list with good relays for each of their
+follows so other clients may use these to update their internal relay
+lists if needed, increasing censorship-resistance.</p>
+<h3 id="petname-scheme">Petname scheme</h3>
+<p>The data from these follow lists can be used by clients to construct
+local <a
+href="http://www.skyhunter.com/marcs/petnames/IntroPetNames.html">&#x201C;petname&#x201D;</a>
+tables derived from other people&#x2019;s follow lists. This alleviates the
+need for global human-readable names. For example:</p>
+<p>A user has an internal follow list that says</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;21df6d143fb96c2ec9d63726bf9edc71&quot;</span><span class="ot">,</span> <span class="st">&quot;&quot;</span><span class="ot">,</span> <span class="st">&quot;erin&quot;</span><span class="ot">]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<p>And receives two follow lists, one from
+<code>21df6d143fb96c2ec9d63726bf9edc71</code> that says</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;a8bb3d884d5d90b413d9891fe4c4e46d&quot;</span><span class="ot">,</span> <span class="st">&quot;&quot;</span><span class="ot">,</span> <span class="st">&quot;david&quot;</span><span class="ot">]</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<p>and another from <code>a8bb3d884d5d90b413d9891fe4c4e46d</code> that
+says</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;f57f54057d2a7af0efecc8b0b66f5708&quot;</span><span class="ot">,</span> <span class="st">&quot;&quot;</span><span class="ot">,</span> <span class="st">&quot;frank&quot;</span><span class="ot">]</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<p>When the user sees <code>21df6d143fb96c2ec9d63726bf9edc71</code> the
+client can show <em>erin</em> instead; When the user sees
+<code>a8bb3d884d5d90b413d9891fe4c4e46d</code> the client can show
+<em>david.erin</em> instead; When the user sees
+<code>f57f54057d2a7af0efecc8b0b66f5708</code> the client can show
+<em>frank.david.erin</em> instead.</p>
