@@ -1,0 +1,7 @@
+NIP-20
+
+Command Results
+
+final mandatory
+
+Moved to NIP-01.
