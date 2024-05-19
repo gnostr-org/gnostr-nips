@@ -1,0 +1,123 @@
+<h1 id="nip-42">NIP-42</h1>
+<h2 id="authentication-of-clients-to-relays">Authentication of clients
+to relays</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines a way for clients to authenticate to relays by
+signing an ephemeral event.</p>
+<h2 id="motivation">Motivation</h2>
+<p>A relay may want to require clients to authenticate to access
+restricted resources. For example,</p>
+<ul>
+<li>A relay may request payment or other forms of whitelisting to
+publish events &#x2013; this can na&#xEF;vely be achieved by limiting publication to
+events signed by the whitelisted key, but with this NIP they may choose
+to accept any events as long as they are published from an authenticated
+user;</li>
+<li>A relay may limit access to <code>kind: 4</code> DMs to only the
+parties involved in the chat exchange, and for that it may require
+authentication before clients can query for that kind.</li>
+<li>A relay may limit subscriptions of any kind to paying users or users
+whitelisted through any other means, and require authentication.</li>
+</ul>
+<h2 id="definitions">Definitions</h2>
+<h3 id="new-client-relay-protocol-messages">New client-relay protocol
+messages</h3>
+<p>This NIP defines a new message, <code>AUTH</code>, which relays CAN
+send when they support authentication and clients can send to relays
+when they want to authenticate. When sent by relays the message has the
+following form:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;AUTH&quot;</span><span class="ot">,</span> <span class="er">&lt;challenge-string&gt;</span><span class="ot">]</span></span></code></pre></div>
+<p>And, when sent by clients, the following form:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;AUTH&quot;</span><span class="ot">,</span> <span class="er">&lt;signed-event-json&gt;</span><span class="ot">]</span></span></code></pre></div>
+<p><code>AUTH</code> messages sent by clients MUST be answered with an
+<code>OK</code> message, like any <code>EVENT</code> message.</p>
+<h3 id="canonical-authentication-event">Canonical authentication
+event</h3>
+<p>The signed event is an ephemeral event not meant to be published or
+queried, it must be of <code>kind: 22242</code> and it should have at
+least two tags, one for the relay URL and one for the challenge string
+as received from the relay. Relays MUST exclude <code>kind: 22242</code>
+events from being broadcasted to any client. <code>created_at</code>
+should be the current time. Example:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">22242</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;relay&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay.example.com/&quot;</span><span class="ot">],</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;challenge&quot;</span><span class="ot">,</span> <span class="st">&quot;challengestringhere&quot;</span><span class="ot">]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="ok-and-closed-machine-readable-prefixes"><code>OK</code> and
+<code>CLOSED</code> machine-readable prefixes</h3>
+<p>This NIP defines two new prefixes that can be used in <code>OK</code>
+(in response to event writes by clients) and <code>CLOSED</code> (in
+response to rejected subscriptions by clients):</p>
+<ul>
+<li><code>"auth-required: "</code> - for when a client has not performed
+<code>AUTH</code> and the relay requires that to fulfill the query or
+write the event.</li>
+<li><code>"restricted: "</code> - for when a client has already
+performed <code>AUTH</code> but the key used to perform it is still not
+allowed by the relay or is exceeding its authorization.</li>
+</ul>
+<h2 id="protocol-flow">Protocol flow</h2>
+<p>At any moment the relay may send an <code>AUTH</code> message to the
+client containing a challenge. The challenge is valid for the duration
+of the connection or until another challenge is sent by the relay. The
+client MAY decide to send its <code>AUTH</code> event at any point and
+the authenticated session is valid afterwards for the duration of the
+connection.</p>
+<h3
+id="auth-required-in-response-to-a-req-message"><code>auth-required</code>
+in response to a <code>REQ</code> message</h3>
+<p>Given that a relay is likely to require clients to perform
+authentication only for certain jobs, like answering a <code>REQ</code>
+or accepting an <code>EVENT</code> write, these are some expected common
+flows:</p>
+<pre><code>relay: [&quot;AUTH&quot;, &quot;&lt;challenge&gt;&quot;]
+client: [&quot;REQ&quot;, &quot;sub_1&quot;, {&quot;kinds&quot;: [4]}]
+relay: [&quot;CLOSED&quot;, &quot;sub_1&quot;, &quot;auth-required: we can&#39;t serve DMs to unauthenticated users&quot;]
+client: [&quot;AUTH&quot;, {&quot;id&quot;: &quot;abcdef...&quot;, ...}]
+relay: [&quot;OK&quot;, &quot;abcdef...&quot;, true, &quot;&quot;]
+client: [&quot;REQ&quot;, &quot;sub_1&quot;, {&quot;kinds&quot;: [4]}]
+relay: [&quot;EVENT&quot;, &quot;sub_1&quot;, {...}]
+relay: [&quot;EVENT&quot;, &quot;sub_1&quot;, {...}]
+relay: [&quot;EVENT&quot;, &quot;sub_1&quot;, {...}]
+relay: [&quot;EVENT&quot;, &quot;sub_1&quot;, {...}]
+...</code></pre>
+<p>In this case, the <code>AUTH</code> message from the relay could be
+sent right as the client connects or it can be sent immediately before
+the <code>CLOSED</code> is sent. The only requirement is that <em>the
+client must have a stored challenge associated with that relay</em> so
+it can act upon that in response to the <code>auth-required</code>
+<code>CLOSED</code> message.</p>
+<h3
+id="auth-required-in-response-to-an-event-message"><code>auth-required</code>
+in response to an <code>EVENT</code> message</h3>
+<p>The same flow is valid for when a client wants to write an
+<code>EVENT</code> to the relay, except now the relay sends back an
+<code>OK</code> message instead of a <code>CLOSED</code> message:</p>
+<pre><code>relay: [&quot;AUTH&quot;, &quot;&lt;challenge&gt;&quot;]
+client: [&quot;EVENT&quot;, {&quot;id&quot;: &quot;012345...&quot;, ...}]
+relay: [&quot;OK&quot;, &quot;012345...&quot;, false, &quot;auth-required: we only accept events from registered users&quot;]
+client: [&quot;AUTH&quot;, {&quot;id&quot;: &quot;abcdef...&quot;, ...}]
+relay: [&quot;OK&quot;, &quot;abcdef...&quot;, true, &quot;&quot;]
+client: [&quot;EVENT&quot;, {&quot;id&quot;: &quot;012345...&quot;, ...}]
+relay: [&quot;OK&quot;, &quot;012345...&quot;, true, &quot;&quot;]</code></pre>
+<h2 id="signed-event-verification">Signed Event Verification</h2>
+<p>To verify <code>AUTH</code> messages, relays must ensure:</p>
+<ul>
+<li>that the <code>kind</code> is <code>22242</code>;</li>
+<li>that the event <code>created_at</code> is close (e.g.&#xA0;within ~10
+minutes) of the current time;</li>
+<li>that the <code>"challenge"</code> tag matches the challenge sent
+before;</li>
+<li>that the <code>"relay"</code> tag matches the relay URL:
+<ul>
+<li>URL normalization techniques can be applied. For most cases just
+checking if the domain name is correct should be enough.</li>
+</ul></li>
+</ul>
