@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>10</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="nip-10">NIP-10</h1>
+<h2 id="on-e-and-p-tags-in-text-events-kind-1.">On “e” and “p” tags in
+Text Events (kind 1).</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2 id="abstract">Abstract</h2>
+<p>This NIP describes how to use “e” and “p” tags in text events,
+especially those that are replies to other text events. It helps clients
+thread the replies into a tree rooted at the original event.</p>
+<h2 id="positional-e-tags-deprecated">Positional “e” tags
+(DEPRECATED)</h2>
+<blockquote>
+<p>This scheme is in common use; but should be considered
+deprecated.</p>
+</blockquote>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;]</code> as per
+NIP-01.</p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;event-id&gt;</code> is the id of the event being
+referenced.</li>
+<li><code>&lt;relay-url&gt;</code> is the URL of a recommended relay
+associated with the reference. Many clients treat this field as
+optional.</li>
+</ul>
+<p><strong>The positions of the “e” tags within the event denote
+specific meanings as follows</strong>:</p>
+<ul>
+<li><p>No “e” tag: <br> This event is not a reply to, nor does it refer
+to, any other event.</p></li>
+<li><p>One “e” tag: <br> <code>["e", &lt;id&gt;]</code>: The id of the
+event to which this event is a reply.</p></li>
+<li><p>Two “e” tags: <code>["e", &lt;root-id&gt;]</code>,
+<code>["e", &lt;reply-id&gt;]</code> <br> <code>&lt;root-id&gt;</code>
+is the id of the event at the root of the reply chain.
+<code>&lt;reply-id&gt;</code> is the id of the article to which this
+event is a reply.</p></li>
+<li><p>Many “e” tags: <code>["e", &lt;root-id&gt;]</code>
+<code>["e", &lt;mention-id&gt;]</code>, …,
+<code>["e", &lt;reply-id&gt;]</code><br> There may be any number of
+<code>&lt;mention-ids&gt;</code>. These are the ids of events which may,
+or may not be in the reply chain. They are citing from this event.
+<code>root-id</code> and <code>reply-id</code> are as above.</p></li>
+</ul>
+<blockquote>
+<p>This scheme is deprecated because it creates ambiguities that are
+difficult, or impossible to resolve when an event references another but
+is not a reply.</p>
+</blockquote>
+<h2 id="marked-e-tags-preferred">Marked “e” tags (PREFERRED)</h2>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;marker&gt;]</code></p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;event-id&gt;</code> is the id of the event being
+referenced.</li>
+<li><code>&lt;relay-url&gt;</code> is the URL of a recommended relay
+associated with the reference. Clients SHOULD add a valid
+<code>&lt;relay-URL&gt;</code> field, but may instead leave it as
+<code>""</code>.</li>
+<li><code>&lt;marker&gt;</code> is optional and if present is one of
+<code>"reply"</code>, <code>"root"</code>, or
+<code>"mention"</code>.</li>
+</ul>
+<p>Those marked with <code>"reply"</code> denote the id of the reply
+event being responded to. Those marked with <code>"root"</code> denote
+the root id of the reply thread being responded to. For top level
+replies (those replying directly to the root event), only the
+<code>"root"</code> marker should be used. Those marked with
+<code>"mention"</code> denote a quoted or reposted event id.</p>
+<p>A direct reply to the root of a thread should have a single marked
+“e” tag of type “root”.</p>
+<blockquote>
+<p>This scheme is preferred because it allows events to mention others
+without confusing them with <code>&lt;reply-id&gt;</code> or
+<code>&lt;root-id&gt;</code>.</p>
+</blockquote>
+<h2 id="the-p-tag">The “p” tag</h2>
+<p>Used in a text event contains a list of pubkeys used to record who is
+involved in a reply thread.</p>
+<p>When replying to a text event E the reply event’s “p” tags should
+contain all of E’s “p” tags as well as the <code>"pubkey"</code> of the
+event being replied to.</p>
+<p>Example: Given a text event authored by <code>a1</code> with “p” tags
+[<code>p1</code>, <code>p2</code>, <code>p3</code>] then the “p” tags of
+the reply should be [<code>a1</code>, <code>p1</code>, <code>p2</code>,
+<code>p3</code>] in no particular order.</p>
+</body>
+</html>
