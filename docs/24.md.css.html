@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>24</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="nip-24">NIP-24</h1>
+<h2 id="extra-metadata-fields-and-tags">Extra metadata fields and
+tags</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines extra optional fields added to events.</p>
+<h1 id="kind-0">kind 0</h1>
+<p>These are extra fields not specified in NIP-01 that may be present in
+the stringified JSON of metadata events:</p>
+<ul>
+<li><code>display_name</code>: an alternative, bigger name with richer
+characters than <code>name</code>. <code>name</code> should always be
+set regardless of the presence of <code>display_name</code> in the
+metadata.</li>
+<li><code>website</code>: a web URL related in any way to the event
+author.</li>
+<li><code>banner</code>: an URL to a wide (~1024x768) picture to be
+optionally displayed in the background of a profile screen.</li>
+<li><code>bot</code>: a boolean to clarify that the content is entirely
+or partially the result of automation, such as with chatbots or
+newsfeeds.</li>
+</ul>
+<h3 id="deprecated-fields">Deprecated fields</h3>
+<p>These are fields that should be ignored or removed when found in the
+wild:</p>
+<ul>
+<li><code>displayName</code>: use <code>display_name</code>
+instead.</li>
+<li><code>username</code>: use <code>name</code> instead.</li>
+</ul>
+<h1 id="kind-3">kind 3</h1>
+<p>These are extra fields not specified in NIP-02 that may be present in
+the stringified JSON of contacts events:</p>
+<h3 id="deprecated-fields-1">Deprecated fields</h3>
+<ul>
+<li><code>{&lt;relay-url&gt;: {"read": &lt;true|false&gt;, "write": &lt;true|false&gt;}, ...}</code>:
+an object of relays used by a user to read/write. <a
+href="65.md.css.html">NIP-65</a> should be used instead.</li>
+</ul>
+<h1 id="tags">tags</h1>
+<p>These tags may be present in multiple event kinds. Whenever a
+different meaning is not specified by some more specific NIP, they have
+the following meanings:</p>
+<ul>
+<li><code>r</code>: a web URL the event is referring to in some way</li>
+<li><code>title</code>: name of <a href="51.md.css.html">NIP-51</a> sets, <a
+href="52.md.css.html">NIP-52</a> calendar event, <a href="53.md.css.html">NIP-53</a> live
+event or <a href="99.md.css.html">NIP-99</a> listing</li>
+</ul>
+</body>
+</html>
