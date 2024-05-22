@@ -76,6 +76,7 @@ List
 -   NIP-58: Badges
 -   NIP-59: Gift Wrap
 -   NIP-65: Relay List Metadata
+-   NIP-71: Video Events
 -   NIP-72: Moderated Communities
 -   NIP-75: Zap Goals
 -   NIP-78: Application-specific data
@@ -231,6 +232,8 @@ Event Kinds
 
   30004          Curation sets                 51
 
+  30005          Video sets                    51
+
   30008          Profile Badges                58
 
   30009          Badge Definition              58
@@ -280,6 +283,13 @@ Event Kinds
   31989          Handler recommendation        89
 
   31990          Handler information           89
+
+  34235          Video Event                   71
+
+  34236          Short-form Portrait Video     71
+                 Event                         
+
+  34237          Video View Event              71
 
   34550          Community Definition          72
 
