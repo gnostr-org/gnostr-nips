@@ -1,8 +1,6 @@
-use std::{
-    error,
-    ffi::NulError,
-    fmt::{self, Debug, Display},
-};
+use std::error;
+use std::ffi::NulError;
+use std::fmt::{self, Debug, Display};
 
 pub trait CustomError: Display + Debug + Send + Sync + 'static {}
 
@@ -11,7 +9,8 @@ impl<T: Display + Debug + Send + Sync + 'static> CustomError for T {}
 /// A WebView error.
 #[derive(Debug)]
 pub enum Error {
-    /// While attempting to build a WebView instance, a required field was not initialized.
+    /// While attempting to build a WebView instance, a required field was not
+    /// initialized.
     UninitializedField(&'static str),
     /// An error occurred while initializing a WebView instance.
     Initialization,
@@ -21,15 +20,17 @@ pub enum Error {
     JsEvaluation,
     /// An error occurred while injecting CSS into a WebView instance.
     CssInjection,
-    /// Failure to dispatch a closure to a WebView instance via a handle, likely because the
-    /// WebView was dropped.
+    /// Failure to dispatch a closure to a WebView instance via a handle, likely
+    /// because the WebView was dropped.
     Dispatch,
-    /// An user-specified error occurred. For use inside invoke and dispatch closures.
+    /// An user-specified error occurred. For use inside invoke and dispatch
+    /// closures.
     Custom(Box<dyn CustomError>),
 }
 
 impl Error {
-    /// Creates a custom error from a `T: Display + Debug + Send + Sync + 'static`.
+    /// Creates a custom error from a `T: Display + Debug + Send + Sync +
+    /// 'static`.
     pub fn custom<E: CustomError>(error: E) -> Error {
         Error::Custom(Box::new(error))
     }
