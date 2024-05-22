@@ -55,6 +55,7 @@ List
 -   NIP-31: Dealing with Unknown Events
 -   NIP-32: Labeling
 -   NIP-34: git stuff
+-   NIP-35: Torrents
 -   NIP-36: Sensitive Content
 -   NIP-38: User Statuses
 -   NIP-39: External Identities in Profiles
@@ -163,6 +164,10 @@ Event Kinds
   1984           Reporting                     56
 
   1985           Label                         32
+
+  2003           Torrent                       35
+
+  2004           Torrent Comment               35
 
   4550           Community Post Approval       72
 
@@ -340,109 +345,115 @@ kinds.
 
 Standardized Tags
 
-  -------------------------------------------------------------------------------
-  name              value                   other         NIP
-                                            parameters    
-  ----------------- ----------------------- ------------- -----------------------
-  e                 event id (hex)          relay URL,    01, 10
-                                            marker        
+  --------------------------------------------------------------------------------
+  name              value                 other parameters   NIP
+  ----------------- --------------------- ------------------ ---------------------
+  e                 event id (hex)        relay URL, marker, 01, 10
+                                          pubkey (hex)       
 
-  p                 pubkey (hex)            relay URL,    01, 02
-                                            petname       
+  p                 pubkey (hex)          relay URL, petname 01, 02
 
-  a                 coordinates to an event relay URL     01
+  a                 coordinates to an     relay URL          01
+                    event                                    
 
-  d                 identifier              &ndash;       01
+  d                 identifier            &ndash;            01
 
-  g                 geohash                 &ndash;       52
+  g                 geohash               &ndash;            52
 
-  i                 identity                proof         39
+  i                 identity              proof              39
 
-  k                 kind number (string)    &ndash;       18, 25, 72
+  k                 kind number (string)  &ndash;            18, 25, 72
 
-  l                 label, label namespace  annotations   32
+  l                 label, label          annotations        32
+                    namespace                                
 
-  L                 label namespace         &ndash;       32
+  L                 label namespace       &ndash;            32
 
-  m                 MIME type               &ndash;       94
+  m                 MIME type             &ndash;            94
 
-  q                 event id (hex)          relay URL     18
+  q                 event id (hex)        relay URL          18
 
-  r                 a reference (URL, etc)  petname       
+  r                 a reference (URL,     petname            
+                    etc)                                     
 
-  r                 relay url               marker        65
+  r                 relay url             marker             65
 
-  t                 hashtag                 &ndash;       
+  t                 hashtag               &ndash;            
 
-  alt               summary                 &ndash;       31
+  alt               summary               &ndash;            31
 
-  amount            millisatoshis,          &ndash;       57
-                    stringified                           
+  amount            millisatoshis,        &ndash;            57
+                    stringified                              
 
-  bolt11            bolt11 invoice          &ndash;       57
+  bolt11            bolt11 invoice        &ndash;            57
 
-  challenge         challenge string        &ndash;       42
+  challenge         challenge string      &ndash;            42
 
-  client            name, address           relay URL     89
+  client            name, address         relay URL          89
 
-  clone             git clone URL           &ndash;       34
+  clone             git clone URL         &ndash;            34
 
-  content-warning   reason                  &ndash;       36
+  content-warning   reason                &ndash;            36
 
-  delegation        pubkey, conditions,     &ndash;       26
-                    delegation token                      
+  delegation        pubkey, conditions,   &ndash;            26
+                    delegation token                         
 
-  description       description             &ndash;       34, 57, 58
+  description       description           &ndash;            34, 57, 58
 
-  emoji             shortcode, image URL    &ndash;       30
+  emoji             shortcode, image URL  &ndash;            30
 
-  encrypted         &ndash;                 &ndash;       90
+  encrypted         &ndash;               &ndash;            90
 
-  expiration        unix timestamp (string) &ndash;       40
+  expiration        unix timestamp        &ndash;            40
+                    (string)                                 
 
-  goal              event id (hex)          relay URL     75
+  goal              event id (hex)        relay URL          75
 
-  image             image URL               dimensions in 23, 58
-                                            pixels        
+  image             image URL             dimensions in      23, 58
+                                          pixels             
 
-  imeta             inline metadata         &ndash;       92
+  imeta             inline metadata       &ndash;            92
 
-  lnurl             bech32 encoded lnurl    &ndash;       57
+  lnurl             bech32 encoded lnurl  &ndash;            57
 
-  location          location string         &ndash;       52, 99
+  location          location string       &ndash;            52, 99
 
-  name              name                    &ndash;       34, 58
+  name              name                  &ndash;            34, 58
 
-  nonce             random                  &ndash;       13
+  nonce             random                &ndash;            13
 
-  preimage          hash of bolt11 invoice  &ndash;       57
+  preimage          hash of bolt11        &ndash;            57
+                    invoice                                  
 
-  price             price                   currency,     99
-                                            frequency     
+  price             price                 currency,          99
+                                          frequency          
 
-  proxy             external ID             protocol      48
+  proxy             external ID           protocol           48
 
-  published_at      unix timestamp (string) &ndash;       23
+  published_at      unix timestamp        &ndash;            23
+                    (string)                                 
 
-  relay             relay url               &ndash;       42, 17
+  relay             relay url             &ndash;            42, 17
 
-  relays            relay list              &ndash;       57
+  relays            relay list            &ndash;            57
 
-  server            file storage server url &ndash;       96
+  server            file storage server   &ndash;            96
+                    url                                      
 
-  subject           subject                 &ndash;       14, 17
+  subject           subject               &ndash;            14, 17
 
-  summary           article summary         &ndash;       23
+  summary           article summary       &ndash;            23
 
-  thumb             badge thumbnail         dimensions in 58
-                                            pixels        
+  thumb             badge thumbnail       dimensions in      58
+                                          pixels             
 
-  title             article title           &ndash;       23
+  title             article title         &ndash;            23
 
-  web               webpage URL             &ndash;       34
+  web               webpage URL           &ndash;            34
 
-  zap               pubkey (hex), relay URL weight        57
-  -------------------------------------------------------------------------------
+  zap               pubkey (hex), relay   weight             57
+                    URL                                      
+  --------------------------------------------------------------------------------
 
 Criteria for acceptance of NIPs
 
