@@ -24,16 +24,18 @@ readme = { workspace = true }
 exclude = ["webview-sys/**", "webview-examples/**", ".github/**", "Cargo.lock"]
 
 [dependencies]
+boxfnonce = "0.1"
 comrak = "0.23.0"
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
 indicatif = "0.17.8"
 markdown = { version = "1.0.0-alpha.17", features = ["json", "log", "serde"] }
 markdown2html-converter = "1.1.12"
+pango = "0.19.5"
+pango-sys = { version = "0.19.5", features = ["v1_42"] }
+tinyfiledialogs = "3.3"
 
 urlencoding = "1.1"
 webview-sys = { path = "webview-sys", version = "0.6.2" }
-boxfnonce = "0.1"
-tinyfiledialogs = "3.3"
 
 [build-dependencies]
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }

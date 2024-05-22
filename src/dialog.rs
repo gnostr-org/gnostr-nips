@@ -1,11 +1,13 @@
 use std::path::PathBuf;
+
 use tfd::MessageBoxIcon;
 
 use crate::{WVResult, WebView};
 
 /// A builder for opening a new dialog window.
 #[deprecated(
-    note = "Please use crates like 'tinyfiledialogs' for dialog handling, see example in examples/dialog.rs"
+    note = "Please use crates like 'tinyfiledialogs' for dialog handling, see example in \
+            examples/dialog.rs"
 )]
 #[derive(Debug)]
 pub struct DialogBuilder<'a: 'b, 'b, T: 'a> {
@@ -38,7 +40,8 @@ impl<'a: 'b, 'b, T: 'a> DialogBuilder<'a, 'b, T> {
         Ok(tfd::save_file_dialog("", "").map(|p| p.into()))
     }
 
-    /// Opens a new choose directory dialog as returns the chosen directory path.
+    /// Opens a new choose directory dialog as returns the chosen directory
+    /// path.
     pub fn choose_directory<S, P>(
         &mut self,
         title: S,

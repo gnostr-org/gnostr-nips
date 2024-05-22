@@ -6,15 +6,17 @@
 //! [crates.io]: https://crates.io/crates/web-view
 //!
 //! This library provides Rust bindings for the [webview](https://github.com/zserge/webview) library
-//! to allow easy creation of cross-platform Rust desktop apps with GUIs based on web technologies.
+//! to allow easy creation of cross-platform Rust desktop apps with GUIs based
+//! on web technologies.
 //!
-//! It supports two-way bindings for communication between the Rust backend and JavaScript frontend.
+//! It supports two-way bindings for communication between the Rust backend and
+//! JavaScript frontend.
 //!
-//! It uses Cocoa/WebKit on macOS, gtk-webkit2 on Linux and MSHTML (IE10/11) on Windows, so your app
-//! will be **much** leaner than with Electron.
+//! It uses Cocoa/WebKit on macOS, gtk-webkit2 on Linux and MSHTML (IE10/11) on
+//! Windows, so your app will be **much** leaner than with Electron.
 //!
-//! To use a custom version of webview, define an environment variable WEBVIEW_DIR with the path to
-//! its source directory.
+//! To use a custom version of webview, define an environment variable
+//! WEBVIEW_DIR with the path to its source directory.
 //!
 //! For usage info please check out [the examples] and the [original readme].
 //!
@@ -33,20 +35,18 @@ mod dialog;
 mod error;
 mod escape;
 
+use std::ffi::{CStr, CString};
+use std::marker::PhantomData;
+use std::mem;
+use std::os::raw::*;
+use std::sync::{Arc, RwLock, Weak};
+
+use boxfnonce::SendBoxFnOnce;
 pub use color::Color;
 pub use dialog::DialogBuilder;
 pub use error::{CustomError, Error, WVResult};
 pub use escape::escape;
-
-use boxfnonce::SendBoxFnOnce;
 use ffi::*;
-use std::{
-    ffi::{CStr, CString},
-    marker::PhantomData,
-    mem,
-    os::raw::*,
-    sync::{Arc, RwLock, Weak},
-};
 use urlencoding::encode;
 
 /// JavaScript function used to insert new css rules to webview.
@@ -55,10 +55,10 @@ use urlencoding::encode;
 /// With every call of this function new style element
 /// will get created with css pasted as its children.
 const CSS_INJECT_FUNCTION: &str = "(function(e){var \
-    t=document.createElement('style'),d=document.head||document.\
-    getElementsByTagName('head')[0];t.setAttribute('type','text/\
-    css'),t.styleSheet?t.styleSheet.cssText=e:t.appendChild(document.\
-    createTextNode(e)),d.appendChild(t)})";
+                                   t=document.createElement('style'),d=document.head||document.\
+                                   getElementsByTagName('head')[0];t.setAttribute('type','text/\
+                                   css'),t.styleSheet?t.styleSheet.cssText=e:t.\
+                                   appendChild(document.createTextNode(e)),d.appendChild(t)})";
 
 /// Content displayable inside a [`WebView`].
 ///
@@ -180,7 +180,8 @@ where
         self
     }
 
-    /// Sets the resizability of the WebView window. If set to false, the window cannot be resized.
+    /// Sets the resizability of the WebView window. If set to false, the window
+    /// cannot be resized.
     ///
     /// Defaults to `true`.
     pub fn resizable(mut self, resizable: bool) -> Self {
@@ -228,12 +229,13 @@ where
         self
     }
 
-    /// Sets the invoke handler callback. This will be called when a message is received from
-    /// JavaScript.
+    /// Sets the invoke handler callback. This will be called when a message is
+    /// received from JavaScript.
     ///
     /// # Errors
     ///
-    /// If the closure returns an `Err`, it will be returned on the next call to [`step()`].
+    /// If the closure returns an `Err`, it will be returned on the next call to
+    /// [`step()`].
     ///
     /// [`step()`]: struct.WebView.html#method.step
     pub fn invoke_handler(mut self, invoke_handler: I) -> Self {
@@ -241,8 +243,9 @@ where
         self
     }
 
-    /// Sets the initial state of the user data. This is an arbitrary value stored on the WebView
-    /// thread, accessible from dispatched closures without synchronization overhead.
+    /// Sets the initial state of the user data. This is an arbitrary value
+    /// stored on the WebView thread, accessible from dispatched closures
+    /// without synchronization overhead.
     pub fn user_data(mut self, user_data: T) -> Self {
         self.user_data = Some(user_data);
         self
@@ -285,7 +288,8 @@ where
         )
     }
 
-    /// Validates provided arguments and runs a new WebView to completion, returning the user data.
+    /// Validates provided arguments and runs a new WebView to completion,
+    /// returning the user data.
     ///
     /// Equivalent to `build()?.run()`.
     pub fn run(self) -> WVResult<T> {
@@ -386,7 +390,8 @@ impl<'a, T> WebView<'a, T> {
         }
     }
 
-    /// Creates a thread-safe [`Handle`] to the `WebView`, from which closures can be dispatched.
+    /// Creates a thread-safe [`Handle`] to the `WebView`, from which closures
+    /// can be dispatched.
     ///
     /// [`Handle`]: struct.Handle.html
     pub fn handle(&self) -> Handle<T> {
@@ -434,7 +439,8 @@ impl<'a, T> WebView<'a, T> {
         unsafe { webview_exit(self.inner.unwrap()) }
     }
 
-    /// Executes the provided string as JavaScript code within the `WebView` instance.
+    /// Executes the provided string as JavaScript code within the `WebView`
+    /// instance.
     pub fn eval(&mut self, js: &str) -> WVResult {
         let js = CString::new(js)?;
         let ret = unsafe { webview_eval(self.inner.unwrap(), js.as_ptr()) };
@@ -522,13 +528,15 @@ impl<'a, T> WebView<'a, T> {
 
     /// Returns a builder for opening a new dialog window.
     #[deprecated(
-        note = "Please use crates like 'tinyfiledialogs' for dialog handling, see example in examples/dialog.rs"
+        note = "Please use crates like 'tinyfiledialogs' for dialog handling, see example in \
+                examples/dialog.rs"
     )]
     pub fn dialog<'b>(&'b mut self) -> DialogBuilder<'a, 'b, T> {
         DialogBuilder::new(self)
     }
 
-    /// Iterates the event loop. Returns `None` if the view has been closed or terminated.
+    /// Iterates the event loop. Returns `None` if the view has been closed or
+    /// terminated.
     pub fn step(&mut self) -> Option<WVResult> {
         unsafe {
             match webview_loop(self.inner.unwrap(), 1) {
@@ -591,7 +599,8 @@ impl<'a, T> Drop for WebView<'a, T> {
     }
 }
 
-/// A thread-safe handle to a [`WebView`] instance. Used to dispatch closures onto its task queue.
+/// A thread-safe handle to a [`WebView`] instance. Used to dispatch closures
+/// onto its task queue.
 ///
 /// [`WebView`]: struct.WebView.html
 pub struct Handle<T> {
@@ -617,7 +626,8 @@ impl<T> Handle<T> {
     ///
     /// Returns [`Error::Dispatch`] if the [`WebView`] has been dropped.
     ///
-    /// If the closure returns an `Err`, it will be returned on the next call to [`step()`].
+    /// If the closure returns an `Err`, it will be returned on the next call to
+    /// [`step()`].
     ///
     /// [`WebView`]: struct.WebView.html
     /// [`Error::Dispatch`]: enum.Error.html#variant.Dispatch
@@ -626,8 +636,8 @@ impl<T> Handle<T> {
     where
         F: FnOnce(&mut WebView<T>) -> WVResult + Send + 'static,
     {
-        // Abort if WebView has been dropped. Otherwise, keep it alive until closure has been
-        // dispatched.
+        // Abort if WebView has been dropped. Otherwise, keep it alive until closure has
+        // been dispatched.
         let mutex = self.live.upgrade().ok_or(Error::Dispatch)?;
         let closure = Box::new(SendBoxFnOnce::new(f));
         let _lock = mutex.read().map_err(|_| Error::Dispatch)?;
