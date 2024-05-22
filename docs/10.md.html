@@ -47,7 +47,7 @@ difficult, or impossible to resolve when an event references another but
 is not a reply.</p>
 </blockquote>
 <h2 id="marked-e-tags-preferred">Marked &#x201C;e&#x201D; tags (PREFERRED)</h2>
-<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;marker&gt;]</code></p>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;marker&gt;, &lt;pubkey&gt;]</code></p>
 <p>Where:</p>
 <ul>
 <li><code>&lt;event-id&gt;</code> is the id of the event being
@@ -59,6 +59,8 @@ associated with the reference. Clients SHOULD add a valid
 <li><code>&lt;marker&gt;</code> is optional and if present is one of
 <code>"reply"</code>, <code>"root"</code>, or
 <code>"mention"</code>.</li>
+<li><code>&lt;pubkey&gt;</code> is optional, SHOULD be the pubkey of the
+author of the referenced event</li>
 </ul>
 <p>Those marked with <code>"reply"</code> denote the id of the reply
 event being responded to. Those marked with <code>"root"</code> denote
@@ -73,6 +75,10 @@ replies (those replying directly to the root event), only the
 without confusing them with <code>&lt;reply-id&gt;</code> or
 <code>&lt;root-id&gt;</code>.</p>
 </blockquote>
+<p><code>&lt;pubkey&gt;</code> SHOULD be the pubkey of the author of the
+<code>e</code> tagged event, this is used in the outbox model to search
+for that event from the authors write relays where relay hints did not
+resolve the event.</p>
 <h2 id="the-p-tag">The &#x201C;p&#x201D; tag</h2>
 <p>Used in a text event contains a list of pubkeys used to record who is
 involved in a reply thread.</p>

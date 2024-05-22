@@ -48,7 +48,7 @@ specific meanings as follows:
 
 Marked &ldquo;e&rdquo; tags (PREFERRED)
 
-["e", <event-id>, <relay-url>, <marker>]
+["e", <event-id>, <relay-url>, <marker>, <pubkey>]
 
 Where:
 
@@ -58,6 +58,8 @@ Where:
     instead leave it as "".
 -   <marker> is optional and if present is one of "reply", "root", or
     "mention".
+-   <pubkey> is optional, SHOULD be the pubkey of the author of the
+    referenced event
 
 Those marked with "reply" denote the id of the reply event being
 responded to. Those marked with "root" denote the root id of the reply
@@ -70,6 +72,10 @@ A direct reply to the root of a thread should have a single marked
 
   This scheme is preferred because it allows events to mention others
   without confusing them with <reply-id> or <root-id>.
+
+<pubkey> SHOULD be the pubkey of the author of the e tagged event, this
+is used in the outbox model to search for that event from the authors
+write relays where relay hints did not resolve the event.
 
 The &ldquo;p&rdquo; tag
 
