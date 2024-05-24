@@ -5,7 +5,7 @@ use std::fmt::{self, Write};
 /// # Example
 ///
 /// ```rust,no_run
-/// # use web_view::WebView;
+/// # use nips::WebView;
 /// # use std::mem;
 /// #
 /// # let mut view: WebView<()> = unsafe { mem::uninitialized() };
