@@ -1,15 +1,18 @@
+[workspace]
 [package]
 name = "nips"
-version = { workspace = true }
-edition = { workspace = true }
-rust-version = { workspace = true }
-license = { workspace = true }
-homepage = { workspace = true }
-repository = { workspace = true }
-documentation = { workspace = true }
-keywords = { workspace = true }
-readme = { workspace = true }
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version = "0.0.45"
+license = "Apache-2.0"
+rust-version = "1.73"
+edition = "2021"
+readme = "README.md"
+homepage = "https://github.com/gnostr-org/gnostr"
+repository = "https://github.com/gnostr-org/gnostr"
+documentation = "https://github.com/gnostr"
+categories = ["version-control", "development-tools", "gnostr", "nostr"]
+keywords = ["git", "gnostr", "nostr"]
+description = "git+nostr workflow utility"
+authors = ["gnostr <admin@gnostr.org>","Mike Dilger <mike@mikedilger.com>", "DanConwayDev <DanConwayDev@protonmail.com>", "Max Inden <mail@max-inden.de>","fiatjaf <fiatjaf@gmail.com>", "Nate Levin <natelevincycling@gmail.com>", "Nethanja Focking <nethanja@nethanja.de>", "Daniele Tonon <tonon@vitamino.it>", "jeremyd (@jeremyd)"]
 
 ## =======
 ## name = "web-view"
@@ -36,7 +39,7 @@ serde_json = "1.0"
 tinyfiledialogs = "3.3"
 
 urlencoding = "1.1"
-webview-sys = { path = "webview-sys", version = "0.6.2" }
+webview-sys = { path = "webview-sys" }
 
 [build-dependencies]
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }

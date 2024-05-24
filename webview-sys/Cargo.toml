@@ -3,7 +3,7 @@ name = "webview-sys"
 version = "0.6.2"
 authors = ["Boscop", "zxey <r.hozak@seznam.cz>"]
 license = "MIT"
-repository = { workspace = true }
+repository = "https://github.com/gnostr-org/gnostr"
 description = "Rust native ffi bindings for webview"
 keywords = ["web", "gui", "desktop", "electron", "webkit"]
 categories = ["gui", "web-programming", "api-bindings", "rendering", "visualization"]
