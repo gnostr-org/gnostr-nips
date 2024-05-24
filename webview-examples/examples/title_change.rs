@@ -1,9 +1,9 @@
-extern crate web_view;
+extern crate nips;
 
-use web_view::*;
+use nips::*;
 
 fn main() {
-    web_view::builder()
+    nips::builder()
         .title("Change title with input")
         .content(Content::Html(HTML))
         .size(800, 100)
