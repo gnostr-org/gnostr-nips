@@ -79,9 +79,9 @@ pub enum Content<T> {
 /// # Example
 ///
 /// ```no_run
-/// extern crate web_view;
+/// extern crate nips;
 ///
-/// use web_view::*;
+/// use nips::*;
 ///
 /// fn main() {
 ///     WebViewBuilder::new()
