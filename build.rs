@@ -5,7 +5,7 @@ use include_dir::{include_dir, Dir};
 //use std::path::Path;
 use markdown::to_html;
 
-static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR");
+//static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR");
 
 fn main() -> std::io::Result<()> {
     let _out_dir = env::var("OUT_DIR").unwrap();
