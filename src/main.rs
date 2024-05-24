@@ -159,14 +159,14 @@ fn main() {
 
 fn print_entries<const BOUND: u8>(nip: Option<&str>) -> () {
     let mut count: u8 = 0;
-    let html = "**/*.html";
-    let css = "**/*css.html";
-    let txt = "**/*.yxy";
+    //let html = "**/*.html";
+    //let css = "**/*css.html";
+    let txt = "**/*.txt";
     //let glob = "**/*.md";
     let mut nip_vec = Vec::<String>::new(); // Create an empty Vec
 
     let doc = nip.unwrap().to_string();
-    for entry in PROJECT_DIR.find(css).unwrap() {
+    for entry in PROJECT_DIR.find(txt).unwrap() {
         count = count + 1;
         nip_vec.push((entry.path().display()).to_string());
         let mut md_content = PROJECT_DIR.get_file(entry.path()).unwrap();
