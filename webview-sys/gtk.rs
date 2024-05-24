@@ -1,5 +1,8 @@
 #![cfg(all(target_family = "unix", not(target_os = "macos")))]
 
+use std::ffi::CStr;
+use std::{mem, ptr};
+
 use gdk_sys::{gdk_threads_add_idle, GdkGeometry, GdkRGBA, GDK_HINT_MIN_SIZE};
 use gio_sys::GAsyncResult;
 use glib_sys::*;
@@ -7,9 +10,6 @@ use gobject_sys::{g_signal_connect_data, GObject};
 use gtk_sys::*;
 use javascriptcore_sys::*;
 use libc::{c_char, c_double, c_int, c_void};
-use std::ffi::CStr;
-use std::mem;
-use std::ptr;
 use webkit2gtk_sys::*;
 
 type ExternalInvokeCallback = extern "C" fn(webview: *mut WebView, arg: *const c_char);

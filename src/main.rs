@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
 extern crate comrak;
 extern crate nips;
+extern crate serde_json;
 
-use include_dir::{include_dir, Dir};
 use comrak::nodes::NodeValue;
 use comrak::{format_html, parse_document, Arena, Options};
+use include_dir::{include_dir, Dir};
 use markdown::to_html;
 use nips::*;
 
@@ -38,8 +38,8 @@ fn webview() {
 		</html>
 		"#,
         styles = inline_style(include_str!("styles.css")),
-        scripts = inline_script(include_str!("picodom.js"))
-            + &inline_script(include_str!("app.js")),
+        scripts =
+            inline_script(include_str!("picodom.js")) + &inline_script(include_str!("app.js")),
     );
 
     let mut webview = nips::builder()
@@ -111,8 +111,6 @@ fn inline_style(s: &str) -> String {
 fn inline_script(s: &str) -> String {
     format!(r#"<script type="text/javascript">{}</script>"#, s)
 }
-
-
 
 fn replace_text(document: &str, orig_string: &str, replacement: &str) -> String {
     // The returned nodes are created in the supplied Arena, and are bound by its

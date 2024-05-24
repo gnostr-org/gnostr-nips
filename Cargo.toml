@@ -12,7 +12,7 @@ documentation = "https://github.com/gnostr"
 categories = ["version-control", "development-tools", "gnostr", "nostr"]
 keywords = ["git", "gnostr", "nostr"]
 description = "git+nostr workflow utility"
-authors = ["gnostr <admin@gnostr.org>","Mike Dilger <mike@mikedilger.com>", "DanConwayDev <DanConwayDev@protonmail.com>", "Max Inden <mail@max-inden.de>","fiatjaf <fiatjaf@gmail.com>", "Nate Levin <natelevincycling@gmail.com>", "Nethanja Focking <nethanja@nethanja.de>", "Daniele Tonon <tonon@vitamino.it>", "jeremyd (@jeremyd)"]
+authors = ["gnostr <admin@gnostr.org>", "Mike Dilger <mike@mikedilger.com>", "DanConwayDev <DanConwayDev@protonmail.com>", "Max Inden <mail@max-inden.de>", "fiatjaf <fiatjaf@gmail.com>", "Nate Levin <natelevincycling@gmail.com>", "Nethanja Focking <nethanja@nethanja.de>", "Daniele Tonon <tonon@vitamino.it>", "jeremyd (@jeremyd)"]
 
 ## =======
 ## name = "web-view"
@@ -48,7 +48,6 @@ markdown = "1.0.0-alpha.17"
 [features]
 edge = ["webview-sys/edge"]
 ##edge = ["nips/edge"]
-
 ## [workspace]
 ## members = [
 ##     "webview-sys",
@@ -56,12 +55,12 @@ edge = ["webview-sys/edge"]
 ## ]
 
 [dev-dependencies]
-tinyfiledialogs = "3.3"
+actix-web = "4.0.0-beta.6"
+grep = "0.2.4"
+mime_guess = "2.0.1"
+rust-embed = "5.1.0"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-actix-web = "4.0.0-beta.6"
-rust-embed = "5.1.0"
-mime_guess = "2.0.1"
-grep = "0.2.4"
+tinyfiledialogs = "3.3"
 walkdir = "2.3.1"
