@@ -49,10 +49,7 @@ fn main() {
             }
         }
     } else if target.contains("apple") {
-        build
-            .file("webview_cocoa.c")
-            .flag("-x")
-            .flag("objective-c");
+        build.file("webview_cocoa.c").flag("-x").flag("objective-c");
         println!("cargo:rustc-link-lib=framework=Cocoa");
         println!("cargo:rustc-link-lib=framework=WebKit");
     } else {
