@@ -147,6 +147,7 @@ fn main() {
     const NIP: Option<&str> = Some("README.md.html");
     //const NIP: Option<&str> = Some("README.md");
 
+    webview();
     let pb = indicatif::ProgressBar::new(100);
     for i in 0..BOUND {
         print_entries::<{ BOUND }>(NIP);
