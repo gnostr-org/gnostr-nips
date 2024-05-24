@@ -14,7 +14,7 @@ use std::fmt::{self, Write};
 ///
 /// // Calls the function callback with "Hello, world!" as its parameter.
 ///
-/// view.eval(&format!("callback({});", web_view::escape(string)));
+/// view.eval(&format!("callback({});", nips::escape(string)));
 /// ```
 pub fn escape(string: &str) -> Escaper {
     Escaper(string)
