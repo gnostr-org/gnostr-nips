@@ -1,9 +1,9 @@
-extern crate web_view;
+extern crate nips;
 
-use web_view::*;
+use nips::*;
 
 fn main() {
-    web_view::builder()
+    nips::builder()
         .title("Change background color")
         .content(Content::Html(HTML))
         .size(200, 100)

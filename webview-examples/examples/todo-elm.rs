@@ -3,9 +3,9 @@
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-extern crate web_view;
+extern crate nips;
 
-use web_view::*;
+use nips::*;
 
 fn main() {
     let html = format!(
@@ -33,7 +33,7 @@ fn main() {
             + &inline_script(include_str!("todo-elm/app.js")),
     );
 
-    let mut webview = web_view::builder()
+    let mut webview = nips::builder()
         .title("Rust Todo App")
         .content(Content::Html(html))
         .size(320, 480)

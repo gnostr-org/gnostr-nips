@@ -1,19 +1,19 @@
 //#![windows_subsystem = "windows"]
 
-extern crate web_view;
+extern crate nips;
 
 use std::{
     sync::{Arc, Mutex},
     thread,
     time::Duration,
 };
-use web_view::*;
+use nips::*;
 
 fn main() {
     let counter = Arc::new(Mutex::new(0));
 
     let counter_inner = counter.clone();
-    let webview = web_view::builder()
+    let webview = nips::builder()
         .title("Timer example")
         .content(Content::Html(HTML))
         .size(800, 600)
