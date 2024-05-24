@@ -1,11 +1,11 @@
 #![windows_subsystem = "windows"]
 
-extern crate web_view;
+extern crate nips;
 
-use web_view::*;
+use nips::*;
 
 fn main() {
-    let mut webview1 = web_view::builder()
+    let mut webview1 = nips::builder()
         .title("Multi window example - Window 1")
         .content(Content::Url("https://en.m.wikipedia.org/wiki/Main_Page"))
         .size(800, 600)
@@ -16,7 +16,7 @@ fn main() {
         .build()
         .unwrap();
 
-    let mut webview2 = web_view::builder()
+    let mut webview2 = nips::builder()
         .title("Multi window example - Window 2")
         .content(Content::Url("https://en.m.wikipedia.org/wiki/Main_Page"))
         .size(800, 600)

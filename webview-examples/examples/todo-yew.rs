@@ -4,7 +4,7 @@ use actix_web::{body::Body, dev::Server, rt, web, App, HttpRequest, HttpResponse
 use mime_guess::from_path;
 use rust_embed::RustEmbed;
 use std::{borrow::Cow, sync::mpsc, thread};
-use web_view::*;
+use nips::*;
 
 #[derive(RustEmbed)]
 #[folder = "examples/todo-yew/static"]
@@ -69,7 +69,7 @@ fn main() {
     // start web view in current thread
     // and point it to a port that was bound
     // to actix web server
-    web_view::builder()
+    nips::builder()
         .title("todomvc example")
         .content(Content::Url(format!("http://127.0.0.1:{}", port)))
         .size(600, 500)

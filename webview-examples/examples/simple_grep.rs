@@ -1,6 +1,6 @@
 extern crate grep;
 extern crate walkdir;
-extern crate web_view;
+extern crate nips;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
@@ -13,10 +13,10 @@ use std::error::Error;
 use std::ffi::OsString;
 use tfd::MessageBoxIcon;
 use walkdir::WalkDir;
-use web_view::*;
+use nips::*;
 
 fn main() {
-    web_view::builder()
+    nips::builder()
         .title("Simple Grep Example")
         .content(Content::Html(HTML))
         .size(825, 625)
