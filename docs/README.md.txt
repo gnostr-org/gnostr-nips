@@ -277,6 +277,8 @@ Event Kinds
 
   30819          Redirects                     54
 
+  31890          Feed                          NUD: Custom Feeds
+
   31922          Date-Based Calendar Event     52
 
   31923          Time-Based Calendar Event     52
