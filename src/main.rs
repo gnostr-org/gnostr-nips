@@ -1,8 +1,5 @@
-#[macro_use]
-extern crate serde_derive;
 extern crate comrak;
-extern crate nips;
-extern crate serde_json;
+extern crate include_dir;
 
 use comrak::nodes::NodeValue;
 use comrak::{format_html, parse_document, Arena, Options};
