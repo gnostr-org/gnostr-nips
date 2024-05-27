@@ -33,9 +33,9 @@ include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
 indicatif = "0.17.8"
 markdown = { version = "1.0.0-alpha.17", features = ["json", "log", "serde"] }
 markdown2html-converter = "1.1.12"
-serde = { version = "1.0", features = ["derive"] }
-serde_derive = "1.0"
-serde_json = "1.0"
+#serde = { version = "1.0", features = ["derive"] }
+#serde_derive = "1.0"
+#serde_json = "1.0"
 tinyfiledialogs = "3.3"
 
 urlencoding = "1.1"
