@@ -337,8 +337,9 @@ kinds:</p>
 <li><code>0</code>: <strong>metadata</strong>: the <code>content</code>
 is set to a stringified JSON object
 <code>{name: &lt;username&gt;, about: &lt;string&gt;, picture: &lt;url, string&gt;}</code>
-describing the user who created the event. A relay may delete older
-events once it gets a new one for the same pubkey.</li>
+describing the user who created the event. <a href="24.md.css.html#kind-0">Extra
+metadata fields</a> may be set. A relay may delete older events once it
+gets a new one for the same pubkey.</li>
 <li><code>1</code>: <strong>text note</strong>: the <code>content</code>
 is set to the <strong>plaintext</strong> content of a note (anything the
 user wants to say). Content that must be parsed, such as Markdown and

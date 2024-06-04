@@ -101,8 +101,7 @@ such as reply and mention can also be used.
 Use Cases
 
 Common use cases include meeting rooms/workshops, watch-together
-activities, or event spaces, such as live.snort.social and
-nostrnests.com.
+activities, or event spaces, such as zap.stream.
 
 Example
 

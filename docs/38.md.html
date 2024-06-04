@@ -39,6 +39,9 @@ NIP.</p>
 <p>The status MAY include an <code>r</code>, <code>p</code>,
 <code>e</code> or <code>a</code> tag linking to a URL, profile, note, or
 parameterized replaceable event.</p>
+<p>The <code>content</code> MAY include emoji(s), or <a
+href="30.md.html">NIP-30</a> custom emoji(s). If the <code>content</code> is
+an empty string then the client should clear the status.</p>
 <h1 id="client-behavior">Client behavior</h1>
 <p>Clients MAY display this next to the username on posts or profiles to
 provide live user status information.</p>
@@ -55,6 +58,3 @@ to a podcast, with a link for others to listen as well</li>
 <li>Clients can use the system media player to update playing music
 status</li>
 </ul>
-<p>The <code>content</code> MAY include emoji(s), or <a
-href="30.md.html">NIP-30</a> custom emoji(s). If the <code>content</code> is
-an empty string then the client should clear the status.</p>

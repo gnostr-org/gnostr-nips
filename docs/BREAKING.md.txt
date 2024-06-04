@@ -6,6 +6,9 @@ implementations, in reverse chronological order.
   --------------------------------------------------------------------------------------------------
   Date                   Commit             NIP              Change
   ---------------------- ------------------ ---------------- ---------------------------------------
+  2024-05-25             5d1d1c17           NIP-71           &lsquo;aes-256-gcm&rsquo; tag was
+                                                             removed
+
   2024-04-30             bad88262           NIP-34           &lsquo;earliest-unique-commit&rsquo;
                                                              tag was removed (use &lsquo;r&rsquo;
                                                              tag instead)

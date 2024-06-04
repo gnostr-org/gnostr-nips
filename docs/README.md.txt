@@ -89,6 +89,7 @@ List
 -   NIP-96: HTTP File Storage Integration
 -   NIP-98: HTTP Auth
 -   NIP-99: Classified Listings
+-   NIP-100: Android Signer Application
 
 Event Kinds
 
@@ -168,6 +169,8 @@ Event Kinds
   2003           Torrent                       35
 
   2004           Torrent Comment               35
+
+  2022           Coinjoin Pool                 joinstr
 
   4550           Community Post Approval       72
 
@@ -277,6 +280,8 @@ Event Kinds
 
   30819          Redirects                     54
 
+  31890          Feed                          NUD: Custom Feeds
+
   31922          Date-Based Calendar Event     52
 
   31923          Time-Based Calendar Event     52
@@ -373,7 +378,7 @@ Standardized Tags
 
   q                 event id (hex)        relay URL          18
 
-  r                 a reference (URL,     petname            
+  r                 a reference (URL,     petname            24
                     etc)                                     
 
   r                 relay url             marker             65
@@ -420,7 +425,7 @@ Standardized Tags
 
   name              name                  &ndash;            34, 58
 
-  nonce             random                &ndash;            13
+  nonce             random                difficulty         13
 
   preimage          hash of bolt11        &ndash;            57
                     invoice                                  
@@ -457,8 +462,8 @@ Standardized Tags
 
 Criteria for acceptance of NIPs
 
-1.  They should be implemented in at least two clients and one relay
-    &ndash; when applicable.
+1.  They should be fully implemented in at least two clients and one
+    relay &ndash; when applicable.
 2.  They should make sense.
 3.  They should be optional and backwards-compatible: care must be taken
     such that clients and relays that choose to not implement them do
