@@ -50,6 +50,9 @@ Any other status types can be used but they are not defined by this NIP.
 The status MAY include an r, p, e or a tag linking to a URL, profile,
 note, or parameterized replaceable event.
 
+The content MAY include emoji(s), or NIP-30 custom emoji(s). If the
+content is an empty string then the client should clear the status.
+
 Client behavior
 
 Clients MAY display this next to the username on posts or profiles to
@@ -67,6 +70,3 @@ Use Cases
     listening to a podcast, with a link for others to listen as well
 -   Clients can use the system media player to update playing music
     status
-
-The content MAY include emoji(s), or NIP-30 custom emoji(s). If the
-content is an empty string then the client should clear the status.

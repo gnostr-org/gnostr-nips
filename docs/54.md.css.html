@@ -212,6 +212,15 @@ normal Markdown links <code>[]()</code> that link to webpages, wikilinks
 wiki is the entirety of Nostr. Clicking on a wikilink should cause the
 client to ask relays for events with <code>d</code> tags equal to the
 target of that wikilink.</p>
+<p>Wikilinks can take these two forms:</p>
+<ol type="1">
+<li><code>[[Target Page]]</code> – in this case it will link to the page
+<code>target-page</code> (according to <code>d</code> tag normalization
+rules above) and be displayed as <code>Target Page</code>;</li>
+<li><code>[[target page|see this]]</code> – in this case it will link to
+the page <code>target-page</code>, but will be displayed as
+<code>see this</code>.</li>
+</ol>
 <h3 id="merge-requests">Merge Requests</h3>
 <p>Event <code>kind:818</code> represents a request to merge from a
 forked article into the source. It is directed to a pubkey and

@@ -108,8 +108,9 @@ weren&rsquo;t defined elsewhere. This NIP defines two basic kinds:
 
 -   0: metadata: the content is set to a stringified JSON object
     {name: <username>, about: <string>, picture: <url, string>}
-    describing the user who created the event. A relay may delete older
-    events once it gets a new one for the same pubkey.
+    describing the user who created the event. Extra metadata fields may
+    be set. A relay may delete older events once it gets a new one for
+    the same pubkey.
 -   1: text note: the content is set to the plaintext content of a note
     (anything the user wants to say). Content that must be parsed, such
     as Markdown and HTML, should not be used. Clients should also not
