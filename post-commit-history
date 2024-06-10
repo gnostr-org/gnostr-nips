@@ -54,7 +54,7 @@ export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
 for relay in $(gnostr-get-relays stripped); do
-gnostr --sec $padded_commit_hash -t $padded_commit_hash --tag nip_commit $commit_hash --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay wss://e.nos.lol || true
+gnostr --sec $padded_commit_hash -t $padded_commit_hash --tag nip_commit $commit_hash --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay $relay || true
 done
 ##echo $commit_hash;
 	#for commit_padded_hash in $(gnostr-reflog -p);do
