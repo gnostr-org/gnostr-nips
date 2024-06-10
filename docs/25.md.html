@@ -18,32 +18,37 @@ as a &#x201C;like&#x201D; or &#x201C;dislike&#x201D;, or the client MAY display 
 on the post. If the <code>content</code> is an empty string then the
 client should consider it a &#x201C;+&#x201D;.</p>
 <h2 id="tags">Tags</h2>
-<p>The reaction event SHOULD include <code>a</code>, <code>e</code> and
-<code>p</code> tags pointing to the note the user is reacting to. The
-<code>p</code> tag allows authors to be notified. The <code>e</code>
-tags enables clients to pull all the reactions to individual events and
+<p>The reaction event SHOULD include <code>e</code> and <code>p</code>
+tags from the note the user is reacting to (and optionally
+<code>a</code> tags if the target is a replaceable event). This allows
+users to be notified of reactions to posts they were mentioned in.
+Including the <code>e</code> tags enables clients to pull all the
+reactions associated with individual posts or all the posts in a thread.
 <code>a</code> tags enables clients to seek reactions for all versions
 of a replaceable event.</p>
-<p>The <code>e</code> tag MUST be the <code>id</code> of the note that
-is being reacted to.</p>
+<p>The last <code>e</code> tag MUST be the <code>id</code> of the note
+that is being reacted to.</p>
+<p>The last <code>p</code> tag MUST be the <code>pubkey</code> of the
+event being reacted to.</p>
 <p>The <code>a</code> tag MUST contain the coordinates
 (<code>kind:pubkey:d-tag</code>) of the replaceable being reacted
 to.</p>
-<p>The <code>p</code> tag MUST be the <code>pubkey</code> of the event
-being reacted to.</p>
 <p>The reaction event MAY include a <code>k</code> tag with the
 stringified kind number of the reacted event as its value.</p>
 <p>Example code</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode swift"><code class="sourceCode swift"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> <span class="fu">make_like_event</span><span class="op">(</span><span class="va">pubkey</span><span class="op">:</span> <span class="dt">String</span><span class="op">,</span> <span class="va">privkey</span><span class="op">:</span> <span class="dt">String</span><span class="op">,</span> <span class="va">liked</span><span class="op">:</span> <span class="dt">NostrEvent</span><span class="op">)</span> -&gt; <span class="fu">NostrEvent</span> <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">.</span>append<span class="op">([</span><span class="st">&quot;e&quot;</span><span class="op">,</span> liked<span class="op">.</span>id<span class="op">])</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">.</span>append<span class="op">([</span><span class="st">&quot;p&quot;</span><span class="op">,</span> liked<span class="op">.</span>pubkey<span class="op">])</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">.</span>append<span class="op">([</span><span class="st">&quot;k&quot;</span><span class="op">,</span> liked<span class="op">.</span>kind<span class="op">])</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="va">ev</span> <span class="op">=</span> NostrEvent<span class="op">(</span>content<span class="op">:</span> <span class="st">&quot;+&quot;</span><span class="op">,</span> pubkey<span class="op">:</span> pubkey<span class="op">,</span> kind<span class="op">:</span> <span class="dv">7</span><span class="op">,</span> tags<span class="op">:</span> tags<span class="op">)</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ev<span class="op">.</span>calculate_id<span class="op">()</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    ev<span class="op">.</span>sign<span class="op">(</span>privkey<span class="op">:</span> privkey<span class="op">)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> ev</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> <span class="va">tags</span><span class="op">:</span> <span class="op">[[</span>String<span class="op">]]</span> <span class="op">=</span> liked<span class="op">.</span>tags<span class="op">.</span>filter <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        tag <span class="cf">in</span> tag<span class="op">.</span>count <span class="op">&gt;=</span> <span class="dv">2</span> <span class="op">&amp;&amp;</span> <span class="op">(</span>tag<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> <span class="st">&quot;e&quot;</span> <span class="op">||</span> tag<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> <span class="st">&quot;p&quot;</span><span class="op">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">.</span>append<span class="op">([</span><span class="st">&quot;e&quot;</span><span class="op">,</span> liked<span class="op">.</span>id<span class="op">])</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">.</span>append<span class="op">([</span><span class="st">&quot;p&quot;</span><span class="op">,</span> liked<span class="op">.</span>pubkey<span class="op">])</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">.</span>append<span class="op">([</span><span class="st">&quot;k&quot;</span><span class="op">,</span> liked<span class="op">.</span>kind<span class="op">])</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="va">ev</span> <span class="op">=</span> NostrEvent<span class="op">(</span>content<span class="op">:</span> <span class="st">&quot;+&quot;</span><span class="op">,</span> pubkey<span class="op">:</span> pubkey<span class="op">,</span> kind<span class="op">:</span> <span class="dv">7</span><span class="op">,</span> tags<span class="op">:</span> tags<span class="op">)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    ev<span class="op">.</span>calculate_id<span class="op">()</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    ev<span class="op">.</span>sign<span class="op">(</span>privkey<span class="op">:</span> privkey<span class="op">)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> ev</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="custom-emoji-reaction">Custom Emoji Reaction</h2>
 <p>The client may specify a custom emoji (<a href="30.md.html">NIP-30</a>)
 <code>:shortcode:</code> in the reaction content. The client should

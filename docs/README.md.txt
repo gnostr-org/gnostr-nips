@@ -72,6 +72,7 @@ List
 -   NIP-52: Calendar Events
 -   NIP-53: Live Activities
 -   NIP-54: Wiki
+-   NIP-55: Android Signer Application
 -   NIP-56: Reporting
 -   NIP-57: Lightning Zaps
 -   NIP-58: Badges
@@ -89,7 +90,6 @@ List
 -   NIP-96: HTTP File Storage Integration
 -   NIP-98: HTTP Auth
 -   NIP-99: Classified Listings
--   NIP-100: Android Signer Application
 
 Event Kinds
 
@@ -345,9 +345,6 @@ Relay to Client
   COUNT    used to send requested event counts to clients       45
   ------------------------------------------------------------------------
 
-Please update these lists when proposing NIPs introducing new event
-kinds.
-
 Standardized Tags
 
   --------------------------------------------------------------------------------
@@ -369,7 +366,7 @@ Standardized Tags
 
   k                 kind number (string)  &ndash;            18, 25, 72
 
-  l                 label, label          annotations        32
+  l                 label, label          &ndash;            32
                     namespace                                
 
   L                 label namespace       &ndash;            32
@@ -459,6 +456,8 @@ Standardized Tags
   zap               pubkey (hex), relay   weight             57
                     URL                                      
   --------------------------------------------------------------------------------
+
+Please update these lists when proposing new NIPs.
 
 Criteria for acceptance of NIPs
 

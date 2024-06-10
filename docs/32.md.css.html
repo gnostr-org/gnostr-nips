@@ -249,7 +249,7 @@ classification.</p>
 <p>An <code>L</code> tag can be any string, but publishers SHOULD ensure
 they are unambiguous by using a well-defined namespace (such as an ISO
 standard) or reverse domain name notation.</p>
-<p><code>L</code> tags are REQUIRED in order to support searching by
+<p><code>L</code> tags are RECOMMENDED in order to support searching by
 namespace rather than by a specific tag. The special <code>ugc</code>
 (“user generated content”) namespace MAY be used when the label content
 is provided by an end user.</p>
@@ -258,9 +258,11 @@ label target should be associated with the label’s value. This is a way
 of attaching standard nostr tags to events, pubkeys, relays, urls,
 etc.</p>
 <h2 id="label-tag">Label Tag</h2>
-<p>An <code>l</code> tag’s value can be any string. <code>l</code> tags
-MUST include a <code>mark</code> matching an <code>L</code> tag value in
-the same event.</p>
+<p>An <code>l</code> tag’s value can be any string. If using an
+<code>L</code> tag, <code>l</code> tags MUST include a mark matching an
+<code>L</code> tag value in the same event. If no <code>L</code> tag is
+included, a mark SHOULD still be included. If none is included,
+<code>ugc</code> is implied.</p>
 <h2 id="label-target">Label Target</h2>
 <p>The label event MUST include one or more tags representing the object
 or objects being labeled: <code>e</code>, <code>p</code>,
@@ -270,8 +272,8 @@ NIP-01, a relay hint SHOULD be included when using <code>e</code> and
 <code>p</code> tags.</p>
 <h2 id="content">Content</h2>
 <p>Labels should be short, meaningful strings. Longer discussions, such
-as for a review, or an explanation of why something was labeled the way
-it was, should go in the event’s <code>content</code> field.</p>
+as for an explanation of why something was labeled the way it was,
+should go in the event’s <code>content</code> field.</p>
 <h2 id="self-reporting">Self-Reporting</h2>
 <p><code>l</code> and <code>L</code> tags MAY be added to other event
 kinds to support self-reporting. For events with a kind other than 1985,

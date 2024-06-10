@@ -19,7 +19,7 @@ An L tag can be any string, but publishers SHOULD ensure they are
 unambiguous by using a well-defined namespace (such as an ISO standard)
 or reverse domain name notation.
 
-L tags are REQUIRED in order to support searching by namespace rather
+L tags are RECOMMENDED in order to support searching by namespace rather
 than by a specific tag. The special ugc (&ldquo;user generated
 content&rdquo;) namespace MAY be used when the label content is provided
 by an end user.
@@ -30,8 +30,10 @@ standard nostr tags to events, pubkeys, relays, urls, etc.
 
 Label Tag
 
-An l tag&rsquo;s value can be any string. l tags MUST include a mark
-matching an L tag value in the same event.
+An l tag&rsquo;s value can be any string. If using an L tag, l tags MUST
+include a mark matching an L tag value in the same event. If no L tag is
+included, a mark SHOULD still be included. If none is included, ugc is
+implied.
 
 Label Target
 
@@ -43,8 +45,8 @@ relay hint SHOULD be included when using e and p tags.
 Content
 
 Labels should be short, meaningful strings. Longer discussions, such as
-for a review, or an explanation of why something was labeled the way it
-was, should go in the event&rsquo;s content field.
+for an explanation of why something was labeled the way it was, should
+go in the event&rsquo;s content field.
 
 Self-Reporting
 
