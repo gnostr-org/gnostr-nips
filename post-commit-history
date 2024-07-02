@@ -18,6 +18,8 @@ else
 REPO=$(basename $(dirname $some_path));
 fi
 
+BRANCH=`git rev-parse --abbrev-ref HEAD` #&& echo $BRANCH
+
 GIT_ORIGIN=$(git config --get remote.origin.url)
 echo $GIT_ORIGIN
 #exit;
@@ -86,7 +88,9 @@ echo $n
 gnostr --sec $padded_commit_hash \
 --pow $POW \
 --tag repo $REPO \
+--tag branch $BRANCH \
 --tag origin $GIT_ORIGIN \
+--tag weeble $WEEBLE \
 --tag weeble $WEEBLE \
 --tag block $BLOCK \
 --tag wobble $WOBBLE \
