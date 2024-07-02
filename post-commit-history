@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+RELAY=${1:-wss://nos.lol}
+POW=${2:-8}
+WEEBLE=${3:-0}
+BLOCK=${4:-0}
+WOBBLE=${5:-0}
 count=0;
 new_count=0;
 INIT_COMMIT=$(git rev-list --all --max-parents=0)
@@ -49,7 +54,14 @@ padded_commit_hash=`printf '%064s' "$commit_hash"`
 export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
-gnostr --sec $padded_commit_hash -t $padded_commit_hash --tag nip_commit $commit_hash --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay wss://e.nos.lol || exit
+gnostr --sec $padded_commit_hash \
+--pow $POW \
+--tag weeble $WEEBLE \
+--tag block $BLOCK \
+--tag wobble $WOBBLE \
+-t $padded_commit_hash \
+--tag nip_commit $commit_hash \
+--content "$(git show $commit_hash || exit)" | gnostr-post-event --relay $RELAY || echo "$commit_hash failed!"
 ##echo $commit_hash;
 	#for commit_padded_hash in $(gnostr-reflog -p);do
 	##echo $commit_padded_hash;
