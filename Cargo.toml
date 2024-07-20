@@ -1,66 +1,18 @@
-[workspace]
 [package]
 name = "nips"
-version = "0.0.44"
-license = "Apache-2.0"
-rust-version = "1.73"
-edition = "2021"
-readme = "README.md"
-homepage = "https://github.com/gnostr-org/gnostr"
-repository = "https://github.com/gnostr-org/gnostr"
-documentation = "https://github.com/gnostr"
-categories = ["version-control", "development-tools", "gnostr", "nostr"]
-keywords = ["git", "gnostr", "nostr"]
-description = "git+nostr workflow utility"
-authors = ["gnostr <admin@gnostr.org>", "Mike Dilger <mike@mikedilger.com>", "DanConwayDev <DanConwayDev@protonmail.com>", "Max Inden <mail@max-inden.de>", "fiatjaf <fiatjaf@gmail.com>", "Nate Levin <natelevincycling@gmail.com>", "Nethanja Focking <nethanja@nethanja.de>", "Daniele Tonon <tonon@vitamino.it>", "jeremyd (@jeremyd)"]
-
-## =======
-## name = "web-view"
-## version = "0.7.3"
-## authors = ["Boscop", "zxey <r.hozak@seznam.cz>", "Sam Green <sam.green81@gmail.com>"]
-## readme = "README.md"
-## license = "MIT"
-## repository = "https://github.com/Boscop/web-view"
-## description = "Rust bindings for webview, a tiny cross-platform library to render web-based GUIs for desktop applications"
-## keywords = ["web", "gui", "desktop", "electron", "webkit"]
-## categories = ["gui", "web-programming", "api-bindings", "rendering", "visualization"]
-exclude = ["webview-sys/**", "webview-examples/**", ".github/**", "Cargo.lock"]
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+keywords = { workspace = true }
+readme = { workspace = true }
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-boxfnonce = "0.1"
 comrak = "0.23.0"
 include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
-indicatif = "0.17.8"
-markdown = { version = "1.0.0-alpha.17", features = ["json", "log", "serde"] }
+markdown = "1.0.0-alpha.18"
 markdown2html-converter = "1.1.12"
-#serde = { version = "1.0", features = ["derive"] }
-#serde_derive = "1.0"
-#serde_json = "1.0"
-tinyfiledialogs = "3.3"
-
-urlencoding = "1.1"
-webview-sys = { path = "webview-sys" }
-
-[build-dependencies]
-include_dir = { version = "0.7.3", features = ["glob", "metadata"] }
-markdown = "1.0.0-alpha.17"
-
-[features]
-edge = ["webview-sys/edge"]
-##edge = ["nips/edge"]
-## [workspace]
-## members = [
-##     "webview-sys",
-##     "webview-examples",
-## ]
-
-[dev-dependencies]
-actix-web = "4.0.0-beta.6"
-grep = "0.2.4"
-mime_guess = "2.0.1"
-rust-embed = "5.1.0"
-serde = "1.0"
-serde_derive = "1.0"
-serde_json = "1.0"
-tinyfiledialogs = "3.3"
-walkdir = "2.3.1"
