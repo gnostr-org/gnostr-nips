@@ -77,13 +77,14 @@ fn print_entries<const BOUND: u8>() -> () {
         let content = md_content.contents_utf8().unwrap();
         //println!("\n{}", content);
         //
-        let filename: &str = &entry.path().display().to_string();
-        let mut file = File::create(filename);
-        file.expect("REASON").write_all(b"Hello, world!");
+        //let filename: &str = &(entry.path().display().to_string() + ".html");
+        let filename: String = entry.path().display().to_string() + ".html";
+        let mut file = File::create(&filename);
+        let _ = file.expect("REASON").write_all(markdown::to_html(content).as_bytes());
 
         let mut file = File::open(filename);
         let mut contents = String::new();
-        file.expect("REASON").read_to_string(&mut contents);
+        let _ = file.expect("REASON").read_to_string(&mut contents);
         println!("{}", contents);
         println!("{}", markdown::to_html(content));
     }
