@@ -38,10 +38,11 @@ fn main() -> std::io::Result<()> {
 
     let dir = env::temp_dir();
     println!("Temporary directory: {}", dir.display());
-    let mut file = File::create("foo.txt")?;
+    let filename: &str = "foo.txt";
+    let mut file = File::create(filename)?;
     file.write_all(b"Hello, world!")?;
 
-    let mut file = File::open("foo.txt")?;
+    let mut file = File::open(filename)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
     println!("{}", contents);
