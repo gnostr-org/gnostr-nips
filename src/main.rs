@@ -33,22 +33,23 @@ fn replace_text(document: &str, orig_string: &str, replacement: &str) -> String 
     String::from_utf8(html).unwrap()
 }
 
-//fn main() {
-fn main() -> std::io::Result<()> {
+fn main() {
+//fn main() -> std::io::Result<()> {
 
     let dir = env::temp_dir();
     println!("Temporary directory: {}", dir.display());
-    let filename: &str = "foo.txt";
-    let mut file = File::create(filename)?;
-    file.write_all(b"Hello, world!")?;
 
-    let mut file = File::open(filename)?;
+    let filename: &str = "foo.txt";
+    let mut file = File::create(filename);
+    file.expect("REASON").write_all(b"Hello, world!");
+
+    let mut file = File::open(filename);
     let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+    file.expect("REASON").read_to_string(&mut contents);
     println!("{}", contents);
     assert_eq!(contents, "Hello, world!");
 
-    std::process::exit(0);
+    //std::process::exit(0);
 
     // let doc = "This is my input.\n\n1. Also [my](#) input.\n2. Certainly *my*
     // input.\n"; let orig = "my";
@@ -69,11 +70,21 @@ fn print_entries<const BOUND: u8>() -> () {
         count = count + 1;
         //println!("count={}", count);
         println!("{}", entry.path().display());
+        println!("{}", entry.path().display().to_string());
         nip_vec.push((entry.path().display()).to_string());
         //nip_vec.push("md content".to_string());
         let mut md_content = PROJECT_DIR.get_file(entry.path()).unwrap();
         let content = md_content.contents_utf8().unwrap();
         //println!("\n{}", content);
+        //
+        let filename: &str = &entry.path().display().to_string();
+        let mut file = File::create(filename);
+        file.expect("REASON").write_all(b"Hello, world!");
+
+        let mut file = File::open(filename);
+        let mut contents = String::new();
+        file.expect("REASON").read_to_string(&mut contents);
+        println!("{}", contents);
         println!("{}", markdown::to_html(content));
     }
 
