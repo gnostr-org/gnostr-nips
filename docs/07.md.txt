@@ -22,16 +22,12 @@ implemented optionally:
     async window.nostr.nip44.encrypt(pubkey, plaintext): string // returns ciphertext as specified in nip-44
     async window.nostr.nip44.decrypt(pubkey, ciphertext): string // takes ciphertext as specified in nip-44
 
-User experience recommendation
+Recommendation to Extension Authors
 
-Due to the way browsers load the extensions, it may take some time for
-window.nostr object will be fully ready to accept requests. Hence, it is
-a good idea to run the first window.nostr interaction on a user action
-on the web page (like a button click), and not during the page load.
-
-Calling the window.nostr based methods during the page load runs the
-risk of intermittent issues due to race conditions between the client
-page&rsquo;s script and the extension&rsquo;s script
+To make sure that the window.nostr is available to nostr clients on page
+load, the authors who create Chromium and Firefox extensions should load
+their scripts by specifying "run_at": "document_end" in the
+extension&rsquo;s manifest.
 
 Implementation
 
