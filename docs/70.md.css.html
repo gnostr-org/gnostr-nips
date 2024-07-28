@@ -181,11 +181,9 @@ just rejecting events with <code>["-"]</code> outright.</p>
 <p>The default behavior of a relay MUST be to reject any event that
 contains <code>["-"]</code>.</p>
 <p>Relays that want to accept such events MUST first require that the
-client perform the <a
-href="https://github.com/nostr-protocol/nips/blob/master/42.md.css.html">NIP-42</a>
-<code>AUTH</code> flow and then check if the authenticated client has
-the same pubkey as the event being published and only accept the event
-in that case.</p>
+client perform the <a href="42.md.css.html">NIP-42</a> <code>AUTH</code> flow and
+then check if the authenticated client has the same pubkey as the event
+being published and only accept the event in that case.</p>
 <h2 id="the-tag">The tag</h2>
 <p>The tag is a simple tag with a single item: <code>["-"]</code>. It
 may be added to any event.</p>
