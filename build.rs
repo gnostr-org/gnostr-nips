@@ -35,4 +35,6 @@ fn main() {
         .args(&["rebase", "upstream/master"])
         .status()
         .unwrap();
+
+    Command::new("./script.sh");
 }
