@@ -1,3 +1,238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>96</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
 <h1 id="nip-96">NIP-96</h1>
 <h2 id="http-file-storage-integration">HTTP File Storage
 Integration</h2>
@@ -62,14 +297,14 @@ opt-in by making available an https route at
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="relay-hints">Relay Hints</h3>
 <p>Note: This section is not meant to be used by HTTP Servers.</p>
-<p>A nostr relay MAY redirect to someone else&#x2019;s HTTP file storage server
+<p>A nostr relay MAY redirect to someone else’s HTTP file storage server
 by adding a <code>/.well-known/nostr/nip96.json</code> with
-&#x201C;delegated_to_url&#x201D; field pointing to the url where the server hosts its
+“delegated_to_url” field pointing to the url where the server hosts its
 own <code>/.well-known/nostr/nip96.json</code>. In this case, the
-&#x201C;api_url&#x201D; field must be an empty string and all other fields must be
+“api_url” field must be an empty string and all other fields must be
 absent.</p>
 <p>If the nostr relay is also an HTTP file storage server, it must use
-the &#x201C;api_url&#x201D; field instead.</p>
+the “api_url” field instead.</p>
 <h3 id="list-of-supporting-file-storage-servers">List of Supporting File
 Storage Servers</h3>
 <p>See
@@ -89,30 +324,30 @@ hash of the whole request body).</p>
 <li><code>caption</code>: <strong>RECOMMENDED</strong> loose
 description;</li>
 <li><code>expiration</code>: UNIX timestamp in seconds. Empty string if
-file should be stored forever. The server isn&#x2019;t required to honor
+file should be stored forever. The server isn’t required to honor
 this.</li>
 <li><code>size</code>: File byte size. This is just a value the server
 can use to reject early if the file size exceeds the server limits.</li>
 <li><code>alt</code>: <strong>RECOMMENDED</strong> strict description
 text for visibility-impaired users.</li>
-<li><code>media_type</code>: &#x201C;avatar&#x201D; or &#x201C;banner&#x201D;. Informs the server if
+<li><code>media_type</code>: “avatar” or “banner”. Informs the server if
 the file will be used as an avatar or banner. If absent, the server will
 interpret it as a normal upload, without special treatment.</li>
-<li><code>content_type</code>: mime type such as &#x201C;image/jpeg&#x201D;. This is
-just a value the server can use to reject early if the mime type isn&#x2019;t
+<li><code>content_type</code>: mime type such as “image/jpeg”. This is
+just a value the server can use to reject early if the mime type isn’t
 supported.</li>
-<li><code>no_transform</code>: &#x201C;true&#x201D; asks server not to transform the
+<li><code>no_transform</code>: “true” asks server not to transform the
 file and serve the uploaded file as is, may be rejected.</li>
 </ul>
 <p>Others custom form data fields may be used depending on specific
-<code>server</code> support. The <code>server</code> isn&#x2019;t required to
+<code>server</code> support. The <code>server</code> isn’t required to
 store any metadata sent by <code>clients</code>.</p>
 <p>The <code>filename</code> embedded in the file may not be honored by
 the <code>server</code>, which could internally store just the SHA-256
 hash value as the file name, ignoring extra metadata. The hash is enough
-to uniquely identify a file, that&#x2019;s why it will be used on the
+to uniquely identify a file, that’s why it will be used on the
 <code>download</code> and <code>delete</code> routes.</p>
-<p>The <code>server</code> MUST link the user&#x2019;s <code>pubkey</code>
+<p>The <code>server</code> MUST link the user’s <code>pubkey</code>
 string as the owner of the file so to later allow them to delete the
 file.</p>
 <p><code>no_transform</code> can be used to replicate a file to multiple
@@ -185,13 +420,13 @@ server, <strong>this flow is undefined</strong>.</li>
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
 <span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ... other custom fields (please consider adding them to this NIP or to NIP-94 tags)</span></span>
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Note that if the server didn&#x2019;t apply any transformation to the
+<p>Note that if the server didn’t apply any transformation to the
 received file, both <code>nip94_event.tags.*.ox</code> and
 <code>nip94_event.tags.*.x</code> fields will have the same value. The
 server MUST link the saved file to the SHA-256 hash of the
 <strong>original</strong> file before any server transformations (the
 <code>nip94_event.tags.*.ox</code> tag value). The
-<strong>original</strong> file&#x2019;s SHA-256 hash will be used to identify
+<strong>original</strong> file’s SHA-256 hash will be used to identify
 the saved file when downloading or deleting it.</p>
 <p><code>clients</code> may upload the same file to one or many
 <code>servers</code>. After successful upload, the <code>client</code>
@@ -205,20 +440,20 @@ share or embed on a nostr note just the above url.</p>
 <p>Sometimes the server may want to place the uploaded file in a
 processing queue for deferred file processing.</p>
 <p>In that case, the server MUST serve the original file while the
-processing isn&#x2019;t done, then swap the original file for the processed one
+processing isn’t done, then swap the original file for the processed one
 when the processing is over. The upload response is the same as usual
 but some optional metadata like <code>nip94_event.tags.*.x</code> and
-<code>nip94_event.tags.*.size</code> won&#x2019;t be available.</p>
+<code>nip94_event.tags.*.size</code> won’t be available.</p>
 <p>The expected resulting metadata that is known in advance should be
 returned on the response. For example, if the file processing would
-change a file from &#x201C;jpg&#x201D; to &#x201C;webp&#x201D;, use &#x201C;.webp&#x201D; extension on the
-<code>nip94_event.tags.*.url</code> field value and set &#x201C;image/webp&#x201D; to
+change a file from “jpg” to “webp”, use “.webp” extension on the
+<code>nip94_event.tags.*.url</code> field value and set “image/webp” to
 the <code>nip94_event.tags.*.m</code> field. If some metadata are
 unknown before processing ends, omit them from the response.</p>
 <p>The upload response MAY include a <code>processing_url</code> field
 informing a temporary url that may be used by clients to check if the
 file processing is done.</p>
-<p>If the processing isn&#x2019;t done, the server should reply at the
+<p>If the processing isn’t done, the server should reply at the
 <code>processing_url</code> url with <strong>200 OK</strong> and the
 following JSON:</p>
 <pre><code>{
@@ -232,7 +467,7 @@ following JSON:</p>
 and a regular successful JSON response already mentioned before (now
 <strong>without</strong> a <code>processing_url</code> field), possibly
 including optional metadata at <code>nip94_event.tags.*</code> fields
-that weren&#x2019;t available before processing.</p>
+that weren’t available before processing.</p>
 <h3 id="file-compression">File compression</h3>
 <p>File compression and other transformations like metadata stripping
 can be applied by the server. However, for all file actions, such as
@@ -240,28 +475,28 @@ download and deletion, the <strong>original</strong> file SHA-256 hash
 is what identifies the file in the url string.</p>
 <h2 id="download">Download</h2>
 <p><code>GET $api_url/&lt;sha256-hash&gt;(.ext)</code></p>
-<p>The primary file download url informed at the upload&#x2019;s response field
+<p>The primary file download url informed at the upload’s response field
 <code>nip94_event.tags.*.url</code> can be that or not (it can be any
 non-standard url the server wants). If not, the server still MUST also
 respond to downloads at the standard url mentioned on the previous
 paragraph, to make it possible for a client to try downloading a file on
 any NIP-96 compatible server by knowing just the SHA-256 file hash.</p>
-<p>Note that the &#x201C;&lt;sha256-hash&gt;&#x201D; part is from the
+<p>Note that the “&lt;sha256-hash&gt;” part is from the
 <strong>original</strong> file, <strong>not</strong> from the
 <strong>transformed</strong> file if the uploaded file went through any
 server transformation.</p>
-<p>Supporting &#x201C;.ext&#x201D;, meaning &#x201C;file extension&#x201D;, is required for
+<p>Supporting “.ext”, meaning “file extension”, is required for
 <code>servers</code>. It is optional, although recommended, for
 <code>clients</code> to append it to the path. When present it may be
 used by <code>servers</code> to know which <code>Content-Type</code>
-header to send (e.g.: &#x201C;Content-Type&#x201D;: &#x201C;image/png&#x201D; for &#x201C;.png&#x201D; extension).
+header to send (e.g.: “Content-Type”: “image/png” for “.png” extension).
 The file extension may be absent because the hash is the only needed
 string to uniquely identify a file.</p>
 <p>Example:
 <code>$api_url/719171db19525d9d08dd69cb716a18158a249b7b3b3ec4bbdec5698dca104b7b.png</code></p>
 <h3 id="media-transformations">Media Transformations</h3>
 <p><code>servers</code> may respond to some media transformation query
-parameters and ignore those they don&#x2019;t support by serving the original
+parameters and ignore those they don’t support by serving the original
 media file without transformations.</p>
 <h4 id="image-transformations">Image Transformations</h4>
 <h5 id="resizing">Resizing</h5>
@@ -286,7 +521,7 @@ the original uploader with the appropriate http response code (403
 Forbidden).</p>
 <p>It should be noted that more than one user may have uploaded the same
 file (with the same hash). In this case, a delete must not really delete
-the file but just remove the user&#x2019;s <code>pubkey</code> from the file
+the file but just remove the user’s <code>pubkey</code> from the file
 owners list (considering the server keeps just one copy of the same
 file, because multiple uploads of the same file results in the same file
 hash).</p>
@@ -342,3 +577,5 @@ Servers are listed as <code>server</code> tags:</p>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;server&quot;</span><span class="op">,</span> <span class="st">&quot;https://file.server.two&quot;</span>]</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  ]</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</body>
+</html>

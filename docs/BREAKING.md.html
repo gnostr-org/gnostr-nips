@@ -1,3 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>BREAKING</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
 <h1 id="breaking-changes">Breaking Changes</h1>
 <p>This is a history of NIP changes that potentially break pre-existing
 implementations, in reverse chronological order.</p>
@@ -52,7 +223,7 @@ href="https://github.com/nostr-protocol/nips/commit/a6dfc7b5">a6dfc7b5</a></td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/5d1d1c17">5d1d1c17</a></td>
 <td><a href="71.md.html">NIP-71</a></td>
-<td>&#x2018;aes-256-gcm&#x2019; tag was removed</td>
+<td>‘aes-256-gcm’ tag was removed</td>
 </tr>
 <tr>
 <td>2024-05-07</td>
@@ -66,7 +237,7 @@ href="https://github.com/nostr-protocol/nips/commit/8073c848">8073c848</a></td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/bad88262">bad88262</a></td>
 <td><a href="34.md.html">NIP-34</a></td>
-<td>&#x2018;earliest-unique-commit&#x2019; tag was removed (use &#x2018;r&#x2019; tag instead)</td>
+<td>‘earliest-unique-commit’ tag was removed (use ‘r’ tag instead)</td>
 </tr>
 <tr>
 <td>2024-02-25</td>
@@ -108,7 +279,7 @@ href="https://github.com/nostr-protocol/nips/commit/d3dad114">d3dad114</a></td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/1a2b21b6">1a2b21b6</a></td>
 <td><a href="59.md.html">NIP-59</a></td>
-<td>&#x2018;p&#x2019; tag became optional</td>
+<td>‘p’ tag became optional</td>
 </tr>
 <tr>
 <td>2023-01-27</td>
@@ -136,21 +307,21 @@ href="https://github.com/nostr-protocol/nips/commit/3d8652ea">3d8652ea</a></td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/29869821">29869821</a></td>
 <td><a href="52.md.html">NIP-52</a></td>
-<td>&#x2018;name&#x2019; tag was removed (use &#x2018;title&#x2019; tag instead)</td>
+<td>‘name’ tag was removed (use ‘title’ tag instead)</td>
 </tr>
 <tr>
 <td>2023-12-27</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/17c67ef5">17c67ef5</a></td>
 <td><a href="94.md.html">NIP-94</a></td>
-<td>&#x2018;aes-256-gcm&#x2019; tag was removed</td>
+<td>‘aes-256-gcm’ tag was removed</td>
 </tr>
 <tr>
 <td>2023-12-03</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/0ba45895">0ba45895</a></td>
 <td><a href="01.md.html">NIP-01</a></td>
-<td>WebSocket status code <code>4000</code> was replaced by &#x2018;CLOSED&#x2019;
+<td>WebSocket status code <code>4000</code> was replaced by ‘CLOSED’
 message</td>
 </tr>
 <tr>
@@ -158,7 +329,7 @@ message</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/6de35f9e">6de35f9e</a></td>
 <td><a href="89.md.html">NIP-89</a></td>
-<td>&#x2018;client&#x2019; tag value was changed</td>
+<td>‘client’ tag value was changed</td>
 </tr>
 <tr>
 <td>2023-11-20</td>
@@ -173,42 +344,42 @@ deprecated</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/cbdca1e9">cbdca1e9</a></td>
 <td><a href="84.md.html">NIP-84</a></td>
-<td>&#x2018;range&#x2019; tag was removed</td>
+<td>‘range’ tag was removed</td>
 </tr>
 <tr>
 <td>2023-11-10</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/c945d8bd">c945d8bd</a></td>
 <td><a href="32.md.html">NIP-32</a></td>
-<td>&#x2018;l&#x2019; tag annotations was removed</td>
+<td>‘l’ tag annotations was removed</td>
 </tr>
 <tr>
 <td>2023-11-07</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/108b7f16">108b7f16</a></td>
 <td><a href="01.md.html">NIP-01</a></td>
-<td>&#x2018;OK&#x2019; message must have 4 items</td>
+<td>‘OK’ message must have 4 items</td>
 </tr>
 <tr>
 <td>2023-10-17</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/cf672b76">cf672b76</a></td>
 <td><a href="03.md.html">NIP-03</a></td>
-<td>&#x2018;block&#x2019; tag was removed</td>
+<td>‘block’ tag was removed</td>
 </tr>
 <tr>
 <td>2023-09-29</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/7dc6385f">7dc6385f</a></td>
 <td><a href="57.md.html">NIP-57</a></td>
-<td>optional &#x2018;a&#x2019; tag was included in <code>zap receipt</code></td>
+<td>optional ‘a’ tag was included in <code>zap receipt</code></td>
 </tr>
 <tr>
 <td>2023-08-21</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/89915e02">89915e02</a></td>
 <td><a href="11.md.html">NIP-11</a></td>
-<td>&#x2018;min_prefix&#x2019; was removed</td>
+<td>‘min_prefix’ was removed</td>
 </tr>
 <tr>
 <td>2023-08-20</td>
@@ -223,7 +394,7 @@ lowest id</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/88ee873c">88ee873c</a></td>
 <td><a href="15.md.html">NIP-15</a></td>
-<td>&#x2018;countries&#x2019; tag was renamed to &#x2018;regions&#x2019;</td>
+<td>‘countries’ tag was renamed to ‘regions’</td>
 </tr>
 <tr>
 <td>2023-08-14</td>
@@ -258,14 +429,14 @@ href="https://github.com/nostr-protocol/nips/commit/72bb8a12">72bb8a12</a></td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/d87f8617">d87f8617</a></td>
 <td><a href="25.md.html">NIP-25</a></td>
-<td>empty <code>content</code> should be considered as &#x201C;+&#x201D;</td>
+<td>empty <code>content</code> should be considered as “+”</td>
 </tr>
 <tr>
 <td>2023-08-01</td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/5d63b157">5d63b157</a></td>
 <td><a href="57.md.html">NIP-57</a></td>
-<td>&#x2018;zap&#x2019; tag was changed</td>
+<td>‘zap’ tag was changed</td>
 </tr>
 <tr>
 <td>2023-07-15</td>
@@ -287,7 +458,7 @@ href="https://github.com/nostr-protocol/nips/commit/a1cd2bd8">a1cd2bd8</a></td>
 <td><a
 href="https://github.com/nostr-protocol/nips/commit/83cbd3e1">83cbd3e1</a></td>
 <td><a href="11.md.html">NIP-11</a></td>
-<td>&#x2018;image&#x2019; was renamed to &#x2018;icon&#x2019;</td>
+<td>‘image’ was renamed to ‘icon’</td>
 </tr>
 <tr>
 <td>2023-04-13</td>
@@ -315,7 +486,9 @@ href="https://github.com/nostr-protocol/nips/commit/e1004d3d">e1004d3d</a></td>
 <p>Breaking changes prior to 2023-03-01 are not yet documented.</p>
 <h2 id="notes">NOTES</h2>
 <ul>
-<li>If it isn&#x2019;t clear that a change is breaking or not, we list it.</li>
+<li>If it isn’t clear that a change is breaking or not, we list it.</li>
 <li>The date is the date it was merged, not necessarily the date of the
 commit.</li>
 </ul>
+</body>
+</html>

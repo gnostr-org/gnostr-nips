@@ -1,3 +1,238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
 <h1 id="nip-01">NIP-01</h1>
 <h2 id="basic-protocol-flow-description">Basic protocol flow
 description</h2>
@@ -94,10 +329,10 @@ by using the
 filter.</p>
 <h3 id="kinds">Kinds</h3>
 <p>Kinds specify how clients should interpret the meaning of each event
-and the other fields of each event (e.g.&#xA0;an <code>"r"</code> tag may
+and the other fields of each event (e.g. an <code>"r"</code> tag may
 have a meaning in an event of kind 1 and an entirely different meaning
 in an event of kind 10002). Each NIP may define the meaning of a set of
-kinds that weren&#x2019;t defined elsewhere. This NIP defines two basic
+kinds that weren’t defined elsewhere. This NIP defines two basic
 kinds:</p>
 <ul>
 <li><code>0</code>: <strong>user metadata</strong>: the
@@ -117,7 +352,7 @@ experimentation and flexibility of relay implementation:</p>
 <ul>
 <li>for kind <code>n</code> such that
 <code>1000 &lt;= n &lt; 10000 || 4 &lt;= n &lt; 45 || n == 1 || n == 2</code>,
-events are <strong>regular</strong>, which means they&#x2019;re all expected to
+events are <strong>regular</strong>, which means they’re all expected to
 be stored by relays.</li>
 <li>for kind <code>n</code> such that
 <code>10000 &lt;= n &lt; 20000 || n == 0 || n == 3</code>, events are
@@ -131,7 +366,7 @@ stored by relays.</li>
 <li>for kind <code>n</code> such that
 <code>30000 &lt;= n &lt; 40000</code>, events are <strong>parameterized
 replaceable</strong>, which means that, for each combination of
-<code>pubkey</code>, <code>kind</code> and the <code>d</code> tag&#x2019;s
+<code>pubkey</code>, <code>kind</code> and the <code>d</code> tag’s
 first value, only the latest event MUST be stored by relays, older
 versions MAY be discarded.</li>
 </ul>
@@ -176,7 +411,7 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ids&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">event</span> <span class="er">ids&gt;</span><span class="fu">,</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;authors&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">lowercase</span> <span class="er">pubkeys</span><span class="fu">,</span> <span class="er">the</span> <span class="er">pubkey</span> <span class="er">of</span> <span class="er">an</span> <span class="er">event</span> <span class="er">must</span> <span class="er">be</span> <span class="er">one</span> <span class="er">of</span> <span class="er">these&gt;</span><span class="fu">,</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">a</span> <span class="er">kind</span> <span class="er">numbers&gt;</span><span class="fu">,</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;#&lt;single-letter (a-zA-Z)&gt;&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">tag</span> <span class="er">values</span><span class="fu">,</span> <span class="er">for</span> <span class="er">#e</span> <span class="er">&#x2014;</span> <span class="er">a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">event</span> <span class="er">ids</span><span class="fu">,</span> <span class="er">for</span> <span class="er">#p</span> <span class="er">&#x2014;</span> <span class="er">a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">pubkeys</span><span class="fu">,</span> <span class="er">etc.&gt;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;#&lt;single-letter (a-zA-Z)&gt;&quot;</span><span class="fu">:</span> <span class="er">&lt;a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">tag</span> <span class="er">values</span><span class="fu">,</span> <span class="er">for</span> <span class="er">#e</span> <span class="er">—</span> <span class="er">a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">event</span> <span class="er">ids</span><span class="fu">,</span> <span class="er">for</span> <span class="er">#p</span> <span class="er">—</span> <span class="er">a</span> <span class="er">list</span> <span class="er">of</span> <span class="er">pubkeys</span><span class="fu">,</span> <span class="er">etc.&gt;</span><span class="fu">,</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;since&quot;</span><span class="fu">:</span> <span class="er">&lt;an</span> <span class="er">integer</span> <span class="er">unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds.</span> <span class="er">Events</span> <span class="er">must</span> <span class="er">have</span> <span class="er">a</span> <span class="er">created_at</span> <span class="er">&gt;=</span> <span class="er">to</span> <span class="er">this</span> <span class="er">to</span> <span class="er">pass&gt;</span><span class="fu">,</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;until&quot;</span><span class="fu">:</span> <span class="er">&lt;an</span> <span class="er">integer</span> <span class="er">unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds.</span> <span class="er">Events</span> <span class="er">must</span> <span class="er">have</span> <span class="er">a</span> <span class="er">created_at</span> <span class="er">&lt;=</span> <span class="er">to</span> <span class="er">this</span> <span class="er">to</span> <span class="er">pass&gt;</span><span class="fu">,</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;limit&quot;</span><span class="fu">:</span> <span class="er">&lt;maximum</span> <span class="er">number</span> <span class="er">of</span> <span class="er">events</span> <span class="er">relays</span> <span class="er">SHOULD</span> <span class="er">return</span> <span class="er">in</span> <span class="er">the</span> <span class="er">initial</span> <span class="er">query&gt;</span></span>
@@ -192,7 +427,7 @@ the previous subscription.</p>
 <p>Filter attributes containing lists (<code>ids</code>,
 <code>authors</code>, <code>kinds</code> and tag filters like
 <code>#e</code>) are JSON arrays with one or more values. At least one
-of the arrays&#x2019; values must match the relevant field in an event for the
+of the arrays’ values must match the relevant field in an event for the
 condition to be considered a match. For scalar event attributes such as
 <code>authors</code> and <code>kind</code>, the attribute from the event
 must be contained in the filter list. In the case of tag attributes such
@@ -225,7 +460,7 @@ will be the last <code>n</code> events ordered by the
 case of ties the event with the lowest id (first in lexical order)
 should be first. It is safe to return less events than
 <code>limit</code> specifies, but it is expected that relays do not
-return (much) more events than requested so clients don&#x2019;t get
+return (much) more events than requested so clients don’t get
 unnecessarily overwhelmed by data.</p>
 <h3 id="from-relay-to-client-sending-events-and-notices">From relay to
 client: sending events and notices</h3>
@@ -287,3 +522,5 @@ prefix and human-readable message. Some examples:
 <code>blocked</code>, <code>rate-limited</code>, <code>invalid</code>,
 and <code>error</code> for when none of that fits.</li>
 </ul>
+</body>
+</html>
