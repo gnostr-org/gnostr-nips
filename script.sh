@@ -11,6 +11,13 @@ case "$OSTYPE" in
 esac
 
 docs() {
+
+mkdir -p docs
+touch docs/index.html
+
+pandoc -s           README.md | \
+sed 's/.md/.md.html/g'   > docs/index.html;
+
 for doc in $(ls *.md);do \
 echo $doc; \
 pandoc --ascii           $doc | \
