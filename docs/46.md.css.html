@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>46</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="nip-46---nostr-remote-signing">NIP-46 - Nostr Remote
+Signing</h1>
+<h2 id="rationale">Rationale</h2>
+<p>Private keys should be exposed to as few systems - apps, operating
+systems, devices - as possible as each system adds to the attack
+surface.</p>
+<p>This NIP describes a method for 2-way communication between a remote
+signer and a Nostr client. The remote signer could be, for example, a
+hardware device dedicated to signing Nostr events, while the client is a
+normal Nostr client.</p>
+<h2 id="terminology">Terminology</h2>
+<ul>
+<li><strong>Local keypair</strong>: A local public and private key-pair
+used to encrypt content and communicate with the remote signer. Usually
+created by the client application.</li>
+<li><strong>Remote user pubkey</strong>: The public key that the user
+wants to sign as. The remote signer has control of the private key that
+matches this public key.</li>
+<li><strong>Remote signer pubkey</strong>: This is the public key of the
+remote signer itself. This is needed in both <code>create_account</code>
+command because you don’t yet have a remote user pubkey.</li>
+</ul>
+<p>All pubkeys specified in this NIP are in hex format.</p>
+<h2 id="initiating-a-connection">Initiating a connection</h2>
+<p>To initiate a connection between a client and a remote signer there
+are a few different options.</p>
+<h3 id="direct-connection-initiated-by-remote-signer">Direct connection
+initiated by remote signer</h3>
+<p>This is most common in a situation where you have your own nsecbunker
+or other type of remote signer and want to connect through a client that
+supports remote signing.</p>
+<p>The remote signer would provide a connection token in the form:</p>
+<pre><code>bunker://&lt;remote-user-pubkey&gt;?relay=&lt;wss://relay-to-connect-on&gt;&amp;relay=&lt;wss://another-relay-to-connect-on&gt;&amp;secret=&lt;optional-secret-value&gt;</code></pre>
+<p>This token is pasted into the client by the user and the client then
+uses the details to connect to the remote signer via the specified
+relay(s). Optional secret can be used for single successfully
+established connection only, remote signer SHOULD ignore new attempts to
+establish connection with old optional secret.</p>
+<h3 id="direct-connection-initiated-by-the-client">Direct connection
+initiated by the client</h3>
+<p>In this case, basically the opposite direction of the first case, the
+client provides a connection token (or encodes the token in a QR code)
+and the signer initiates a connection to the client via the specified
+relay(s).</p>
+<pre><code>nostrconnect://&lt;local-keypair-pubkey&gt;?relay=&lt;wss://relay-to-connect-on&gt;&amp;metadata=&lt;json metadata in the form: {&quot;name&quot;:&quot;...&quot;, &quot;url&quot;: &quot;...&quot;, &quot;description&quot;: &quot;...&quot;}&gt;</code></pre>
+<h2 id="the-flow">The flow</h2>
+<ol type="1">
+<li>Client creates a local keypair. This keypair doesn’t need to be
+communicated to the user since it’s largely disposable (i.e. the user
+doesn’t need to see this pubkey). Clients might choose to store it
+locally and they should delete it when the user logs out.</li>
+<li>Client gets the remote user pubkey (either via a
+<code>bunker://</code> connection string or a NIP-05 login-flow; shown
+below)</li>
+<li>Clients use the local keypair to send requests to the remote signer
+by <code>p</code>-tagging and encrypting to the remote user pubkey.</li>
+<li>The remote signer responds to the client by <code>p</code>-tagging
+and encrypting to the local keypair pubkey.</li>
+</ol>
+<h3 id="example-flow-for-signing-an-event">Example flow for signing an
+event</h3>
+<ul>
+<li>Remote user pubkey (e.g. signing as)
+<code>fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52</code></li>
+<li>Local pubkey is
+<code>eff37350d839ce3707332348af4549a96051bd695d3223af4aabce4993531d86</code></li>
+</ul>
+<h4 id="signature-request">Signature request</h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">24133</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;eff37350d839ce3707332348af4549a96051bd695d3223af4aabce4993531d86&quot;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">nip04(</span><span class="fu">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;random_string&gt;</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;method&quot;</span><span class="fu">:</span> <span class="st">&quot;sign_event&quot;</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;params&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">json_stringified(&lt;</span><span class="fu">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="er">content</span><span class="fu">:</span> <span class="st">&quot;Hello, I&#39;m signing remotely&quot;</span><span class="fu">,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>            <span class="er">kind</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            <span class="er">tags</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>            <span class="er">created_at</span><span class="fu">:</span> <span class="dv">1714078911</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="er">&gt;)</span><span class="ot">]</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="er">)</span><span class="fu">,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52&quot;</span><span class="ot">]]</span><span class="fu">,</span> <span class="er">//</span> <span class="er">p-tags</span> <span class="er">the</span> <span class="er">remote</span> <span class="er">user</span> <span class="er">pubkey</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="response-event">Response event</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">24133</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52&quot;</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">nip04(</span><span class="fu">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;random_string&gt;</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="er">json_stringified(&lt;signed-event&gt;)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="er">)</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;eff37350d839ce3707332348af4549a96051bd695d3223af4aabce4993531d86&quot;</span><span class="ot">]]</span><span class="fu">,</span> <span class="er">//</span> <span class="er">p-tags</span> <span class="er">the</span> <span class="er">local</span> <span class="er">keypair</span> <span class="er">pubkey</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="diagram">Diagram</h4>
+<figure>
+<img src="https://i.nostr.build/P3gW.png" alt="signing-example" />
+<figcaption aria-hidden="true">signing-example</figcaption>
+</figure>
+<h2 id="request-events-kind-24133">Request Events
+<code>kind: 24133</code></h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;id&gt;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">24133</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="er">&lt;local_keypair_pubkey&gt;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">&lt;nip04(&lt;request&gt;)&gt;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;remote_user_pubkey&gt;</span><span class="ot">]]</span><span class="fu">,</span> <span class="er">//</span> <span class="er">NB</span><span class="fu">:</span> <span class="er">in</span> <span class="er">the</span> <span class="er">`create_account`</span> <span class="er">event</span><span class="fu">,</span> <span class="er">the</span> <span class="er">remote</span> <span class="er">signer</span> <span class="er">pubkey</span> <span class="er">should</span> <span class="er">be</span> <span class="er">`p`</span> <span class="er">tagged.</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="er">&lt;unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>The <code>content</code> field is a JSON-RPC-like message that is <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>
+encrypted and has the following structure:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;random_string&gt;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;method&quot;</span><span class="fu">:</span> <span class="er">&lt;method_name&gt;</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;params&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">array_of_strings</span><span class="ot">]</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>id</code> is a random string that is a request ID. This same
+ID will be sent back in the response payload.</li>
+<li><code>method</code> is the name of the method/command (detailed
+below).</li>
+<li><code>params</code> is a positional array of string parameters.</li>
+</ul>
+<h3 id="methodscommands">Methods/Commands</h3>
+<p>Each of the following are methods that the client sends to the remote
+signer.</p>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 34%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>Params</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>connect</code></td>
+<td><code>[&lt;remote_user_pubkey&gt;, &lt;optional_secret&gt;, &lt;optional_requested_permissions&gt;]</code></td>
+<td>“ack”</td>
+</tr>
+<tr class="even">
+<td><code>sign_event</code></td>
+<td><code>[&lt;{kind, content, tags, created_at}&gt;]</code></td>
+<td><code>json_stringified(&lt;signed_event&gt;)</code></td>
+</tr>
+<tr class="odd">
+<td><code>ping</code></td>
+<td><code>[]</code></td>
+<td>“pong”</td>
+</tr>
+<tr class="even">
+<td><code>get_relays</code></td>
+<td><code>[]</code></td>
+<td><code>json_stringified({&lt;relay_url&gt;: {read: &lt;boolean&gt;, write: &lt;boolean&gt;}})</code></td>
+</tr>
+<tr class="odd">
+<td><code>get_public_key</code></td>
+<td><code>[]</code></td>
+<td><code>&lt;hex-pubkey&gt;</code></td>
+</tr>
+<tr class="even">
+<td><code>nip04_encrypt</code></td>
+<td><code>[&lt;third_party_pubkey&gt;, &lt;plaintext_to_encrypt&gt;]</code></td>
+<td><code>&lt;nip04_ciphertext&gt;</code></td>
+</tr>
+<tr class="odd">
+<td><code>nip04_decrypt</code></td>
+<td><code>[&lt;third_party_pubkey&gt;, &lt;nip04_ciphertext_to_decrypt&gt;]</code></td>
+<td><code>&lt;plaintext&gt;</code></td>
+</tr>
+<tr class="even">
+<td><code>nip44_encrypt</code></td>
+<td><code>[&lt;third_party_pubkey&gt;, &lt;plaintext_to_encrypt&gt;]</code></td>
+<td><code>&lt;nip44_ciphertext&gt;</code></td>
+</tr>
+<tr class="odd">
+<td><code>nip44_decrypt</code></td>
+<td><code>[&lt;third_party_pubkey&gt;, &lt;nip44_ciphertext_to_decrypt&gt;]</code></td>
+<td><code>&lt;plaintext&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="requested-permissions">Requested permissions</h3>
+<p>The <code>connect</code> method may be provided with
+<code>optional_requested_permissions</code> for user convenience. The
+permissions are a comma-separated list of <code>method[:params]</code>,
+i.e. <code>nip04_encrypt,sign_event:4</code> meaning permissions to call
+<code>nip04_encrypt</code> and to call <code>sign_event</code> with
+<code>kind:4</code>. Optional parameter for <code>sign_event</code> is
+the kind number, parameters for other methods are to be defined
+later.</p>
+<h2 id="response-events-kind24133">Response Events
+<code>kind:24133</code></h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;id&gt;</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">24133</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="er">&lt;remote_signer_pubkey&gt;</span><span class="fu">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="er">&lt;nip04(&lt;response&gt;)&gt;</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;local_keypair_pubkey&gt;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="er">&lt;unix</span> <span class="er">timestamp</span> <span class="er">in</span> <span class="er">seconds&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>The <code>content</code> field is a JSON-RPC-like message that is <a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04</a>
+encrypted and has the following structure:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;request_id&gt;</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="er">&lt;results_string&gt;</span><span class="fu">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="er">&lt;optional_error_string&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>id</code> is the request ID that this response is for.</li>
+<li><code>results</code> is a string of the result of the call (this can
+be either a string or a JSON stringified object)</li>
+<li><code>error</code>, <em>optionally</em>, it is an error in string
+form, if any. Its presence indicates an error with the request.</li>
+</ul>
+<h3 id="auth-challenges">Auth Challenges</h3>
+<p>An Auth Challenge is a response that a remote signer can send back
+when it needs the user to authenticate via other means. This is
+currently used in the OAuth-like flow enabled by signers like <a
+href="https://github.com/kind-0/nsecbunkerd/">Nsecbunker</a>. The
+response <code>content</code> object will take the following form:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="er">&lt;request_id&gt;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;auth_url&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="er">&lt;URL_to_display_to_end_user&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Clients should display (in a popup or new tab) the URL from the
+<code>error</code> field and then subscribe/listen for another response
+from the remote signer (reusing the same request ID). This event will be
+sent once the user authenticates in the other window (or will never
+arrive if the user doesn’t authenticate). It’s also possible to add a
+<code>redirect_uri</code> url parameter to the auth_url, which is
+helpful in situations when a client cannot open a new window or tab to
+display the auth challenge.</p>
+<h4 id="example-event-signing-request-with-auth-challenge">Example event
+signing request with auth challenge</h4>
+<figure>
+<img src="https://i.nostr.build/W3aj.png"
+alt="signing-example-with-auth-challenge" />
+<figcaption
+aria-hidden="true">signing-example-with-auth-challenge</figcaption>
+</figure>
+<h2 id="remote-signer-commands">Remote Signer Commands</h2>
+<p>Remote signers might support additional commands when communicating
+directly with it. These commands follow the same flow as noted above,
+the only difference is that when the client sends a request event, the
+<code>p</code>-tag is the pubkey of the remote signer itself and the
+<code>content</code> payload is encrypted to the same remote signer
+pubkey.</p>
+<h3 id="methodscommands-1">Methods/Commands</h3>
+<p>Each of the following are methods that the client sends to the remote
+signer.</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 44%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>Params</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>create_account</code></td>
+<td><code>[&lt;username&gt;, &lt;domain&gt;, &lt;optional_email&gt;, &lt;optional_requested_permissions&gt;]</code></td>
+<td><code>&lt;newly_created_remote_user_pubkey&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix">Appendix</h2>
+<h3 id="nip-05-login-flow">NIP-05 Login Flow</h3>
+<p>Clients might choose to present a more familiar login flow, so users
+can type a NIP-05 address instead of a <code>bunker://</code>
+string.</p>
+<p>When the user types a NIP-05 the client:</p>
+<ul>
+<li>Queries the <code>/.well-known/nostr.json</code> file from the
+domain for the NIP-05 address provided to get the user’s pubkey (this is
+the <strong>remote user pubkey</strong>)</li>
+<li>In the same <code>/.well-known/nostr.json</code> file, queries for
+the <code>nip46</code> key to get the relays that the remote signer will
+be listening on.</li>
+<li>Now the client has enough information to send commands to the remote
+signer on behalf of the user.</li>
+</ul>
+<h3 id="oauth-like-flow">OAuth-like Flow</h3>
+<h4 id="remote-signer-discovery-via-nip-89">Remote signer discovery via
+NIP-89</h4>
+<p>In this last case, most often used to facilitate an OAuth-like signin
+flow, the client first looks for remote signers that have announced
+themselves via NIP-89 application handler events.</p>
+<p>First the client will query for <code>kind: 31990</code> events that
+have a <code>k</code> tag of <code>24133</code>.</p>
+<p>These are generally shown to a user, and once the user selects which
+remote signer to use and provides the remote user pubkey they want to
+use (via npub, pubkey, or nip-05 value), the client can initiate a
+connection. Note that it’s on the user to select the remote signer that
+is actually managing the remote key that they would like to use in this
+case. If the remote user pubkey is managed on another remote signer, the
+connection will fail.</p>
+<p>In addition, it’s important that clients validate that the pubkey of
+the announced remote signer matches the pubkey of the <code>_</code>
+entry in the <code>/.well-known/nostr.json</code> file of the remote
+signer’s announced domain.</p>
+<p>Clients that allow users to create new accounts should also consider
+validating the availability of a given username in the namespace of
+remote signer’s domain by checking the
+<code>/.well-known/nostr.json</code> file for existing usernames.
+Clients can then show users feedback in the UI before sending a
+<code>create_account</code> event to the remote signer and receiving an
+error in return. Ideally, remote signers would also respond with
+understandable error messages if a client tries to create an account
+with an existing username.</p>
+<h4
+id="example-oauth-like-flow-to-create-a-new-user-account-with-nsecbunker">Example
+Oauth-like flow to create a new user account with Nsecbunker</h4>
+<p>Coming soon…</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a
+href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP-04 -
+Encryption</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<h1 id="nip-23">NIP-23</h1>
+<h2 id="long-form-content">Long-form Content</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:30023</code> (a <em>parameterized
+replaceable event</em>) for long-form text content, generally referred
+to as &#x201C;articles&#x201D; or &#x201C;blog posts&#x201D;. <code>kind:30024</code> has the same
+structure as <code>kind:30023</code> and is used to save long form
+drafts.</p>
+<p>&#x201C;Social&#x201D; clients that deal primarily with <code>kind:1</code> notes
+should not be expected to implement this NIP.</p>
+<h3 id="format">Format</h3>
+<p>The <code>.content</code> of these events should be a string text in
+Markdown syntax. To maximize compatibility and readability between
+different clients and devices, any client that is creating long form
+notes:</p>
+<ul>
+<li><p>MUST NOT hard line-break paragraphs of text, such as arbitrary
+line breaks at 80 column boundaries.</p></li>
+<li><p>MUST NOT support adding HTML to Markdown.</p></li>
+</ul>
+<h3 id="metadata">Metadata</h3>
+<p>For the date of the last update the <code>.created_at</code> field
+should be used, for &#x201C;tags&#x201D;/&#x201C;hashtags&#x201D; (i.e.&#xA0;topics about which the event
+might be of relevance) the <code>t</code> tag should be used, as per
+NIP-12.</p>
+<p>Other metadata fields can be added as tags to the event as necessary.
+Here we standardize 4 that may be useful, although they remain strictly
+optional:</p>
+<ul>
+<li><code>"title"</code>, for the article title</li>
+<li><code>"image"</code>, for a URL pointing to an image to be shown
+along with the title</li>
+<li><code>"summary"</code>, for the article summary</li>
+<li><code>"published_at"</code>, for the timestamp in unix seconds
+(stringified) of the first time the article was published</li>
+</ul>
+<h3 id="editability">Editability</h3>
+<p>These articles are meant to be editable, so they should make use of
+the parameterized replaceability feature and include a <code>d</code>
+tag with an identifier for the article. Clients should take care to only
+publish and read these events from relays that implement that. If they
+don&#x2019;t do that they should also take care to hide old versions of the
+same article they may receive.</p>
+<h3 id="linking">Linking</h3>
+<p>The article may be linked to using the <a href="19.md.html">NIP-19</a>
+<code>naddr</code> code along with the <code>a</code> tag.</p>
+<h3 id="references">References</h3>
+<p>References to other Nostr notes, articles or profiles must be made
+according to <a href="27.md.html">NIP-27</a>, i.e.&#xA0;by using <a
+href="21.md.html">NIP-21</a> <code>nostr:...</code> links and optionally
+adding tags for these (see example below).</p>
+<h2 id="example-event">Example Event</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">30023</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1675642635</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem [ipsum][nostr:nevent1qqst8cujky046negxgwwm5ynqwn53t8aqjr6afd8g59nfqwxpdhylpcpzamhxue69uhhyetvv9ujuetcv9khqmr99e3k7mg8arnc9] dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span><span class="ch">\n\n</span><span class="st">Read more at nostr:naddr1qqzkjurnw4ksz9thwden5te0wfjkccte9ehx7um5wghx7un8qgs2d90kkcq3nk2jry62dyf50k0h36rhpdtd594my40w9pkal876jxgrqsqqqa28pccpzu.&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;lorem-ipsum&quot;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;title&quot;</span><span class="ot">,</span> <span class="st">&quot;Lorem Ipsum&quot;</span><span class="ot">],</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;published_at&quot;</span><span class="ot">,</span> <span class="st">&quot;1296962229&quot;</span><span class="ot">],</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="st">&quot;placeholder&quot;</span><span class="ot">],</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;b3e392b11f5d4f28321cedd09303a748acfd0487aea5a7450b3481c60b6e4f87&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay.example.com&quot;</span><span class="ot">],</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay.nostr.org&quot;</span><span class="ot">]</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>

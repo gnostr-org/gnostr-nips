@@ -1,0 +1,68 @@
+<h1 id="nip-94">NIP-94</h1>
+<h2 id="file-metadata">File Metadata</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>The purpose of this NIP is to allow an organization and
+classification of shared files. So that relays can filter and organize
+in any way that is of interest. With that, multiple types of filesharing
+clients can be created. NIP-94 support is not expected to be implemented
+by &#x201C;social&#x201D; clients that deal with <code>kind:1</code> notes or by
+longform clients that deal with <code>kind:30023</code> articles.</p>
+<h2 id="event-format">Event format</h2>
+<p>This NIP specifies the use of the <code>1063</code> event type,
+having in <code>content</code> a description of the file content, and a
+list of tags described below:</p>
+<ul>
+<li><code>url</code> the url to download the file</li>
+<li><code>m</code> a string indicating the data type of the file. The <a
+href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">MIME
+types</a> format must be used,&#xA0;and they should be lowercase.</li>
+<li><code>x</code> containing the SHA-256 hexencoded string of the
+file.</li>
+<li><code>ox</code> containing the SHA-256 hexencoded string of the
+original file, before any transformations done by the upload server</li>
+<li><code>size</code> (optional) size of file in bytes</li>
+<li><code>dim</code> (optional) size of file in pixels in the form
+<code>&lt;width&gt;x&lt;height&gt;</code></li>
+<li><code>magnet</code> (optional) URI to magnet file</li>
+<li><code>i</code> (optional) torrent infohash</li>
+<li><code>blurhash</code>(optional) the <a
+href="https://github.com/woltapp/blurhash">blurhash</a> to show while
+the file is being loaded by the client</li>
+<li><code>thumb</code> (optional) url of thumbnail with same aspect
+ratio</li>
+<li><code>image</code> (optional) url of preview image with same
+dimensions</li>
+<li><code>summary</code> (optional) text excerpt</li>
+<li><code>alt</code> (optional) description for accessibility</li>
+<li><code>fallback</code> (optional) zero or more fallback file sources
+in case <code>url</code> fails</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1063</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;url&quot;</span><span class="ot">,</span><span class="er">&lt;string</span> <span class="er">with</span> <span class="er">URI</span> <span class="er">of</span> <span class="er">file&gt;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;m&quot;</span><span class="ot">,</span> <span class="er">&lt;MIME</span> <span class="er">type&gt;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;x&quot;</span><span class="ot">,</span><span class="er">&lt;Hash</span> <span class="er">SHA</span><span class="dv">-256</span><span class="er">&gt;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;ox&quot;</span><span class="ot">,</span><span class="er">&lt;Hash</span> <span class="er">SHA</span><span class="dv">-256</span><span class="er">&gt;</span><span class="ot">],</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;size&quot;</span><span class="ot">,</span> <span class="er">&lt;size</span> <span class="er">of</span> <span class="er">file</span> <span class="er">in</span> <span class="er">bytes&gt;</span><span class="ot">],</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;dim&quot;</span><span class="ot">,</span> <span class="er">&lt;size</span> <span class="er">of</span> <span class="er">file</span> <span class="er">in</span> <span class="er">pixels&gt;</span><span class="ot">],</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;magnet&quot;</span><span class="ot">,</span><span class="er">&lt;magnet</span> <span class="er">URI&gt;</span> <span class="ot">],</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span><span class="er">&lt;torrent</span> <span class="er">infohash&gt;</span><span class="ot">],</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;blurhash&quot;</span><span class="ot">,</span> <span class="er">&lt;value&gt;</span><span class="ot">],</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;thumb&quot;</span><span class="ot">,</span> <span class="er">&lt;string</span> <span class="er">with</span> <span class="er">thumbnail</span> <span class="er">URI&gt;</span><span class="ot">],</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;image&quot;</span><span class="ot">,</span> <span class="er">&lt;string</span> <span class="er">with</span> <span class="er">preview</span> <span class="er">URI&gt;</span><span class="ot">],</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;summary&quot;</span><span class="ot">,</span> <span class="er">&lt;excerpt&gt;</span><span class="ot">],</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;alt&quot;</span><span class="ot">,</span> <span class="er">&lt;description&gt;</span><span class="ot">]</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;caption&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="suggested-use-cases">Suggested use cases</h2>
+<ul>
+<li>A relay for indexing shared files. For example, to promote
+torrents.</li>
+<li>A pinterest-like client where people can share their portfolio and
+inspire others.</li>
+<li>A simple way to distribute configurations and software updates.</li>
+</ul>

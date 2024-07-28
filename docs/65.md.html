@@ -1,0 +1,74 @@
+<h1 id="nip-65">NIP-65</h1>
+<h2 id="relay-list-metadata">Relay List Metadata</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Defines a replaceable event using <code>kind:10002</code> to
+advertise preferred relays for discovering a user&#x2019;s content and
+receiving fresh content from others.</p>
+<p>The event MUST include a list of <code>r</code> tags with relay URIs
+and a <code>read</code> or <code>write</code> marker. Relays marked as
+<code>read</code> / <code>write</code> are called READ / WRITE relays,
+respectively. If the marker is omitted, the relay is used for both
+purposes.</p>
+<p>The <code>.content</code> is not used.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">10002</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://alicerelay.example.com&quot;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://brando-relay.com&quot;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://expensive-relay.example2.com&quot;</span><span class="ot">,</span> <span class="st">&quot;write&quot;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://nostr-relay.example.com&quot;</span><span class="ot">,</span> <span class="st">&quot;read&quot;</span><span class="ot">]</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="er">...other</span> <span class="er">fields</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>This NIP doesn&#x2019;t fully replace relay lists that are designed to
+configure a client&#x2019;s usage of relays (such as <code>kind:3</code> style
+relay lists). Clients MAY use other relay lists in situations where a
+<code>kind:10002</code> relay list cannot be found.</p>
+<h2 id="when-to-use-read-and-write-relays">When to Use Read and Write
+Relays</h2>
+<p>When seeking events <strong>from</strong> a user, Clients SHOULD use
+the WRITE relays of the user&#x2019;s <code>kind:10002</code>.</p>
+<p>When seeking events <strong>about</strong> a user, where the user was
+tagged, Clients SHOULD use the READ relays of the user&#x2019;s
+<code>kind:10002</code>.</p>
+<p>When broadcasting an event, Clients SHOULD:</p>
+<ul>
+<li>Broadcast the event to the WRITE relays of the author</li>
+<li>Broadcast the event to all READ relays of each tagged user</li>
+</ul>
+<h2 id="motivation">Motivation</h2>
+<p>The old model of using a fixed relay list per user centralizes in
+large relay operators:</p>
+<ul>
+<li>Most users submit their posts to the same highly popular relays,
+aiming to achieve greater visibility among a broader audience</li>
+<li>Many users are pulling events from a large number of relays in order
+to get more data at the expense of duplication</li>
+<li>Events are being copied between relays, oftentimes to many different
+relays</li>
+</ul>
+<p>This NIP allows Clients to connect directly with the most up-to-date
+relay set from each individual user, eliminating the need of
+broadcasting events to popular relays.</p>
+<h2 id="final-considerations">Final Considerations</h2>
+<ol type="1">
+<li><p>Clients SHOULD guide users to keep <code>kind:10002</code> lists
+small (2-4 relays).</p></li>
+<li><p>Clients SHOULD spread an author&#x2019;s <code>kind:10002</code> event
+to as many relays as viable.</p></li>
+<li><p><code>kind:10002</code> events should primarily be used to
+advertise the user&#x2019;s preferred relays to others. A user&#x2019;s own client may
+use other heuristics for selecting relays for fetching data.</p></li>
+<li><p>DMs SHOULD only be broadcasted to the author&#x2019;s WRITE relays and
+to the receiver&#x2019;s READ relays to keep maximum privacy.</p></li>
+<li><p>If a relay signals support for this NIP in their <a
+href="11.md.html">NIP-11</a> document that means they&#x2019;re willing to accept
+kind 10002 events from a broad range of users, not only their paying
+customers or whitelisted group.</p></li>
+<li><p>Clients SHOULD deduplicate connections by normalizing relay URIs
+according to <a
+href="https://datatracker.ietf.org/doc/html/rfc3986#section-6">RFC
+3986</a>.</p></li>
+</ol>

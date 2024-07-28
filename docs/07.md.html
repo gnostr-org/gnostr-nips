@@ -1,0 +1,31 @@
+<h1 id="nip-07">NIP-07</h1>
+<h2
+id="window.nostr-capability-for-web-browsers"><code>window.nostr</code>
+capability for web browsers</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>The <code>window.nostr</code> object may be made available by web
+browsers or extensions and websites or web-apps may make use of it after
+checking its availability.</p>
+<p>That object must define the following methods:</p>
+<pre><code>async window.nostr.getPublicKey(): string // returns a public key as hex
+async window.nostr.signEvent(event: { created_at: number, kind: number, tags: string[][], content: string }): Event // takes an event object, adds `id`, `pubkey` and `sig` and returns it</code></pre>
+<p>Aside from these two basic above, the following functions can also be
+implemented optionally:</p>
+<pre><code>async window.nostr.getRelays(): { [url: string]: {read: boolean, write: boolean} } // returns a basic map of relay urls to relay policies
+async window.nostr.nip04.encrypt(pubkey, plaintext): string // returns ciphertext and iv as specified in nip-04 (deprecated)
+async window.nostr.nip04.decrypt(pubkey, ciphertext): string // takes ciphertext and iv as specified in nip-04 (deprecated)
+async window.nostr.nip44.encrypt(pubkey, plaintext): string // returns ciphertext as specified in nip-44
+async window.nostr.nip44.decrypt(pubkey, ciphertext): string // takes ciphertext as specified in nip-44</code></pre>
+<h3 id="user-experience-recommendation">User experience
+recommendation</h3>
+<p>Due to the way browsers load the extensions, it may take some time
+for <code>window.nostr</code> object will be fully ready to accept
+requests. Hence, it is a good idea to run the first
+<code>window.nostr</code> interaction on a user action on the web page
+(like a button click), and not during the page load.</p>
+<p>Calling the <code>window.nostr</code> based methods during the page
+load runs the risk of intermittent issues due to race conditions between
+the client page&#x2019;s script and the extension&#x2019;s script</p>
+<h3 id="implementation">Implementation</h3>
+<p>See
+https://github.com/aljazceru/awesome-nostr#nip-07-browser-extensions.</p>
