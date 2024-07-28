@@ -4,7 +4,7 @@ Nostr Marketplace
 
 draft optional
 
-Based on https://github.com/lnbits/Diagon-Alley.
+Based on Diagon-Alley.
 
 Implemented in NostrMarket and Plebeian Market.
 
@@ -153,7 +153,7 @@ Event Tags
 
 Checkout events
 
-All checkout events are sent as JSON strings using (NIP-04).
+All checkout events are sent as JSON strings using NIP-04.
 
 The merchant and the customer can exchange JSON messages that represent
 different actions. Each JSON message MUST have a type field indicating
@@ -376,8 +376,7 @@ start_date + duration + (SUM(c.duration_extended) FOR c in all confirmations.
 Customer support events
 
 Customer support is handled over whatever communication method was
-specified. If communicating via nostr, NIP-04 is used
-https://github.com/nostr-protocol/nips/blob/master/04.txt.
+specified. If communicating via nostr, NIP-04 is used.
 
 Additional
 
