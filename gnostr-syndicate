@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+
+type -P gnostr-reflog >/dev/null || cargo install gnostr-bins
+type -P gnostr-get-relays >/dev/null || cargo install gnostr-bins
+
 some_path=$PWD
 REPO=$(basename $some_path)
 PARENT_REPO=$(basename $(dirname $some_path))
@@ -21,11 +25,30 @@ fi
 BRANCH=`git rev-parse --abbrev-ref HEAD` #&& echo $BRANCH
 
 GIT_ORIGIN=$(git config --get remote.origin.url)
-echo $GIT_ORIGIN
+#echo $GIT_ORIGIN
 #exit;
 
-RELAY=${1:-wss://nos.lol}
-echo $RELAY
+#non public/slow/unfriendly relays get included
+#strip them out here
+RELAYS=$(gnostr-get-relays -s \
+| sed 's/wss:\/\/relay.oldcity-bitcoiners.info//g' \
+| sed 's/wss:\/\/relay.damus.io//g' \
+| sed 's/wss:\/\/relay.damus.io//g' \
+| sed 's/wss:\/\/relay.damus.io//g' \
+| sed 's/wss:\/\/relay.damus.io//g' \
+| sed 's/wss:\/\/ragnar-relay.com//g' \
+| sed 's/wss:\/\/nostr.slothy.win//g' \
+| sed 's/wss:\/\/nostr-relay.schnitzel.world//g' \
+| sed 's/wss:\/\/nostr-pub.wellorder.net//g' \
+| sed 's/wss:\/\/relay.stoner.com//g' \
+| sed 's/wss:\/\/ragnar-relay.com//g' \
+| sed 's/wss:\/\/nostr.inosta.cc//g' \
+| sed 's/wss:\/\/nos.lol/wss:\/\/e.nos.lol/g' \
+)
+echo $RELAYS
+
+RELAY=${1:-wss://e.nos.lol}
+#echo $RELAY
 POW=${2:-12}
 echo $POW
 GNOSTR_WEEBLE=$(gnostr-weeble)
@@ -77,8 +100,11 @@ done
 export COUNT=$count
 #exit
 
-#new_count = 0
+new_count=0
 for commit_hash in $(gnostr-reflog);do
+
+for relay in $(gnostr-get-relays -s);do
+
 #echo $commit_hash
 padded_commit_hash=`printf '%064s' "$commit_hash"`
 #echo $padded_commit_hash
@@ -87,6 +113,7 @@ export NEW_COUNT=$new_count
 echo $n
 gnostr --sec $padded_commit_hash \
 --pow $POW \
+--tag relay $relay \
 --tag repo $REPO \
 --tag branch $BRANCH \
 --tag origin $GIT_ORIGIN \
@@ -94,14 +121,8 @@ gnostr --sec $padded_commit_hash \
 --tag weeble $WEEBLE \
 --tag block $BLOCK \
 --tag wobble $WOBBLE \
--t $padded_commit_hash \
 --tag commit $commit_hash \
---content "$(git show $commit_hash || exit)" | gnostr-post-event --relay $RELAY || echo "$commit_hash failed!"
-##echo $commit_hash;
-	#for commit_padded_hash in $(gnostr-reflog -p);do
-	##echo $commit_padded_hash;
-	#	gnostr --sec $commit_padded_hash --content "$(git show $commit_hash)"
-	#done
+--content "$(git show $commit_hash || exit)" | gnostr-post-event --relay $relay || echo "$commit_hash failed!"
 if [[ "$commit_hash" == "$INIT_COMMIT" ]]; then
 exit;
 fi
@@ -109,5 +130,6 @@ new_count=$((new_count+1))
 #echo $count & wait
 #echo $new_count & wait
 #exit
+done
 done
 exit;
