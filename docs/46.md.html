@@ -133,54 +133,54 @@ signer.</p>
 <col style="width: 48%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>Command</th>
 <th>Params</th>
 <th>Result</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>connect</code></td>
 <td><code>[&lt;remote_user_pubkey&gt;, &lt;optional_secret&gt;, &lt;optional_requested_permissions&gt;]</code></td>
 <td>&#x201C;ack&#x201D;</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>sign_event</code></td>
 <td><code>[&lt;{kind, content, tags, created_at}&gt;]</code></td>
 <td><code>json_stringified(&lt;signed_event&gt;)</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>ping</code></td>
 <td><code>[]</code></td>
 <td>&#x201C;pong&#x201D;</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>get_relays</code></td>
 <td><code>[]</code></td>
 <td><code>json_stringified({&lt;relay_url&gt;: {read: &lt;boolean&gt;, write: &lt;boolean&gt;}})</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>get_public_key</code></td>
 <td><code>[]</code></td>
 <td><code>&lt;hex-pubkey&gt;</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>nip04_encrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;plaintext_to_encrypt&gt;]</code></td>
 <td><code>&lt;nip04_ciphertext&gt;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>nip04_decrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;nip04_ciphertext_to_decrypt&gt;]</code></td>
 <td><code>&lt;plaintext&gt;</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>nip44_encrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;plaintext_to_encrypt&gt;]</code></td>
 <td><code>&lt;nip44_ciphertext&gt;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>nip44_decrypt</code></td>
 <td><code>[&lt;third_party_pubkey&gt;, &lt;nip44_ciphertext_to_decrypt&gt;]</code></td>
 <td><code>&lt;plaintext&gt;</code></td>
@@ -268,14 +268,14 @@ signer.</p>
 <col style="width: 38%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>Command</th>
 <th>Params</th>
 <th>Result</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>create_account</code></td>
 <td><code>[&lt;username&gt;, &lt;domain&gt;, &lt;optional_email&gt;, &lt;optional_requested_permissions&gt;]</code></td>
 <td><code>&lt;newly_created_remote_user_pubkey&gt;</code></td>
