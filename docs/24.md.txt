@@ -31,7 +31,7 @@ wild:
 kind 3
 
 These are extra fields not specified in NIP-02 that may be present in
-the stringified JSON of contacts events:
+the stringified JSON of follow events:
 
 Deprecated fields
 
@@ -45,6 +45,9 @@ These tags may be present in multiple event kinds. Whenever a different
 meaning is not specified by some more specific NIP, they have the
 following meanings:
 
--   r: a web URL the event is referring to in some way
+-   r: a web URL the event is referring to in some way.
+-   i: an external id the event is referring to in some way - see
+    NIP-73.
 -   title: name of NIP-51 sets, NIP-52 calendar event, NIP-53 live event
-    or NIP-99 listing
+    or NIP-99 listing.
+-   t: a hashtag. The value MUST be a lowercase string.

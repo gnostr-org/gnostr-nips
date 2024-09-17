@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>64</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="nip-64">NIP-64</h1>
+<h2 id="chess-portable-game-notation">Chess (Portable Game
+Notation)</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:64</code> notes representing chess games
+in <a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html">PGN</a>
+format, which can be read by humans and is also supported by most chess
+software.</p>
+<h2 id="note">Note</h2>
+<h3 id="content">Content</h3>
+<p>The <code>.content</code> of these notes is a string representing a
+<a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#18-formal-syntax">PGN-database</a>.</p>
+<h3 id="notes">Notes</h3>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 64,
+  &quot;content&quot;: &quot;1. e4 *&quot;,
+  // other fields...
+}</code></pre>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 64,
+  &quot;tags&quot;: [
+    [&quot;alt&quot;, &quot;Fischer vs. Spassky in Belgrade on 1992-11-04 (F/S Return Match, Round 29)&quot;],
+    // rest of tags...
+  ],
+  &quot;content&quot;: &quot;[Event \&quot;F/S Return Match\&quot;]\n[Site \&quot;Belgrade, Serbia JUG\&quot;]\n[Date \&quot;1992.11.04\&quot;]\n[Round \&quot;29\&quot;]\n[White \&quot;Fischer, Robert J.\&quot;]\n[Black \&quot;Spassky, Boris V.\&quot;]\n[Result \&quot;1/2-1/2\&quot;]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 {This opening is called the Ruy Lopez.} 3... a6\n4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7\n11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5\nNxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6\n23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5\nhxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5\n35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6\nNf2 42. g4 Bd3 43. Re6 1/2-1/2&quot;,
+  // other fields...
+}</code></pre>
+<h2 id="client-behavior">Client Behavior</h2>
+<p>Clients SHOULD display the content represented as chessboard.</p>
+<p>Clients SHOULD publish PGN notes in <a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#32-export-format-used-for-program-generated-output">“export
+format”</a> (“strict mode”, i.e. created by machines) but expect
+incoming notes to be in <a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#31-import-format-allows-for-manually-prepared-data">“import
+format”</a> (“lax mode”, i.e. created by humans).</p>
+<p>Clients SHOULD check whether the formatting is valid and all moves
+comply with chess rules.</p>
+<p>Clients MAY include additional tags (e.g. like <a
+href="https://github.com/nostr-protocol/nips/blob/master/31.md.css.html"><code>"alt"</code></a>)
+in order to represent the note to users of non-supporting clients.</p>
+<h2 id="relay-behavior">Relay Behavior</h2>
+<p>Relays MAY validate PGN contents and reject invalid notes.</p>
+<h2 id="examples">Examples</h2>
+<pre class="pgn"><code>// A game where nothing is known. Game still in progress, game abandoned, or result otherwise unknown. 
+// Maybe players died before a move has been made.
+*</code></pre>
+<pre class="pgn"><code>1. e4 *</code></pre>
+<pre class="pgn"><code>[White &quot;Fischer, Robert J.&quot;]
+[Black &quot;Spassky, Boris V.&quot;]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 {This opening is called the Ruy Lopez.} *</code></pre>
+<pre class="pgn"><code>[Event &quot;F/S Return Match&quot;]
+[Site &quot;Belgrade, Serbia JUG&quot;]
+[Date &quot;1992.11.04&quot;]
+[Round &quot;29&quot;]
+[White &quot;Fischer, Robert J.&quot;]
+[Black &quot;Spassky, Boris V.&quot;]
+[Result &quot;1/2-1/2&quot;]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 {This opening is called the Ruy Lopez.} 3... a6
+4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
+11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
+Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
+23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
+hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
+35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
+Nf2 42. g4 Bd3 43. Re6 1/2-1/2</code></pre>
+<pre class="pgn"><code>[Event &quot;Hourly HyperBullet Arena&quot;]
+[Site &quot;https://lichess.org/wxx4GldJ&quot;]
+[Date &quot;2017.04.01&quot;]
+[White &quot;T_LUKE&quot;]
+[Black &quot;decidement&quot;]
+[Result &quot;1-0&quot;]
+[UTCDate &quot;2017.04.01&quot;]
+[UTCTime &quot;11:56:14&quot;]
+[WhiteElo &quot;2047&quot;]
+[BlackElo &quot;1984&quot;]
+[WhiteRatingDiff &quot;+10&quot;]
+[BlackRatingDiff &quot;-7&quot;]
+[Variant &quot;Standard&quot;]
+[TimeControl &quot;30+0&quot;]
+[ECO &quot;B00&quot;]
+[Termination &quot;Abandoned&quot;]
+
+1. e4 1-0
+
+
+[Event &quot;Hourly HyperBullet Arena&quot;]
+[Site &quot;https://lichess.org/rospUdSk&quot;]
+[Date &quot;2017.04.01&quot;]
+[White &quot;Bastel&quot;]
+[Black &quot;oslochess&quot;]
+[Result &quot;1-0&quot;]
+[UTCDate &quot;2017.04.01&quot;]
+[UTCTime &quot;11:55:56&quot;]
+[WhiteElo &quot;2212&quot;]
+[BlackElo &quot;2000&quot;]
+[WhiteRatingDiff &quot;+6&quot;]
+[BlackRatingDiff &quot;-4&quot;]
+[Variant &quot;Standard&quot;]
+[TimeControl &quot;30+0&quot;]
+[ECO &quot;A01&quot;]
+[Termination &quot;Normal&quot;]
+
+1. b3 d5 2. Bb2 c6 3. Nc3 Bf5 4. d4 Nf6 5. e3 Nbd7 6. f4 Bg6 7. Nf3 Bh5 8. Bd3 e6 9. O-O Be7 10. Qe1 O-O 11. Ne5 Bg6 12. Nxg6 hxg6 13. e4 dxe4 14. Nxe4 Nxe4 15. Bxe4 Nf6 16. c4 Bd6 17. Bc2 Qc7 18. f5 Be7 19. fxe6 fxe6 20. Qxe6+ Kh8 21. Qh3+ Kg8 22. Bxg6 Qd7 23. Qe3 Bd6 24. Bf5 Qe7 25. Be6+ Kh8 26. Qh3+ Nh7 27. Bf5 Rf6 28. Qxh7# 1-0</code></pre>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html">PGN
+Specification</a>: PGN (Portable Game Notation) specification</li>
+<li><a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-spec-supplement.md.css.html">PGN
+Specification Supplement</a>: Addition for adding graphical elements,
+clock values, eval, …</li>
+<li><a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#18-formal-syntax">PGN
+Formal Syntax</a></li>
+<li><a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#811-seven-tag-roster">PGN
+Seven Tag Roster</a></li>
+<li><a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#31-import-format-allows-for-manually-prepared-data">PGN
+Import Format</a></li>
+<li><a
+href="https://github.com/mliebelt/pgn-spec-commented/blob/main/pgn-specification.md.css.html#32-export-format-used-for-program-generated-output">PGN
+Export Format</a></li>
+<li><a href="https://github.com/lichess-org/pgn-viewer">lichess /
+pgn-viewer (GitHub)</a>: PGN viewer widget, designed to be embedded in
+content pages</li>
+</ul>
+</body>
+</html>

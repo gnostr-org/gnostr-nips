@@ -13,17 +13,19 @@ display this information.
 
 i tag on a metadata event
 
-A new optional i tag is introduced for kind 0 metadata event contents in
-addition to name, about, picture fields as included in NIP-01:
+A new optional i tag is introduced for kind 0 metadata event defined in
+NIP-01:
 
     {
+      "id": <id>,
+      "pubkey": <pubkey>,
       "tags": [
         ["i", "github:semisol", "9721ce4ee4fceb91c9711ca2a6c9a5ab"],
         ["i", "twitter:semisol_public", "1619358434134196225"],
         ["i", "mastodon:bitcoinhackers.org/@semisol", "109775066355589974"]
         ["i", "telegram:1087295469", "nostrdirectory/770"]
       ],
-      ...
+      // other fields...
     }
 
 An i tag will have two parameters, which are defined as the

@@ -318,7 +318,7 @@ but optional.</li>
 <li><code>e</code> is an optional hex-encoded event id. Clients MUST
 include this if zapping an event rather than a person.</li>
 <li><code>a</code> is an optional event coordinate that allows tipping
-parameterized replaceable events such as NIP-23 long-form notes.</li>
+addressable events such as NIP-23 long-form notes.</li>
 </ul>
 <p>Example:</p>
 <div class="sourceCode" id="cb1"><pre
@@ -446,7 +446,7 @@ of the zap request (zap sender).</li>
 <li>The <code>zap receipt</code> MUST have a <code>bolt11</code> tag
 containing the description hash bolt11 invoice.</li>
 <li>The <code>zap receipt</code> MUST contain a <code>description</code>
-tag which is the JSON-encoded invoice description.</li>
+tag which is the JSON-encoded zap request.</li>
 <li><code>SHA256(description)</code> MUST match the description hash in
 the bolt11 invoice.</li>
 <li>The <code>zap receipt</code> MAY contain a <code>preimage</code> tag
@@ -508,13 +508,13 @@ to each receiver. If weights are not present, CLIENTS should equally
 divide the zap amount to all receivers. If weights are only partially
 present, receivers without a weight should not be zapped
 (<code>weight = 0</code>).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        [ <span class="st">&quot;zap&quot;</span><span class="op">,</span> <span class="st">&quot;82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2&quot;</span><span class="op">,</span> <span class="st">&quot;wss://nostr.oxtr.dev&quot;</span><span class="op">,</span> <span class="st">&quot;1&quot;</span> ]<span class="op">,</span>  <span class="co">// 25%</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        [ <span class="st">&quot;zap&quot;</span><span class="op">,</span> <span class="st">&quot;fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52&quot;</span><span class="op">,</span> <span class="st">&quot;wss://nostr.wine/&quot;</span><span class="op">,</span>    <span class="st">&quot;1&quot;</span> ]<span class="op">,</span>  <span class="co">// 25%</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        [ <span class="st">&quot;zap&quot;</span><span class="op">,</span> <span class="st">&quot;460c25e682fda7832b52d1f22d3d22b3176d972f60dcdc3212ed8c92ef85065c&quot;</span><span class="op">,</span> <span class="st">&quot;wss://nos.lol/&quot;</span><span class="op">,</span>       <span class="st">&quot;2&quot;</span> ]   <span class="co">// 50%</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="jsonc"><code>{
+    &quot;tags&quot;: [
+        [ &quot;zap&quot;, &quot;82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2&quot;, &quot;wss://nostr.oxtr.dev&quot;, &quot;1&quot; ],  // 25%
+        [ &quot;zap&quot;, &quot;fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52&quot;, &quot;wss://nostr.wine/&quot;,    &quot;1&quot; ],  // 25%
+        [ &quot;zap&quot;, &quot;460c25e682fda7832b52d1f22d3d22b3176d972f60dcdc3212ed8c92ef85065c&quot;, &quot;wss://nos.lol/&quot;,       &quot;2&quot; ]   // 50%
+    ]
+}</code></pre>
 <p>Clients MAY display the zap split configuration in the note.</p>
 <h2 id="future-work">Future Work</h2>
 <p>Zaps can be extended to be more private by encrypting

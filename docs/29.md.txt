@@ -24,8 +24,8 @@ group so it exists in different forms &ndash; still using the same id
 Relay-generated events
 
 Relays are supposed to generate the events that describe group metadata
-and group admins. These are parameterized replaceable events signed by
-the relay keypair directly, with the group id as the d tag.
+and group admins. These are addressable events signed by the relay
+keypair directly, with the group id as the d tag.
 
 Group identifier
 
@@ -73,9 +73,9 @@ to a group.
       "content": "hello my friends lovers of pizza",
       "tags": [
         ["h", "<group-id>"],
-        ["previous", "<event-id-first-chars>", "<event-id-first-chars>", ...]
+        ["previous", "<event-id-first-chars>", "<event-id-first-chars>", /*...*/]
       ]
-      ...
+      // other fields...
 
 -   threaded text reply (kind:12)
 
@@ -97,9 +97,9 @@ This is the basic unit of a chat message sent to a group.
       "content": "hello my friends lovers of pizza",
       "tags": [
         ["h", "<group-id>"],
-        ["previous", "<event-id-first-chars>", "<event-id-first-chars>", ...]
+        ["previous", "<event-id-first-chars>", "<event-id-first-chars>", /*...*/]
       ]
-      ...
+      // other fields...
 
 -   chat message threaded reply (kind:10)
 
@@ -128,6 +128,20 @@ upon them.
       ]
     }
 
+-   leave request (kind:9022)
+
+Any user can send one of these events to the relay in order to be
+automatically removed from the group. The relay will automatically issue
+a kind:9001 in response removing this user.
+
+    {
+      "kind": 9022,
+      "content": "optional reason",
+      "tags": [
+        ["h", "<group-id>"]
+      ]
+    }
+
 -   moderation events (kinds:9000-9020) (optional)
 
 Clients can send these events to a relay in order to accomplish a
@@ -140,7 +154,7 @@ after taking action or keep it as a moderation log.
       "content": "optional reason",
       "tags": [
         ["h", "<group-id>"],
-        ["previous", ...]
+        ["previous", /*...*/]
       ]
     }
 
@@ -168,6 +182,10 @@ table:
 
   9006                    edit-group-status       public or private, open
                                                   or closed
+
+  9007                    create-group            
+
+  9008                    delete-group            
   -----------------------------------------------------------------------
 
 -   group metadata (kind:39000) (optional)
@@ -191,7 +209,7 @@ multiple versions of this event in each different relay and so on.
         ["public"], // or ["private"]
         ["open"] // or ["closed"]
       ]
-      ...
+      // other fields...
     }
 
 name, picture and about are basic metadata for the group for display
@@ -221,6 +239,7 @@ following:
 -   add-permission
 -   remove-permission
 -   edit-group-status
+-   delete-group
 
     {
       "kind": 39001,
@@ -230,7 +249,7 @@ following:
         ["p", "<pubkey1-as-hex>", "ceo", "add-user", "edit-metadata", "delete-event", "remove-user"],
         ["p", "<pubkey2-as-hex>", "secretary", "add-user", "delete-event"]
       ]
-      ...
+      // other fields...
     }
 
 -   group members (kind:39002) (optional)

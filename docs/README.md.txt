@@ -33,7 +33,7 @@ List
 -   NIP-07: window.nostr capability for web browsers
 -   NIP-08: Handling Mentions .txtash; unrecommended: deprecated in favor
     of NIP-27
--   NIP-09: Event Deletion
+-   NIP-09: Event Deletion Request
 -   NIP-10: Conventions for clients&rsquo; use of e and p tags in text
     events
 -   NIP-11: Relay Information Document
@@ -72,16 +72,21 @@ List
 -   NIP-52: Calendar Events
 -   NIP-53: Live Activities
 -   NIP-54: Wiki
+-   NIP-55: Android Signer Application
 -   NIP-56: Reporting
 -   NIP-57: Lightning Zaps
 -   NIP-58: Badges
 -   NIP-59: Gift Wrap
+-   NIP-64: Chess (PGN)
 -   NIP-65: Relay List Metadata
+-   NIP-70: Protected Events
 -   NIP-71: Video Events
 -   NIP-72: Moderated Communities
+-   NIP-73: External Content IDs
 -   NIP-75: Zap Goals
 -   NIP-78: Application-specific data
 -   NIP-84: Highlights
+-   NIP-88: Polls
 -   NIP-89: Recommended Application Handlers
 -   NIP-90: Data Vending Machines
 -   NIP-92: Media Attachments
@@ -92,216 +97,247 @@ List
 
 Event Kinds
 
-  ------------------------------------------------------------------------
-  kind           description                   NIP
-  -------------- ----------------------------- ---------------------------
-  0              Metadata                      01
+  -----------------------------------------------------------------------
+  kind        description                NIP
+  ----------- -------------------------- --------------------------------
+  0           User Metadata              01
 
-  1              Short Text Note               01
+  1           Short Text Note            01
 
-  2              Recommend Relay               01 (deprecated)
+  2           Recommend Relay            01 (deprecated)
 
-  3              Follows                       02
+  3           Follows                    02
 
-  4              Encrypted Direct Messages     04
+  4           Encrypted Direct Messages  04
 
-  5              Event Deletion                09
+  5           Event Deletion Request     09
 
-  6              Repost                        18
+  6           Repost                     18
 
-  7              Reaction                      25
+  7           Reaction                   25
 
-  8              Badge Award                   58
+  8           Badge Award                58
 
-  9              Group Chat Message            29
+  9           Group Chat Message         29
 
-  10             Group Chat Threaded Reply     29
+  10          Group Chat Threaded Reply  29
 
-  11             Group Thread                  29
+  11          Group Thread               29
 
-  12             Group Thread Reply            29
+  12          Group Thread Reply         29
 
-  13             Seal                          59
+  13          Seal                       59
 
-  14             Direct Message                17
+  14          Direct Message             17
 
-  16             Generic Repost                18
+  16          Generic Repost             18
 
-  40             Channel Creation              28
+  17          Reaction to a website      25
 
-  41             Channel Metadata              28
+  40          Channel Creation           28
 
-  42             Channel Message               28
+  41          Channel Metadata           28
 
-  43             Channel Hide Message          28
+  42          Channel Message            28
 
-  44             Channel Mute User             28
+  43          Channel Hide Message       28
 
-  818            Merge Requests                54
+  44          Channel Mute User          28
 
-  1021           Bid                           15
+  64          Chess (PGN)                64
 
-  1022           Bid confirmation              15
+  818         Merge Requests             54
 
-  1040           OpenTimestamps                03
+  1018        Poll Response              88
 
-  1059           Gift Wrap                     59
+  1021        Bid                        15
 
-  1063           File Metadata                 94
+  1022        Bid confirmation           15
 
-  1311           Live Chat Message             53
+  1040        OpenTimestamps             03
 
-  1617           Patches                       34
+  1059        Gift Wrap                  59
 
-  1621           Issues                        34
+  1063        File Metadata              94
 
-  1622           Replies                       34
+  1068        Poll                       88
 
-  1630-1633      Status                        34
+  1311        Live Chat Message          53
 
-  1971           Problem Tracker               nostrocket
+  1617        Patches                    34
 
-  1984           Reporting                     56
+  1621        Issues                     34
 
-  1985           Label                         32
+  1622        Replies                    34
 
-  2003           Torrent                       35
+  1630-1633   Status                     34
 
-  2004           Torrent Comment               35
+  1971        Problem Tracker            nostrocket
 
-  4550           Community Post Approval       72
+  1984        Reporting                  56
 
-  5000-5999      Job Request                   90
+  1985        Label                      32
 
-  6000-6999      Job Result                    90
+  1986        Relay reviews              
 
-  7000           Job Feedback                  90
+  1987        AI Embeddings / Vector     NKBIP-02
+              lists                      
 
-  9000-9030      Group Control Events          29
+  2003        Torrent                    35
 
-  9041           Zap Goal                      75
+  2004        Torrent Comment            35
 
-  9734           Zap Request                   57
+  2022        Coinjoin Pool              joinstr
 
-  9735           Zap                           57
+  4550        Community Post Approval    72
 
-  9802           Highlights                    84
+  5000-5999   Job Request                90
 
-  10000          Mute list                     51
+  6000-6999   Job Result                 90
 
-  10001          Pin list                      51
+  7000        Job Feedback               90
 
-  10002          Relay List Metadata           65
+  9000-9030   Group Control Events       29
 
-  10003          Bookmark list                 51
+  9041        Zap Goal                   75
 
-  10004          Communities list              51
+  9467        Tidal login                Tidal-nostr
 
-  10005          Public chats list             51
+  9734        Zap Request                57
 
-  10006          Blocked relays list           51
+  9735        Zap                        57
 
-  10007          Search relays list            51
+  9802        Highlights                 84
 
-  10009          User groups                   51, 29
+  10000       Mute list                  51
 
-  10015          Interests list                51
+  10001       Pin list                   51
 
-  10030          User emoji list               51
+  10002       Relay List Metadata        65
 
-  10050          Relay list to receive DMs     17
+  10003       Bookmark list              51
 
-  10096          File storage server list      96
+  10004       Communities list           51
 
-  13194          Wallet Info                   47
+  10005       Public chats list          51
 
-  21000          Lightning Pub RPC             Lightning.Pub
+  10006       Blocked relays list        51
 
-  22242          Client Authentication         42
+  10007       Search relays list         51
 
-  23194          Wallet Request                47
+  10009       User groups                51, 29
 
-  23195          Wallet Response               47
+  10015       Interests list             51
 
-  24133          Nostr Connect                 46
+  10030       User emoji list            51
 
-  27235          HTTP Auth                     98
+  10050       Relay list to receive DMs  51, 17
 
-  30000          Follow sets                   51
+  10063       User server list           blossom
 
-  30001          Generic lists                 51
+  10096       File storage server list   96
 
-  30002          Relay sets                    51
+  13194       Wallet Info                47
 
-  30003          Bookmark sets                 51
+  21000       Lightning Pub RPC          Lightning.Pub
 
-  30004          Curation sets                 51
+  22242       Client Authentication      42
 
-  30005          Video sets                    51
+  23194       Wallet Request             47
 
-  30008          Profile Badges                58
+  23195       Wallet Response            47
 
-  30009          Badge Definition              58
+  24133       Nostr Connect              46
 
-  30015          Interest sets                 51
+  24242       Blobs stored on            blossom
+              mediaservers               
 
-  30017          Create or update a stall      15
+  27235       HTTP Auth                  98
 
-  30018          Create or update a product    15
+  30000       Follow sets                51
 
-  30019          Marketplace UI/UX             15
+  30001       Generic lists              51
 
-  30020          Product sold as an auction    15
+  30002       Relay sets                 51
 
-  30023          Long-form Content             23
+  30003       Bookmark sets              51
 
-  30024          Draft Long-form Content       23
+  30004       Curation sets              51
 
-  30030          Emoji sets                    51
+  30005       Video sets                 51
 
-  30063          Release artifact sets         51
+  30007       Kind mute sets             51
 
-  30078          Application-specific Data     78
+  30008       Profile Badges             58
 
-  30311          Live Event                    53
+  30009       Badge Definition           58
 
-  30315          User Statuses                 38
+  30015       Interest sets              51
 
-  30402          Classified Listing            99
+  30017       Create or update a stall   15
 
-  30403          Draft Classified Listing      99
+  30018       Create or update a product 15
 
-  30617          Repository announcements      34
+  30019       Marketplace UI/UX          15
 
-  30818          Wiki article                  54
+  30020       Product sold as an auction 15
 
-  30819          Redirects                     54
+  30023       Long-form Content          23
 
-  31890          Feed                          NUD: Custom Feeds
+  30024       Draft Long-form Content    23
 
-  31922          Date-Based Calendar Event     52
+  30030       Emoji sets                 51
 
-  31923          Time-Based Calendar Event     52
+  30040       Modular Article Header     NKBIP-01
 
-  31924          Calendar                      52
+  30041       Modular Article Content    NKBIP-01
 
-  31925          Calendar Event RSVP           52
+  30063       Release artifact sets      51
 
-  31989          Handler recommendation        89
+  30078       Application-specific Data  78
 
-  31990          Handler information           89
+  30311       Live Event                 53
 
-  34235          Video Event                   71
+  30315       User Statuses              38
 
-  34236          Short-form Portrait Video     71
-                 Event                         
+  30402       Classified Listing         99
 
-  34237          Video View Event              71
+  30403       Draft Classified Listing   99
 
-  34550          Community Definition          72
+  30617       Repository announcements   34
 
-  39000-9        Group metadata events         29
-  ------------------------------------------------------------------------
+  30618       Repository state           34
+              announcements              
+
+  30818       Wiki article               54
+
+  30819       Redirects                  54
+
+  31890       Feed                       NUD: Custom Feeds
+
+  31922       Date-Based Calendar Event  52
+
+  31923       Time-Based Calendar Event  52
+
+  31924       Calendar                   52
+
+  31925       Calendar Event RSVP        52
+
+  31989       Handler recommendation     89
+
+  31990       Handler information        89
+
+  34235       Video Event                71
+
+  34236       Short-form Portrait Video  71
+              Event                      
+
+  34237       Video View Event           71
+
+  34550       Community Definition       72
+
+  39000-9     Group metadata events      29
+  -----------------------------------------------------------------------
 
 Message types
 
@@ -342,9 +378,6 @@ Relay to Client
   COUNT    used to send requested event counts to clients       45
   ------------------------------------------------------------------------
 
-Please update these lists when proposing NIPs introducing new event
-kinds.
-
 Standardized Tags
 
   --------------------------------------------------------------------------------
@@ -360,13 +393,17 @@ Standardized Tags
 
   d                 identifier            &ndash;            01
 
+  -                 &ndash;               &ndash;            70
+
   g                 geohash               &ndash;            52
 
-  i                 identity              proof              39
+  h                 group id              &ndash;            29
+
+  i                 external identity     proof, url hint    39, 73
 
   k                 kind number (string)  &ndash;            18, 25, 72
 
-  l                 label, label          annotations        32
+  l                 label, label          &ndash;            32
                     namespace                                
 
   L                 label namespace       &ndash;            32
@@ -375,12 +412,12 @@ Standardized Tags
 
   q                 event id (hex)        relay URL          18
 
-  r                 a reference (URL,     petname            
+  r                 a reference (URL,     &ndash;            24, 25
                     etc)                                     
 
   r                 relay url             marker             65
 
-  t                 hashtag               &ndash;            
+  t                 hashtag               &ndash;            24
 
   alt               summary               &ndash;            31
 
@@ -411,7 +448,7 @@ Standardized Tags
 
   goal              event id (hex)        relay URL          75
 
-  image             image URL             dimensions in      23, 58
+  image             image URL             dimensions in      23, 52, 58
                                           pixels             
 
   imeta             inline metadata       &ndash;            92
@@ -420,9 +457,9 @@ Standardized Tags
 
   location          location string       &ndash;            52, 99
 
-  name              name                  &ndash;            34, 58
+  name              name                  &ndash;            34, 58, 72
 
-  nonce             random                &ndash;            13
+  nonce             random                difficulty         13
 
   preimage          hash of bolt11        &ndash;            57
                     invoice                                  
@@ -444,7 +481,7 @@ Standardized Tags
 
   subject           subject               &ndash;            14, 17
 
-  summary           article summary       &ndash;            23
+  summary           summary               &ndash;            23, 52
 
   thumb             badge thumbnail       dimensions in      58
                                           pixels             
@@ -457,10 +494,12 @@ Standardized Tags
                     URL                                      
   --------------------------------------------------------------------------------
 
+Please update these lists when proposing new NIPs.
+
 Criteria for acceptance of NIPs
 
-1.  They should be implemented in at least two clients and one relay
-    &ndash; when applicable.
+1.  They should be fully implemented in at least two clients and one
+    relay &ndash; when applicable.
 2.  They should make sense.
 3.  They should be optional and backwards-compatible: care must be taken
     such that clients and relays that choose to not implement them do

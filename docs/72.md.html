@@ -2,23 +2,25 @@
 <h2 id="moderated-communities-reddit-style">Moderated Communities
 (Reddit Style)</h2>
 <p><code>draft</code> <code>optional</code></p>
-<p>The goal of this NIP is to create moderator-approved public
-communities around a topic. It defines the replaceable event
-<code>kind:34550</code> to define the community and the current list of
-moderators/administrators. Users that want to post into the community,
-simply tag any Nostr event with the community&#x2019;s <code>a</code> tag.
-Moderators issue an approval event <code>kind:4550</code> that links the
-community with the new post.</p>
+<p>The goal of this NIP is to enable public communities. It defines the
+replaceable event <code>kind:34550</code> to define the community and
+the current list of moderators/administrators. Users that want to post
+into the community, simply tag any Nostr event with the community&#x2019;s
+<code>a</code> tag. Moderators may issue an approval event
+<code>kind:4550</code>.</p>
 <h1 id="community-definition">Community Definition</h1>
-<p><code>kind:34550</code> SHOULD include any field that helps define
+<p><code>Kind:34550</code> SHOULD include any field that helps define
 the community and the set of moderators. <code>relay</code> tags MAY be
-used to describe the preferred relay to download requests and
-approvals.</p>
+used to describe the preferred relay to download requests and approvals.
+A community definition event&#x2019;s <code>d</code> tag MAY double as its
+name, but if a <code>name</code> tag is provided, it SHOULD be displayed
+instead of the <code>d</code> tag.</p>
 <pre class="jsonc"><code>{
   &quot;created_at&quot;: &lt;Unix timestamp in seconds&gt;,
   &quot;kind&quot;: 34550,
   &quot;tags&quot;: [
     [&quot;d&quot;, &quot;&lt;community-d-identifier&gt;&quot;],
+    [&quot;name&quot;, &quot;&lt;Community name&gt;&quot;],
     [&quot;description&quot;, &quot;&lt;Community description&gt;&quot;],
     [&quot;image&quot;, &quot;&lt;Community image url&gt;&quot;, &quot;&lt;Width&gt;x&lt;Height&gt;&quot;],
 
@@ -35,33 +37,36 @@ approvals.</p>
     [&quot;relay&quot;, &quot;&lt;relay where to send and receive approvals&gt;&quot;, &quot;approvals&quot;],
     [&quot;relay&quot;, &quot;&lt;relay where to post requests to and fetch approvals from&gt;&quot;]
   ],
-  ...
+  // other fields...
 }</code></pre>
-<h1 id="new-post-request">New Post Request</h1>
-<p>Any Nostr event can be submitted to a community by anyone for
-approval. Clients MUST add the community&#x2019;s <code>a</code> tag to the new
-post event in order to be presented for the moderator&#x2019;s approval.</p>
+<h1 id="posting-to-a-community">Posting to a community</h1>
+<p>Any Nostr event can be posted to a community. Clients MUST add one or
+more community <code>a</code> tags, each with a recommended relay.</p>
 <pre class="jsonc"><code>{
   &quot;kind&quot;: 1,
   &quot;tags&quot;: [
     [&quot;a&quot;, &quot;34550:&lt;community event author pubkey&gt;:&lt;community-d-identifier&gt;&quot;, &quot;&lt;optional-relay-url&gt;&quot;],
   ],
   &quot;content&quot;: &quot;hello world&quot;,
-  // ...
+  // other fields...
 }</code></pre>
-<p>Community management clients MAY filter all mentions to a given
-<code>kind:34550</code> event and request moderators to approve each
-submission. Moderators MAY delete his/her approval of a post at any time
-using event deletions (See <a href="09.md.html">NIP-09</a>).</p>
-<h1 id="post-approval-by-moderators">Post Approval by moderators</h1>
-<p>The post-approval event MUST include <code>a</code> tags of the
-communities the moderator is posting into (one or more), the
-<code>e</code> tag of the post and <code>p</code> tag of the author of
-the post (for approval notifications). The event SHOULD also include the
-stringified <code>post request</code> event inside the
-<code>.content</code> (<a href="18.md.html">NIP-18-style</a>) and a
+<h1 id="moderation">Moderation</h1>
+<p>Anyone may issue an approval event to express their opinion that a
+post is appropriate for a community. Clients MAY choose which approval
+events to honor, but SHOULD at least use ones published by the group&#x2019;s
+defined moderators.</p>
+<p>An approval event MUST include one or more community <code>a</code>
+tags, an <code>e</code> or <code>a</code> tag pointing to the post, and
+the <code>p</code> tag of the author of the post (for approval
+notifications). <code>a</code> tag prefixes can be used to disambiguate
+between community and replaceable event pointers (community
+<code>a</code> tags always begin with <code>34550</code>).</p>
+<p>The event SHOULD also include the JSON-stringified
+<code>post request</code> event inside the <code>.content</code>, and a
 <code>k</code> tag with the original post&#x2019;s event kind to allow
 filtering of approved posts by kind.</p>
+<p>Moderators MAY request deletion of their approval of a post at any
+time using <a href="09.md.html">NIP-09 event deletion requests</a>.</p>
 <pre class="jsonc"><code>{
   &quot;pubkey&quot;: &quot;&lt;32-bytes lowercase hex-encoded public key of the event creator&gt;&quot;,
   &quot;kind&quot;: 4550,
@@ -72,7 +77,7 @@ filtering of approved posts by kind.</p>
     [&quot;k&quot;, &quot;&lt;post-request-kind&gt;&quot;]
   ],
   &quot;content&quot;: &quot;&lt;the full approved event, JSON-encoded&gt;&quot;,
-  // ...
+  // other fields...
 }</code></pre>
 <p>It&#x2019;s recommended that multiple moderators approve posts to avoid
 deleting them from the community when a moderator is removed from the
@@ -81,35 +86,28 @@ new moderator set must sign new approvals for posts in the past or the
 community will restart. The owner can also periodically copy and re-sign
 of each moderator&#x2019;s approval events to make sure posts don&#x2019;t disappear
 with moderators.</p>
-<p>Post Approvals of replaceable events can be created in three ways:
-(i) by tagging the replaceable event as an <code>e</code> tag if
+<p>Approvals of replaceable events can be created in three ways:</p>
+<ol type="1">
+<li>By tagging the replaceable event as an <code>e</code> tag if
 moderators want to approve each individual change to the replaceable
-event; (ii) by tagging the replaceable event as an <code>a</code> tag if
-the moderator authorizes the replaceable event author to make changes
-without additional approvals and (iii) by tagging the replaceable event
-with both its <code>e</code> and <code>a</code> tag which empowers
-clients to display the original and updated versions of the event, with
-appropriate remarks in the UI. Since relays are instructed to delete old
-versions of a replaceable event, the <code>.content</code> of an
-<code>e</code>-approval MUST have the specific version of the event or
-Clients might not be able to find that version of the content
-anywhere.</p>
+event</li>
+<li>By tagging the replaceable event as an <code>a</code> tag if the
+moderator authorizes the replaceable event author to make changes
+without additional approvals and</li>
+<li>By tagging the replaceable event with both its <code>e</code> and
+<code>a</code> tag which empowers clients to display the original and
+updated versions of the event, with appropriate remarks in the UI.</li>
+</ol>
+<p>Since relays are instructed to delete old versions of a replaceable
+event, the <code>content</code> of an approval using an <code>e</code>
+tag MUST have the specific version of the event or clients might not be
+able to find that version of the content anywhere.</p>
 <p>Clients SHOULD evaluate any non-<code>34550:*</code> <code>a</code>
-tag as posts to be included in all <code>34550:*</code> <code>a</code>
+tag as posts to be approved for all <code>34550:*</code> <code>a</code>
 tags.</p>
-<h1 id="displaying">Displaying</h1>
-<p>Community clients SHOULD display posts that have been approved by at
-least 1 moderator or by the community owner.</p>
-<p>The following filter displays the approved posts.</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;REQ&quot;</span><span class="ot">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;_&quot;</span><span class="ot">,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;authors&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;&lt;owner-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;moderator1-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;moderator2-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;moderator3-pubkey&gt;&quot;</span><span class="ot">,</span> <span class="er">...</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">4550</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;#a&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;34550:&lt;Community event author pubkey&gt;:&lt;d-identifier of the community&gt;&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
-<p>Clients MAY hide approvals by blocked moderators at the user&#x2019;s
-request.</p>
+<h1 id="cross-posting">Cross-posting</h1>
+<p>Clients MAY support cross-posting between communities by posting a
+NIP 18 <code>kind 6</code> or <code>kind 16</code> repost to one or more
+communities using <code>a</code> tags as described above. The
+<code>content</code> of the repost MUST be the original event, not the
+approval event.</p>

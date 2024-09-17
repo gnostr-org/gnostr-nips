@@ -166,39 +166,123 @@
       vertical-align: middle;
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
 </head>
 <body>
 <h1 id="nip-54">NIP-54</h1>
 <h2 id="wiki">Wiki</h2>
 <p><code>draft</code> <code>optional</code></p>
-<p>This NIP defines <code>kind:30818</code> (a <em>parameterized
-replaceable event</em>) for long-form text content similar to <a
-href="23.md.css.html">NIP-23</a>, but with one important difference: articles are
-meant to be descriptions, or encyclopedia entries, of particular
+<p>This NIP defines <code>kind:30818</code> (an <em>addressable
+event</em>) for descriptions (or encyclopedia entries) of particular
 subjects, and it’s expected that multiple people will write articles
 about the exact same subjects, with either small variations or
 completely independent content.</p>
 <p>Articles are identified by lowercase, normalized ascii <code>d</code>
 tags.</p>
 <h3 id="articles">Articles</h3>
-<pre class="jsonc"><code>{
-  &quot;content&quot;: &quot;A wiki is a hypertext publication collaboratively edited and managed by its own audience.&quot;,
-  &quot;tags&quot;: [
-    [&quot;d&quot;, &quot;wiki&quot;],
-    [&quot;title&quot;, &quot;Wiki&quot;],
-  ]
-}</code></pre>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;A wiki is a hypertext publication collaboratively edited and managed by its own audience.&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;wiki&quot;</span><span class="ot">],</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;title&quot;</span><span class="ot">,</span> <span class="st">&quot;Wiki&quot;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <h3 id="d-tag-normalization-rules"><code>d</code> tag normalization
 rules</h3>
 <ul>
 <li>Any non-letter character MUST be converted to a <code>-</code>.</li>
 <li>All letters MUST be converted to lowercase.</li>
 </ul>
-<h3 id="content-rules">Content rules</h3>
-<p>The content should be Markdown, following the same rules as of <a
-href="23.md.css.html">NIP-23</a>, although it takes some extra (optional)
-metadata tags:</p>
+<h3 id="content">Content</h3>
+<p>The <code>content</code> should be Asciidoc with two extra
+functionalities: <strong>wikilinks</strong> and <strong>nostr:…</strong>
+links.</p>
+<p>Unlike normal Asciidoc links <code>http://example.com[]</code> that
+link to external webpages, wikilinks <code>[[]]</code> link to other
+articles in the wiki. In this case, the wiki is the entirety of Nostr.
+Clicking on a wikilink should cause the client to ask relays for events
+with <code>d</code> tags equal to the target of that wikilink.</p>
+<p>Wikilinks can take these two forms:</p>
+<ol type="1">
+<li><code>[[Target Page]]</code> – in this case it will link to the page
+<code>target-page</code> (according to <code>d</code> tag normalization
+rules above) and be displayed as <code>Target Page</code>;</li>
+<li><code>[[target page|see this]]</code> – in this case it will link to
+the page <code>target-page</code>, but will be displayed as
+<code>see this</code>.</li>
+</ol>
+<p><code>nostr:...</code> links, as per <a href="21.md.css.html">NIP-21</a>,
+should link to profiles or arbitrary Nostr events. Although it is not
+recommended to link to specific versions of articles – instead the
+<em>wikilink</em> syntax should be preferred, since it should be left to
+the reader and their client to decide what version of any given article
+they want to read.</p>
+<h3 id="optional-extra-tags">Optional extra tags</h3>
 <ul>
 <li><code>title</code>: for when the display title should be different
 from the <code>d</code> tag.</li>
@@ -206,12 +290,6 @@ from the <code>d</code> tag.</li>
 <li><code>a</code> and <code>e</code>: for referencing the original
 event a wiki article was forked from.</li>
 </ul>
-<p>One extra functionality is added: <strong>wikilinks</strong>. Unlike
-normal Markdown links <code>[]()</code> that link to webpages, wikilinks
-<code>[[]]</code> link to other articles in the wiki. In this case, the
-wiki is the entirety of Nostr. Clicking on a wikilink should cause the
-client to ask relays for events with <code>d</code> tags equal to the
-target of that wikilink.</p>
 <h3 id="merge-requests">Merge Requests</h3>
 <p>Event <code>kind:818</code> represents a request to merge from a
 forked article into the source. It is directed to a pubkey and
@@ -275,43 +353,32 @@ want to keep/maintain an independent version, the <code>link</code> tag
 could effectively be a considered a “deletion” of the editor’s version
 and putting that pubkey’s WoT weight behind the original author’s
 version.</p>
-<h2 id="why-markdown">Why Markdown?</h2>
-<p>If the idea is to make a wiki then the most obvious text format to
-use is probably the mediawiki/wikitext format used by Wikipedia since
-it’s widely deployed in all mediawiki installations and used for decades
-with great success. However, it turns out that format is very bloated
-and convoluted, has way too many features and probably because of that
-it doesn’t have many alternative implementations out there, and the ones
-that exist are not complete and don’t look very trustworthy. Also it is
-very much a centralized format that can probably be changed at the whims
-of the Wikipedia owners.</p>
-<p>On the other hand, Markdown has proven to work well for small scale
-wikis and one of the biggest wikis in the planet (which is not very
-often thought of as a wiki), <a
-href="https://stackoverflow.com">StackOverflow</a> and its child sites,
-and also one of the biggest “personal wiki” software, <a
-href="https://obsidian.md.css.html/">Obsidian</a>. Markdown can probably deliver
-95% of the functionality of wikitext. When augmented with tables,
-diagram generators and MathJax (which are common extensions that exist
-in the wild and can be included in this NIP) that rate probably goes to
-99%, and its simplicity is a huge benefit that can’t be overlooked.
-Wikitext format can also be transpíled into Markdown using Pandoc. Given
-all that, I think it’s a reasonable suspicion that mediawiki is not
-inherently better than Markdown, the success of Wikipedia probably
-cannot be predicated on the syntax language choice.</p>
+<h2 id="why-asciidoc">Why Asciidoc?</h2>
+<p>Wikitext is <a
+href="nostr:nevent1qqsqt0gcggry60n72uglhuhypdlmr2dm6swjj69jex5v530gcpazlzsprpmhxue69uhhyetvv9ujumn0wdmksetjv5hxx.md.css.htmlqy28wumn8ghj7un9d3shjtnyv9kh2uewd9hsygpm7rrrljungc6q0tuh5hj7ue863q73qlheu4vywtzwhx42a7j9n5ueneex">garbage</a>
+and Markdown is not powerful enough (besides being too freeform and
+unspecified and prone to generate incompatibilities in the future).</p>
+<p>Asciidoc has a strict spec, multiple implementations in many
+languages, and support for features that are very much necessary in a
+wiki article, like <em>sidebars</em>, <em>tables</em> (with rich markup
+inside cells), many levels of <em>headings</em>, <em>footnotes</em>,
+<em>superscript</em> and <em>subscript</em> markup and <em>description
+lists</em>. It is also arguably easier to read in its plaintext format
+than Markdown (and certainly much better than Wikitext).</p>
 <h1 id="appendix-1-merge-requests">Appendix 1: Merge requests</h1>
 <p>Users can request other users to get their entries merged into
 someone else’s entry by creating a <code>kind:818</code> event.</p>
-<pre class="jsonc"><code>{
-  &quot;content&quot;: &quot;I added information about how to make hot ice-creams&quot;,
-  &quot;kind&quot;: 818,
-  &quot;tags&quot;: [
-    [ &quot;a&quot;, &quot;30818:&lt;destination-pubkey&gt;:hot-ice-creams&quot;, &quot;&lt;relay-url&gt;&quot; ],
-    [ &quot;e&quot;, &quot;&lt;version-against-which-the-modification-was-made&gt;&quot;, &quot;&lt;relay-url&gt;&#39; ],
-    [ &quot;p&quot;, &quot;&lt;destination-pubkey&gt;&quot; ],
-    [ &quot;e&quot;, &quot;&lt;version-to-be-merged&gt;&quot;, &quot;&lt;relay-url&gt;&quot;, &quot;source&quot; ]
-  ]
-}</code></pre>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;I added information about how to make hot ice-creams&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">818</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span> <span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;30818:&lt;destination-pubkey&gt;:hot-ice-creams&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span> <span class="ot">],</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span> <span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;version-against-which-the-modification-was-made&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span> <span class="ot">],</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span> <span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;destination-pubkey&gt;&quot;</span> <span class="ot">],</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span> <span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;version-to-be-merged&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;source&quot;</span> <span class="ot">]</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p><code>.content</code>: an optional explanation detailing why this
 merge is being requested. <code>a</code> tag: tag of the article which
 should be modified (i.e. the target of this merge request).
@@ -319,8 +386,9 @@ should be modified (i.e. the target of this merge request).
 modifications is based <code>e</code> tag with <code>source</code>
 marker: the ID of the event that should be merged. This event id MUST be
 of a <code>kind:30818</code> as defined in this NIP.</p>
-<p>The destination-pubkey (the pubkey being requested to merge something
-into their article can create [[NIP-25]] reactions that tag the
-<code>kind:818</code> event with <code>+</code> or <code>-</code></p>
+<p>The destination-pubkey is the pubkey being requested to merge
+something into their article can create [[NIP-25]] reactions that tag
+the <code>kind:818</code> event with <code>+</code> or
+<code>-</code></p>
 </body>
 </html>

@@ -10,18 +10,17 @@ and a <code>read</code> or <code>write</code> marker. Relays marked as
 respectively. If the marker is omitted, the relay is used for both
 purposes.</p>
 <p>The <code>.content</code> is not used.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">10002</span><span class="fu">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://alicerelay.example.com&quot;</span><span class="ot">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://brando-relay.com&quot;</span><span class="ot">],</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://expensive-relay.example2.com&quot;</span><span class="ot">,</span> <span class="st">&quot;write&quot;</span><span class="ot">],</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;r&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://nostr-relay.example.com&quot;</span><span class="ot">,</span> <span class="st">&quot;read&quot;</span><span class="ot">]</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="er">...other</span> <span class="er">fields</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 10002,
+  &quot;tags&quot;: [
+    [&quot;r&quot;, &quot;wss://alicerelay.example.com&quot;],
+    [&quot;r&quot;, &quot;wss://brando-relay.com&quot;],
+    [&quot;r&quot;, &quot;wss://expensive-relay.example2.com&quot;, &quot;write&quot;],
+    [&quot;r&quot;, &quot;wss://nostr-relay.example.com&quot;, &quot;read&quot;]
+  ],
+  &quot;content&quot;: &quot;&quot;,
+  // other fields...
+}</code></pre>
 <p>This NIP doesn&#x2019;t fully replace relay lists that are designed to
 configure a client&#x2019;s usage of relays (such as <code>kind:3</code> style
 relay lists). Clients MAY use other relay lists in situations where a
@@ -36,7 +35,7 @@ tagged, Clients SHOULD use the READ relays of the user&#x2019;s
 <p>When broadcasting an event, Clients SHOULD:</p>
 <ul>
 <li>Broadcast the event to the WRITE relays of the author</li>
-<li>Broadcast the event all READ relays of each tagged user</li>
+<li>Broadcast the event to all READ relays of each tagged user</li>
 </ul>
 <h2 id="motivation">Motivation</h2>
 <p>The old model of using a fixed relay list per user centralizes in

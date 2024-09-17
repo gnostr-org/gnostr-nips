@@ -220,7 +220,7 @@ Request:
             "amount": 123, // invoice amount in msats, required
             "pubkey": "03...", // payee pubkey, required
             "preimage": "0123456789abcdef...", // preimage of the payment, optional
-            "tlv_records: [ // tlv records, optional
+            "tlv_records": [ // tlv records, optional
                 {
                     "type": 5482373484, // tlv type
                     "value": "0123456789abcdef" // hex encoded tlv value
@@ -254,7 +254,7 @@ Request:
         "method": "multi_pay_keysend",
         "params": {
             "keysends": [
-              {"id": "4c5b24a351", pubkey": "03...", "amount": 123},
+              {"id": "4c5b24a351", "pubkey": "03...", "amount": 123},
               {"id": "3da52c32a1", "pubkey": "02...", "amount": 567, "preimage": "abc123..", "tlv_records": [{"type": 696969, "value": "77616c5f6872444873305242454d353736"}]},
             ],
         }
@@ -397,8 +397,7 @@ Request:
 
     {
         "method": "get_balance",
-        "params": {
-        }
+        "params": {}
     }
 
 Response:
@@ -416,8 +415,7 @@ Request:
 
     {
         "method": "get_info",
-        "params": {
-        }
+        "params": {}
     }
 
 Response:

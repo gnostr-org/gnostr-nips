@@ -4,7 +4,7 @@ Nostr Marketplace
 
 draft optional
 
-Based on https://github.com/lnbits/Diagon-Alley.
+Based on Diagon-Alley.
 
 Implemented in NostrMarket and Plebeian Market.
 
@@ -85,7 +85,7 @@ Event Tags
 
     {
       "tags": [["d", <string, id of stall]],
-      ...
+      // other fields...
     }
 
 -   the d tag is required, its value MUST be the same as the stall id.
@@ -142,7 +142,7 @@ Event Tags
         ["d", <string, id of product],
         ["t", <string (optional), product category],
         ["t", <string (optional), product category],
-        ...
+        // other fields...
       ],
       ...
 
@@ -153,7 +153,7 @@ Event Tags
 
 Checkout events
 
-All checkout events are sent as JSON strings using (NIP-04).
+All checkout events are sent as JSON strings using NIP-04.
 
 The merchant and the customer can exchange JSON messages that represent
 different actions. Each JSON message MUST have a type field indicating
@@ -174,7 +174,7 @@ The below JSON goes in content of NIP-04.
       "type": 0,
       "name": <string (optional), ???>,
       "address": <string (optional), for physical goods an address should be provided>,
-      "message": "<string (optional), message for merchant>,
+      "message": <string (optional), message for merchant>,
       "contact": {
         "nostr": <32-bytes hex of a pubkey>,
         "phone": <string (optional), if the customer wants to be contacted by phone>,
@@ -265,7 +265,7 @@ Event Content
         "darkMode": <bool, true/false>
       },
       "merchants": [array of pubkeys (optional)],
-      ...
+      // other fields...
     }
 
 This event leverages naddr to enable comprehensive customization and
@@ -314,19 +314,20 @@ Event 1021: Bid
     {
         "content": <int, amount of sats>,
         "tags": [["e", <event ID of the auction to bid on>]],
+        // other fields...
     }
 
 Bids are simply events of kind 1021 with a content field specifying the
 amount, in the currency of the auction. Bids must reference an auction.
 
   [!NOTE] Auctions can be edited as many times as desired (they are
-  &ldquo;parameterized replaceable events&rdquo;) by the author - even
-  after the start_date, but they cannot be edited after they have
-  received the first bid! This is enforced by the fact that bids
-  reference the event ID of the auction (rather than the product UUID),
-  which changes with every new version of the auctioned product. So a
-  bid is always attached to one &ldquo;version&rdquo;. Editing the
-  auction after a bid would result in the new product losing the bid!
+  &ldquo;addressable events&rdquo;) by the author - even after the
+  start_date, but they cannot be edited after they have received the
+  first bid! This is enforced by the fact that bids reference the event
+  ID of the auction (rather than the product UUID), which changes with
+  every new version of the auctioned product. So a bid is always
+  attached to one &ldquo;version&rdquo;. Editing the auction after a bid
+  would result in the new product losing the bid!
 
 Event 1022: Bid confirmation
 
@@ -376,8 +377,7 @@ start_date + duration + (SUM(c.duration_extended) FOR c in all confirmations.
 Customer support events
 
 Customer support is handled over whatever communication method was
-specified. If communicating via nostr, NIP-04 is used
-https://github.com/nostr-protocol/nips/blob/master/04.txt.
+specified. If communicating via nostr, NIP-04 is used.
 
 Additional
 

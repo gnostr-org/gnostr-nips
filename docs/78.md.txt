@@ -16,10 +16,10 @@ would then enable these apps to store application-specific data there.
 
 Nostr event
 
-This NIP specifies the use of event kind 30078 (parameterized
-replaceable event) with a d tag containing some reference to the app
-name and context &ndash; or any other arbitrary string. content and
-other tags can be anything or in any format.
+This NIP specifies the use of event kind 30078 (an addressable event)
+with a d tag containing some reference to the app name and context
+&ndash; or any other arbitrary string. content and other tags can be
+anything or in any format.
 
 Some use cases
 

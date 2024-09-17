@@ -7,10 +7,10 @@ draft optional
 Three special events are used to define, award and display badges in
 user profiles:
 
-1.  A &ldquo;Badge Definition&rdquo; event is defined as a parameterized
-    replaceable event with kind 30009 having a d tag with a value that
-    uniquely identifies the badge (e.g.&nbsp;bravery) published by the
-    badge issuer. Badge definitions can be updated.
+1.  A &ldquo;Badge Definition&rdquo; event is defined as an addressable
+    event with kind 30009 having a d tag with a value that uniquely
+    identifies the badge (e.g.&nbsp;bravery) published by the badge
+    issuer. Badge definitions can be updated.
 
 2.  A &ldquo;Badge Award&rdquo; event is a kind 8 event with a single a
     tag referencing a &ldquo;Badge Definition&rdquo; event and one or
@@ -110,7 +110,7 @@ Example of a Badge Definition event
         ["image", "https://nostr.academy/awards/bravery.png", "1024x1024"],
         ["thumb", "https://nostr.academy/awards/bravery_256x256.png", "256x256"]
       ],
-      ...
+      // other fields...
     }
 
 Example of Badge Award event
@@ -124,7 +124,7 @@ Example of Badge Award event
         ["p", "bob", "wss://relay"],
         ["p", "charlie", "wss://relay"]
       ],
-      ...
+      // other fields...
     }
 
 Example of a Profile Badges event
@@ -141,5 +141,5 @@ Honorable Bob The Brave:
         ["a", "30009:alice:honor"],
         ["e", "<honor badge award event id>", "wss://nostr.academy"]
       ],
-      ...
+      // other fields...
     }

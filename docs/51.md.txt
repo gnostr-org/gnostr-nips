@@ -21,9 +21,9 @@ Types of lists
 
 Standard lists
 
-Standard lists use non-parameterized replaceable events, meaning users
-may only have a single list of each kind. They have special meaning and
-clients may rely on them to augment a user&rsquo;s profile or browsing
+Standard lists use normal replaceable events, meaning users may only
+have a single list of each kind. They have special meaning and clients
+may rely on them to augment a user&rsquo;s profile or browsing
 experience.
 
 For example, mute list can contain the public keys of spammers and bad
@@ -80,6 +80,9 @@ notifications from.
                                       and pointers to emoji  NIP-30) and "a"
                                       sets                   (kind:30030 emoji
                                                              set)
+
+  DM relays         10050             Where to receive       "relay" (see
+                                      NIP-17 direct messages NIP-17)
 
   Good wiki authors 10101             NIP-54 user            "p" (pubkeys)
                                       recommended wiki       
@@ -139,6 +142,10 @@ enhance their UI.
                                       by users as interesting  videos)
                                       and/or belonging to the  
                                       same category            
+
+  Kind mute sets    30007             mute pubkeys by kinds"d" "p" (pubkeys)
+                                      tag MUST be the kind     
+                                      string                   
 
   Interest sets     30015             interest topics          "t" (hashtags)
                                       represented by a bunch   

@@ -1,6 +1,6 @@
 NIP-10
 
-On &ldquo;e&rdquo; and &ldquo;p&rdquo; tags in Text Events (kind 1).
+On &ldquo;e&rdquo; and &ldquo;p&rdquo; tags in Text Events (kind 1)
 
 draft optional
 
@@ -54,7 +54,7 @@ Where:
 
 -   <event-id> is the id of the event being referenced.
 -   <relay-url> is the URL of a recommended relay associated with the
-    reference. Clients SHOULD add a valid <relay-URL> field, but may
+    reference. Clients SHOULD add a valid <relay-url> field, but may
     instead leave it as "".
 -   <marker> is optional and if present is one of "reply", "root", or
     "mention".

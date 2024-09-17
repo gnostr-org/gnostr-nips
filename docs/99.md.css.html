@@ -166,90 +166,23 @@
       vertical-align: middle;
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-    /* CSS for syntax highlighting */
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { color: #008000; } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { color: #008000; font-weight: bold; } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
 </head>
 <body>
 <h1 id="nip-99">NIP-99</h1>
 <h2 id="classified-listings">Classified Listings</h2>
 <p><code>draft</code> <code>optional</code></p>
-<p>This NIP defines <code>kind:30402</code>: a parameterized replaceable
-event to describe classified listings that list any arbitrary product,
-service, or other thing for sale or offer and includes enough structured
-metadata to make them useful.</p>
+<p>This NIP defines <code>kind:30402</code>: an addressable event to
+describe classified listings that list any arbitrary product, service,
+or other thing for sale or offer and includes enough structured metadata
+to make them useful.</p>
 <p>The category of classifieds includes a very broad range of physical
 goods, services, work opportunities, rentals, free giveaways, personals,
 etc. and is distinct from the more strictly structured marketplaces
-defined in <a
-href="https://github.com/nostr-protocol/nips/blob/master/15.md.css.html">NIP-15</a>
-that often sell many units of specific products through very specific
-channels.</p>
+defined in <a href="15.md.css.html">NIP-15</a> that often sell many units of
+specific products through very specific channels.</p>
 <p>The structure of these events is very similar to <a
-href="https://github.com/nostr-protocol/nips/blob/master/23.md.css.html">NIP-23</a>
-long-form content events.</p>
+href="23.md.css.html">NIP-23</a> long-form content events.</p>
 <h3 id="draft-inactive-listings">Draft / Inactive Listings</h3>
 <p><code>kind:30403</code> has the same structure as
 <code>kind:30402</code> and is used to save draft or inactive classified
@@ -265,12 +198,11 @@ party creating the listing.</p>
 <ul>
 <li>For “tags”/“hashtags” (i.e. categories or keywords of relevance for
 the listing) the <code>"t"</code> event tag should be used, as per <a
-href="https://github.com/nostr-protocol/nips/blob/master/12.md.css.html">NIP-12</a>.</li>
+href="12.md.css.html">NIP-12</a>.</li>
 <li>For images, whether included in the markdown content or not, clients
 SHOULD use <code>image</code> tags as described in <a
-href="https://github.com/nostr-protocol/nips/blob/master/58.md.css.html">NIP-58</a>.
-This allows clients to display images in carousel format more
-easily.</li>
+href="58.md.css.html">NIP-58</a>. This allows clients to display images in
+carousel format more easily.</li>
 </ul>
 <p>The following tags, used for structured metadata, are standardized
 and SHOULD be included. Other tags may be added as necessary.</p>
@@ -311,34 +243,33 @@ be either “active” or “sold”.</li>
 <li><code>"g"</code>, a geohash for more precise location</li>
 </ul>
 <h2 id="example-event">Example Event</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">30402</span><span class="fu">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1675642635</span><span class="fu">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">//</span> <span class="er">Markdown</span> <span class="er">content</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem [ipsum][nostr:nevent1qqst8cujky046negxgwwm5ynqwn53t8aqjr6afd8g59nfqwxpdhylpcpzamhxue69uhhyetvv9ujuetcv9khqmr99e3k7mg8arnc9] dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span><span class="ch">\n\n</span><span class="st">Read more at nostr:naddr1qqzkjurnw4ksz9thwden5te0wfjkccte9ehx7um5wghx7un8qgs2d90kkcq3nk2jry62dyf50k0h36rhpdtd594my40w9pkal876jxgrqsqqqa28pccpzu.&quot;</span><span class="fu">,</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;lorem-ipsum&quot;</span><span class="ot">],</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;title&quot;</span><span class="ot">,</span> <span class="st">&quot;Lorem Ipsum&quot;</span><span class="ot">],</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;published_at&quot;</span><span class="ot">,</span> <span class="st">&quot;1296962229&quot;</span><span class="ot">],</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="st">&quot;electronics&quot;</span><span class="ot">],</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;image&quot;</span><span class="ot">,</span> <span class="st">&quot;https://url.to.img&quot;</span><span class="ot">,</span> <span class="st">&quot;256x256&quot;</span><span class="ot">],</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;summary&quot;</span><span class="ot">,</span> <span class="st">&quot;More lorem ipsum that is a little more than the title&quot;</span><span class="ot">],</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;location&quot;</span><span class="ot">,</span> <span class="st">&quot;NYC&quot;</span><span class="ot">],</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;price&quot;</span><span class="ot">,</span> <span class="st">&quot;100&quot;</span><span class="ot">,</span> <span class="st">&quot;USD&quot;</span><span class="ot">],</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;e&quot;</span><span class="ot">,</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;b3e392b11f5d4f28321cedd09303a748acfd0487aea5a7450b3481c60b6e4f87&quot;</span><span class="ot">,</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;wss://relay.example.com&quot;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">],</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;a&quot;</span><span class="ot">,</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum&quot;</span><span class="ot">,</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;wss://relay.nostr.org&quot;</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">,</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 30402,
+  &quot;created_at&quot;: 1675642635,
+  // Markdown content
+  &quot;content&quot;: &quot;Lorem [ipsum][nostr:nevent1qqst8cujky046negxgwwm5ynqwn53t8aqjr6afd8g59nfqwxpdhylpcpzamhxue69uhhyetvv9ujuetcv9khqmr99e3k7mg8arnc9] dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nRead more at nostr:naddr1qqzkjurnw4ksz9thwden5te0wfjkccte9ehx7um5wghx7un8qgs2d90kkcq3nk2jry62dyf50k0h36rhpdtd594my40w9pkal876jxgrqsqqqa28pccpzu.&quot;,
+  &quot;tags&quot;: [
+    [&quot;d&quot;, &quot;lorem-ipsum&quot;],
+    [&quot;title&quot;, &quot;Lorem Ipsum&quot;],
+    [&quot;published_at&quot;, &quot;1296962229&quot;],
+    [&quot;t&quot;, &quot;electronics&quot;],
+    [&quot;image&quot;, &quot;https://url.to.img&quot;, &quot;256x256&quot;],
+    [&quot;summary&quot;, &quot;More lorem ipsum that is a little more than the title&quot;],
+    [&quot;location&quot;, &quot;NYC&quot;],
+    [&quot;price&quot;, &quot;100&quot;, &quot;USD&quot;],
+    [
+      &quot;e&quot;,
+      &quot;b3e392b11f5d4f28321cedd09303a748acfd0487aea5a7450b3481c60b6e4f87&quot;,
+      &quot;wss://relay.example.com&quot;
+    ],
+    [
+      &quot;a&quot;,
+      &quot;30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum&quot;,
+      &quot;wss://relay.nostr.org&quot;
+    ]
+  ],
+  &quot;pubkey&quot;: &quot;...&quot;,
+  &quot;id&quot;: &quot;...&quot;
+}</code></pre>
 </body>
 </html>

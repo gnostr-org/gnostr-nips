@@ -24,7 +24,7 @@ The .content is not used.
         ["r", "wss://nostr-relay.example.com", "read"]
       ],
       "content": "",
-      ...other fields
+      // other fields...
     }
 
 This NIP doesn&rsquo;t fully replace relay lists that are designed to
@@ -43,7 +43,7 @@ SHOULD use the READ relays of the user&rsquo;s kind:10002.
 When broadcasting an event, Clients SHOULD:
 
 -   Broadcast the event to the WRITE relays of the author
--   Broadcast the event all READ relays of each tagged user
+-   Broadcast the event to all READ relays of each tagged user
 
 Motivation
 

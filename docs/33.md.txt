@@ -4,4 +4,4 @@ Parameterized Replaceable Events
 
 final mandatory
 
-Moved to NIP-01.
+Renamed to &ldquo;Addressable events&rdquo; and moved to NIP-01.

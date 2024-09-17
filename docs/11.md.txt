@@ -106,7 +106,7 @@ rejected or fail immediately.
         "created_at_lower_limit": 31536000,
         "created_at_upper_limit": 3
       },
-      ...
+      // other fields...
     }
 
 -   max_message_length: this is the maximum number of bytes for incoming
@@ -181,7 +181,8 @@ preferably an error will be provided when those are received.
         {"kinds": [[40000, 49999]], "time": 100},
         {"kinds": [[30000, 39999]], "count": 1000},
         {"time": 3600, "count": 10000}
-      ]
+      ],
+      // other fields...
     }
 
 retention is a list of specifications: each will apply to either all
@@ -201,7 +202,7 @@ they are not retained.
 Content Limitations
 
 Some relays may be governed by the arbitrary laws of a nation state.
-This may limit what content can be stored in cleartext on those relays.
+This may limit what content can be stored in clear-text on those relays.
 All clients are encouraged to use encryption to work around this
 limitation.
 
@@ -214,12 +215,12 @@ countries&rsquo; laws might end up being enforced on them, and then
 indirectly on their users&rsquo; content.
 
 Users should be able to avoid relays in countries they don&rsquo;t like,
-and/or select relays in more favourable zones. Exposing this flexibility
+and/or select relays in more favorable zones. Exposing this flexibility
 is up to the client software.
 
     {
       "relay_countries": [ "CA", "US" ],
-      ...
+      // other fields...
     }
 
 -   relay_countries: a list of two-level ISO country codes (ISO 3166-1
@@ -241,7 +242,7 @@ goal, relays MAY specify some of the following values.
       "language_tags": ["en", "en-419"],
       "tags": ["sfw-only", "bitcoin-only", "anime"],
       "posting_policy": "https://example.com/posting-policy.html",
-      ...
+      // other fields...
     }
 
 -   language_tags is an ordered list of IETF language tags indicating
@@ -289,28 +290,50 @@ Recommended to be squared in shape.
 
     {
       "icon": "https://nostr.build/i/53866b44135a27d624e99c6165cabd76ac8f72797209700acb189fce75021f47.jpg",
-      ...
+      // other fields...
     }
 
 Examples
 
 As of 2 May 2023 the following command provided these results:
 
-``` ~> curl -H &ldquo;Accept: application/nostr+json&rdquo;
-https://eden.nostr.land | jq
+    $ curl -H "Accept: application/nostr+json" https://eden.nostr.land | jq
 
-{ &ldquo;description&rdquo;: &ldquo;nostr.land family of relays
-(us-or-01)&rdquo;, &ldquo;name&rdquo;: &ldquo;nostr.land&rdquo;,
-&ldquo;pubkey&rdquo;:
-&ldquo;52b4a076bcbbbdc3a1aefa3735816cf74993b1b8db202b01c883c58be7fad8bd&rdquo;,
-&ldquo;software&rdquo;: &ldquo;custom&rdquo;,
-&ldquo;supported_nips&rdquo;: [ 1, 2, 4, 9, 11, 12, 16, 20, 22, 28, 33,
-40 ], &ldquo;version&rdquo;: &ldquo;1.0.1&rdquo;,
-&ldquo;limitation&rdquo;: { &ldquo;payment_required&rdquo;: true,
-&ldquo;max_message_length&rdquo;: 65535, &ldquo;max_event_tags&rdquo;:
-2000, &ldquo;max_subscriptions&rdquo;: 20, &ldquo;auth_required&rdquo;:
-false }, &ldquo;payments_url&rdquo;:
-&ldquo;https://eden.nostr.land&rdquo;, &ldquo;fees&rdquo;: {
-&ldquo;subscription&rdquo;: [ { &ldquo;amount&rdquo;: 2500000,
-&ldquo;unit&rdquo;: &ldquo;msats&rdquo;, &ldquo;period&rdquo;: 2592000 }
-] }, }
+    {
+      "description": "nostr.land family of relays (us-or-01)",
+      "name": "nostr.land",
+      "pubkey": "52b4a076bcbbbdc3a1aefa3735816cf74993b1b8db202b01c883c58be7fad8bd",
+      "software": "custom",
+      "supported_nips": [
+        1,
+        2,
+        4,
+        9,
+        11,
+        12,
+        16,
+        20,
+        22,
+        28,
+        33,
+        40
+      ],
+      "version": "1.0.1",
+      "limitation": {
+        "payment_required": true,
+        "max_message_length": 65535,
+        "max_event_tags": 2000,
+        "max_subscriptions": 20,
+        "auth_required": false
+      },
+      "payments_url": "https://eden.nostr.land",
+      "fees": {
+        "subscription": [
+          {
+            "amount": 2500000,
+            "unit": "msats",
+            "period": 2592000
+          }
+        ]
+      },
+    }

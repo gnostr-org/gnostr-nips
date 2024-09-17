@@ -46,15 +46,16 @@ is <strong>always</strong> encrypted to a receiver&#x2019;s pubkey but there is
 no <code>p</code> tag pointing to the receiver. There is no way to know
 who the rumor is for without the receiver&#x2019;s or the sender&#x2019;s private key.
 The only public information in this event is who is signing it.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;id&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;id&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pubkey&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;real author&#39;s pubkey&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;encrypted rumor&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">13</span><span class="op">,</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;created_at&quot;</span><span class="op">:</span> <span class="dv">1686840217</span><span class="op">,</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> []<span class="op">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;sig&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;real author&#39;s pubkey signature&gt;&quot;</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;id&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;real author&#39;s pubkey&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;encrypted rumor&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">13</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1686840217</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;real author&#39;s pubkey signature&gt;&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>Tags MUST must always be empty in a <code>kind:13</code>. The inner
 event MUST always be unsigned.</p>
 <h2 id="gift-wrap-event-kind">3. Gift Wrap Event Kind</h2>
@@ -63,15 +64,16 @@ wraps any other event. <code>tags</code> SHOULD include any information
 needed to route the event to its intended recipient, including the
 recipient&#x2019;s <code>p</code> tag or <a href="13.md.html">NIP-13</a> proof of
 work.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;id&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;id&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pubkey&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;random, one-time-use pubkey&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;encrypted kind 13&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">1059</span><span class="op">,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;created_at&quot;</span><span class="op">:</span> <span class="dv">1686840217</span><span class="op">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [[<span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;recipient pubkey&gt;&quot;</span>]]<span class="op">,</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;sig&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;random, one-time-use pubkey signature&gt;&quot;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;id&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;random, one-time-use pubkey&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;encrypted kind 13&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1059</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="dv">1686840217</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;recipient pubkey&gt;&quot;</span><span class="ot">]]</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sig&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;random, one-time-use pubkey signature&gt;&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <h1 id="encrypting-payloads">Encrypting Payloads</h1>
 <p>Encryption is done following <a href="44.md.html">NIP-44</a> on the
 JSON-encoded event. Place the encryption payload in the

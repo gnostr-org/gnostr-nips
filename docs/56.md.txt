@@ -48,7 +48,7 @@ Example events
         ["l", "NS-nud", "social.nos.ontology"]
       ],
       "content": "",
-      ...
+      // other fields...
     }
 
     {
@@ -58,7 +58,7 @@ Example events
         ["p", <pubkey>]
       ],
       "content": "He's insulting the king!",
-      ...
+      // other fields...
     }
 
     {
@@ -67,7 +67,7 @@ Example events
         ["p", <impersonator pubkey>, "impersonation"]
       ],
       "content": "Profile is impersonating nostr:<victim bech32 pubkey>",
-      ...
+      // other fields...
     }
 
 Client behavior

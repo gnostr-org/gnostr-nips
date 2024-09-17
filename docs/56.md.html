@@ -35,36 +35,33 @@ categories</li>
 in <a href="32.md.html">NIP-32</a> to support further qualification and
 querying.</p>
 <h2 id="example-events">Example events</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1984</span><span class="fu">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey&gt;</span><span class="ot">,</span> <span class="st">&quot;nudity&quot;</span><span class="ot">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;L&quot;</span><span class="ot">,</span> <span class="st">&quot;social.nos.ontology&quot;</span><span class="ot">],</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;l&quot;</span><span class="ot">,</span> <span class="st">&quot;NS-nud&quot;</span><span class="ot">,</span> <span class="st">&quot;social.nos.ontology&quot;</span><span class="ot">]</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1984</span><span class="fu">,</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;e&quot;</span><span class="ot">,</span> <span class="er">&lt;eventId&gt;</span><span class="ot">,</span> <span class="st">&quot;illegal&quot;</span><span class="ot">],</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;pubkey&gt;</span><span class="ot">]</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;He&#39;s insulting the king!&quot;</span><span class="fu">,</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1984</span><span class="fu">,</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="er">&lt;impersonator</span> <span class="er">pubkey&gt;</span><span class="ot">,</span> <span class="st">&quot;impersonation&quot;</span><span class="ot">]</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Profile is impersonating nostr:&lt;victim bech32 pubkey&gt;&quot;</span><span class="fu">,</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 1984,
+  &quot;tags&quot;: [
+    [&quot;p&quot;, &lt;pubkey&gt;, &quot;nudity&quot;],
+    [&quot;L&quot;, &quot;social.nos.ontology&quot;],
+    [&quot;l&quot;, &quot;NS-nud&quot;, &quot;social.nos.ontology&quot;]
+  ],
+  &quot;content&quot;: &quot;&quot;,
+  // other fields...
+}</code></pre>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 1984,
+  &quot;tags&quot;: [
+    [&quot;e&quot;, &lt;eventId&gt;, &quot;illegal&quot;],
+    [&quot;p&quot;, &lt;pubkey&gt;]
+  ],
+  &quot;content&quot;: &quot;He&#39;s insulting the king!&quot;,
+  // other fields...
+}</code></pre>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 1984,
+  &quot;tags&quot;: [
+    [&quot;p&quot;, &lt;impersonator pubkey&gt;, &quot;impersonation&quot;]
+  ],
+  &quot;content&quot;: &quot;Profile is impersonating nostr:&lt;victim bech32 pubkey&gt;&quot;,
+  // other fields...
+}</code></pre>
 <h2 id="client-behavior">Client behavior</h2>
 <p>Clients can use reports from friends to make moderation decisions if
 they choose to. For instance, if 3+ of your friends report a profile for

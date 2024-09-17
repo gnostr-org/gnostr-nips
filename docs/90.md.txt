@@ -57,7 +57,8 @@ compute.
             [ "relays", "wss://..." ],
             [ "bid", "<msat-amount>" ],
             [ "t", "bitcoin" ]
-        ]
+        ],
+        // other fields...
     }
 
 All tags are optional.
@@ -119,7 +120,7 @@ tag should be present
         ["p", "04f74530a6ede6b24731b976b8e78fb449ea61f40ff10e3d869a3030c4edc91f"],
         ["encrypted"]
       ],
-      ...
+      // other fields...
     }
 
 Job result (kind:6000-6999)
@@ -139,7 +140,7 @@ customer&rsquo;s pubkey.
         ["p", "<customer's-pubkey>"],
         ["amount", "requested-payment-amount", "<optional-bolt11>"]
       ],
-      ...
+      // other fields...
     }
 
 -   request: The job request event stringified-JSON.
@@ -165,7 +166,7 @@ mark the output content as encrypted
         ["amount", "requested-payment-amount", "<optional-bolt11>"],
         ["encrypted"]
       ],
-      ...
+      // other fields...
     }
 
 Job feedback
@@ -181,7 +182,7 @@ Service providers can give feedback about a job back to the customer.
         ["e", "<job-request-id>", "<relay-hint>"],
         ["p", "<customer's-pubkey>"],
       ],
-      ...
+      // other fields...
     }
 
 -   content: Either empty or a job-result (e.g.&nbsp;for partial-result
@@ -301,7 +302,7 @@ support for job kinds:
         ["k", "5005"], // e.g. translation
         ["t", "bitcoin"] // e.g. optionally advertises it specializes in bitcoin audio transcription that won't confuse "Drivechains" with "Ridechains"
       ],
-      ...
+      // other fields...
     }
 
 Customers can use NIP-89 to see what service providers their follows

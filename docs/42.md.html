@@ -26,11 +26,9 @@ messages</h3>
 send when they support authentication and clients can send to relays
 when they want to authenticate. When sent by relays the message has the
 following form:</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;AUTH&quot;</span><span class="ot">,</span> <span class="er">&lt;challenge-string&gt;</span><span class="ot">]</span></span></code></pre></div>
+<pre><code>[&quot;AUTH&quot;, &lt;challenge-string&gt;]</code></pre>
 <p>And, when sent by clients, the following form:</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="st">&quot;AUTH&quot;</span><span class="ot">,</span> <span class="er">&lt;signed-event-json&gt;</span><span class="ot">]</span></span></code></pre></div>
+<pre><code>[&quot;AUTH&quot;, &lt;signed-event-json&gt;]</code></pre>
 <p><code>AUTH</code> messages sent by clients MUST be answered with an
 <code>OK</code> message, like any <code>EVENT</code> message.</p>
 <h3 id="canonical-authentication-event">Canonical authentication
@@ -41,15 +39,14 @@ least two tags, one for the relay URL and one for the challenge string
 as received from the relay. Relays MUST exclude <code>kind: 22242</code>
 events from being broadcasted to any client. <code>created_at</code>
 should be the current time. Example:</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">22242</span><span class="fu">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;relay&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://relay.example.com/&quot;</span><span class="ot">],</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;challenge&quot;</span><span class="ot">,</span> <span class="st">&quot;challengestringhere&quot;</span><span class="ot">]</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 22242,
+  &quot;tags&quot;: [
+    [&quot;relay&quot;, &quot;wss://relay.example.com/&quot;],
+    [&quot;challenge&quot;, &quot;challengestringhere&quot;]
+  ],
+  // other fields...
+}</code></pre>
 <h3 id="ok-and-closed-machine-readable-prefixes"><code>OK</code> and
 <code>CLOSED</code> machine-readable prefixes</h3>
 <p>This NIP defines two new prefixes that can be used in <code>OK</code>

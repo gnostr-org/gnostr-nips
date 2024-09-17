@@ -2,7 +2,7 @@
 <h2 id="mapping-nostr-keys-to-dns-based-internet-identifiers">Mapping
 Nostr keys to DNS-based internet identifiers</h2>
 <p><code>final</code> <code>optional</code></p>
-<p>On events of kind <code>0</code> (<code>metadata</code>) one can
+<p>On events of kind <code>0</code> (<code>user metadata</code>) one can
 specify the key <code>"nip05"</code> with an <a
 href="https://datatracker.ietf.org/doc/html/rfc5322#section-3.4.1">internet
 identifier</a> (an email-like address) as the value. Although there is a
@@ -17,17 +17,16 @@ these values to make a GET request to
 <code>"names"</code> that should then be a mapping of names to hex
 formatted public keys. If the public key for the given
 <code>&lt;name&gt;</code> matches the <code>pubkey</code> from the
-<code>metadata</code> event, the client then concludes that the given
-pubkey can indeed be referenced by its identifier.</p>
+<code>user's metadata</code> event, the client then concludes that the
+given pubkey can indeed be referenced by its identifier.</p>
 <h3 id="example">Example</h3>
 <p>If a client sees an event like this:</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9&quot;</span><span class="fu">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;{</span><span class="ch">\&quot;</span><span class="st">name</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">bob</span><span class="ch">\&quot;</span><span class="st">, </span><span class="ch">\&quot;</span><span class="st">nip05</span><span class="ch">\&quot;</span><span class="st">: </span><span class="ch">\&quot;</span><span class="st">bob@example.com</span><span class="ch">\&quot;</span><span class="st">}&quot;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;pubkey&quot;: &quot;b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9&quot;,
+  &quot;kind&quot;: 0,
+  &quot;content&quot;: &quot;{\&quot;name\&quot;: \&quot;bob\&quot;, \&quot;nip05\&quot;: \&quot;bob@example.com\&quot;}&quot;
+  // other fields...
+}</code></pre>
 <p>It will make a GET request to
 <code>https://example.com/.well-known/nostr.json?name=bob</code> and get
 back a response that will look like</p>
@@ -67,6 +66,21 @@ there it gets the public key of the user, then it tries to fetch the
 kind <code>0</code> event for that user and check if it has a matching
 <code>"nip05"</code>.</p>
 <h2 id="notes">Notes</h2>
+<h3 id="identification-not-verification">Identification, not
+verification</h3>
+<p>The NIP-05 is not intended to <em>verify</em> a user, but only to
+<em>identify</em> them, for the purpose of facilitating the exchange of
+a contact or their search.<br />
+Exceptions are people who own (e.g., a company) or are connected (e.g.,
+a project) to a well-known domain, who can exploit NIP-05 as an
+attestation of their relationship with it, and thus to the organization
+behind it, thereby gaining an element of trust.</p>
+<h3 id="user-discovery-implementation-suggestion">User discovery
+implementation suggestion</h3>
+<p>A client can use this to allow users to search other profiles. If a
+client has a search box or something like that, a user may be able to
+type &#x201C;bob@example.com&#x201D; there and the client would recognize that and do
+the proper queries to obtain a pubkey and suggest that to the user.</p>
 <h3
 id="clients-must-always-follow-public-keys-not-nip-05-addresses">Clients
 must always follow public keys, not NIP-05 addresses</h3>
@@ -86,13 +100,6 @@ format</h3>
 <p>Keys must be returned in hex format. Keys in NIP-19 <code>npub</code>
 format are only meant to be used for display in client UIs, not in this
 NIP.</p>
-<h3 id="user-discovery-implementation-suggestion">User Discovery
-implementation suggestion</h3>
-<p>A client can also use this to allow users to search other profiles.
-If a client has a search box or something like that, a user may be able
-to type &#x201C;bob@example.com&#x201D; there and the client would recognize that and
-do the proper queries to obtain a pubkey and suggest that to the
-user.</p>
 <h3 id="showing-just-the-domain-as-an-identifier">Showing just the
 domain as an identifier</h3>
 <p>Clients may treat the identifier <code>_@domain</code> as the &#x201C;root&#x201D;

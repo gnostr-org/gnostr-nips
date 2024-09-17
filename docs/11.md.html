@@ -72,25 +72,24 @@ is recommended this be a version number or commit identifier.</p>
 <p>These are limitations imposed by the relay on clients. Your client
 should expect that requests which exceed these <em>practical</em>
 limitations are rejected or fail immediately.</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;limitation&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_message_length&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_subscriptions&quot;</span><span class="fu">:</span> <span class="dv">20</span><span class="fu">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_filters&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_limit&quot;</span><span class="fu">:</span> <span class="dv">5000</span><span class="fu">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_subid_length&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_event_tags&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_content_length&quot;</span><span class="fu">:</span> <span class="dv">8196</span><span class="fu">,</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;min_pow_difficulty&quot;</span><span class="fu">:</span> <span class="dv">30</span><span class="fu">,</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;auth_required&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;payment_required&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;restricted_writes&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at_lower_limit&quot;</span><span class="fu">:</span> <span class="dv">31536000</span><span class="fu">,</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;created_at_upper_limit&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;limitation&quot;: {
+    &quot;max_message_length&quot;: 16384,
+    &quot;max_subscriptions&quot;: 20,
+    &quot;max_filters&quot;: 100,
+    &quot;max_limit&quot;: 5000,
+    &quot;max_subid_length&quot;: 100,
+    &quot;max_event_tags&quot;: 100,
+    &quot;max_content_length&quot;: 8196,
+    &quot;min_pow_difficulty&quot;: 30,
+    &quot;auth_required&quot;: true,
+    &quot;payment_required&quot;: true,
+    &quot;restricted_writes&quot;: true,
+    &quot;created_at_lower_limit&quot;: 31536000,
+    &quot;created_at_upper_limit&quot;: 3
+  },
+  // other fields...
+}</code></pre>
 <ul>
 <li><p><code>max_message_length</code>: this is the maximum number of
 bytes for incoming JSON that the relay will attempt to decode and act
@@ -151,15 +150,15 @@ other policies.</p>
 indicating infinity. If zero is provided, this means the event will not
 be stored at all, and preferably an error will be provided when those
 are received.</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;retention&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="ot">[</span><span class="dv">5</span><span class="ot">,</span> <span class="dv">7</span><span class="ot">],</span> <span class="ot">[</span><span class="dv">40</span><span class="ot">,</span> <span class="dv">49</span><span class="ot">]]</span><span class="fu">,</span> <span class="dt">&quot;time&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">40000</span><span class="ot">,</span> <span class="dv">49999</span><span class="ot">]]</span><span class="fu">,</span> <span class="dt">&quot;time&quot;</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;kinds&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">30000</span><span class="ot">,</span> <span class="dv">39999</span><span class="ot">]]</span><span class="fu">,</span> <span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="dv">1000</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;time&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span> <span class="dt">&quot;count&quot;</span><span class="fu">:</span> <span class="dv">10000</span><span class="fu">}</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;retention&quot;: [
+    {&quot;kinds&quot;: [0, 1, [5, 7], [40, 49]], &quot;time&quot;: 3600},
+    {&quot;kinds&quot;: [[40000, 49999]], &quot;time&quot;: 100},
+    {&quot;kinds&quot;: [[30000, 39999]], &quot;count&quot;: 1000},
+    {&quot;time&quot;: 3600, &quot;count&quot;: 10000}
+  ],
+  // other fields...
+}</code></pre>
 <p><code>retention</code> is a list of specifications: each will apply
 to either all kinds, or a subset of kinds. Ranges may be specified for
 the kind field as a tuple of inclusive start and end values. Events of
@@ -174,7 +173,7 @@ protocol quickly via a single HTTP fetch.</p>
 events</em> since they are not retained.</p>
 <h3 id="content-limitations">Content Limitations</h3>
 <p>Some relays may be governed by the arbitrary laws of a nation state.
-This may limit what content can be stored in cleartext on those relays.
+This may limit what content can be stored in clear-text on those relays.
 All clients are encouraged to use encryption to work around this
 limitation.</p>
 <p>It is not possible to describe the limitations of each country&#x2019;s laws
@@ -184,13 +183,12 @@ shifting.</p>
 countries&#x2019; laws might end up being enforced on them, and then indirectly
 on their users&#x2019; content.</p>
 <p>Users should be able to avoid relays in countries they don&#x2019;t like,
-and/or select relays in more favourable zones. Exposing this flexibility
+and/or select relays in more favorable zones. Exposing this flexibility
 is up to the client software.</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;relay_countries&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;CA&quot;</span><span class="ot">,</span> <span class="st">&quot;US&quot;</span> <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;relay_countries&quot;: [ &quot;CA&quot;, &quot;US&quot; ],
+  // other fields...
+}</code></pre>
 <ul>
 <li><code>relay_countries</code>: a list of two-level ISO country codes
 (ISO 3166-1 alpha-2) whose laws and policies may affect this relay.
@@ -204,13 +202,12 @@ number of countries are involved.</p>
 community. This would encourage users to follow the global feed on that
 relay, in addition to their usual individual follows. To support this
 goal, relays MAY specify some of the following values.</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;language_tags&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;en&quot;</span><span class="ot">,</span> <span class="st">&quot;en-419&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;sfw-only&quot;</span><span class="ot">,</span> <span class="st">&quot;bitcoin-only&quot;</span><span class="ot">,</span> <span class="st">&quot;anime&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;posting_policy&quot;</span><span class="fu">:</span> <span class="st">&quot;https://example.com/posting-policy.html&quot;</span><span class="fu">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;language_tags&quot;: [&quot;en&quot;, &quot;en-419&quot;],
+  &quot;tags&quot;: [&quot;sfw-only&quot;, &quot;bitcoin-only&quot;, &quot;anime&quot;],
+  &quot;posting_policy&quot;: &quot;https://example.com/posting-policy.html&quot;,
+  // other fields...
+}</code></pre>
 <ul>
 <li><p><code>language_tags</code> is an ordered list of <a
 href="https://en.wikipedia.org/wiki/IETF_language_tag">IETF language
@@ -250,21 +247,50 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="
 <h3 id="icon">Icon</h3>
 <p>A URL pointing to an image to be used as an icon for the relay.
 Recommended to be squared in shape.</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;icon&quot;</span><span class="fu">:</span> <span class="st">&quot;https://nostr.build/i/53866b44135a27d624e99c6165cabd76ac8f72797209700acb189fce75021f47.jpg&quot;</span><span class="fu">,</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;icon&quot;: &quot;https://nostr.build/i/53866b44135a27d624e99c6165cabd76ac8f72797209700acb189fce75021f47.jpg&quot;,
+  // other fields...
+}</code></pre>
 <h3 id="examples">Examples</h3>
 <p>As of 2 May 2023 the following command provided these results:</p>
-<p>``` ~&gt; curl -H &#x201C;Accept: application/nostr+json&#x201D;
-https://eden.nostr.land | jq</p>
-<p>{ &#x201C;description&#x201D;: &#x201C;nostr.land family of relays (us-or-01)&#x201D;, &#x201C;name&#x201D;:
-&#x201C;nostr.land&#x201D;, &#x201C;pubkey&#x201D;:
-&#x201C;52b4a076bcbbbdc3a1aefa3735816cf74993b1b8db202b01c883c58be7fad8bd&#x201D;,
-&#x201C;software&#x201D;: &#x201C;custom&#x201D;, &#x201C;supported_nips&#x201D;: [ 1, 2, 4, 9, 11, 12, 16, 20,
-22, 28, 33, 40 ], &#x201C;version&#x201D;: &#x201C;1.0.1&#x201D;, &#x201C;limitation&#x201D;: {
-&#x201C;payment_required&#x201D;: true, &#x201C;max_message_length&#x201D;: 65535, &#x201C;max_event_tags&#x201D;:
-2000, &#x201C;max_subscriptions&#x201D;: 20, &#x201C;auth_required&#x201D;: false }, &#x201C;payments_url&#x201D;:
-&#x201C;https://eden.nostr.land&#x201D;, &#x201C;fees&#x201D;: { &#x201C;subscription&#x201D;: [ { &#x201C;amount&#x201D;:
-2500000, &#x201C;unit&#x201D;: &#x201C;msats&#x201D;, &#x201C;period&#x201D;: 2592000 } ] }, }</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-H</span> <span class="st">&quot;Accept: application/nostr+json&quot;</span> https://eden.nostr.land <span class="kw">|</span> <span class="ex">jq</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;nostr.land family of relays (us-or-01)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;nostr.land&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pubkey&quot;</span><span class="fu">:</span> <span class="st">&quot;52b4a076bcbbbdc3a1aefa3735816cf74993b1b8db202b01c883c58be7fad8bd&quot;</span><span class="fu">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;software&quot;</span><span class="fu">:</span> <span class="st">&quot;custom&quot;</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;supported_nips&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="ot">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span><span class="ot">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">4</span><span class="ot">,</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="dv">9</span><span class="ot">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="dv">11</span><span class="ot">,</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="dv">12</span><span class="ot">,</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="dv">16</span><span class="ot">,</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="dv">20</span><span class="ot">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="dv">22</span><span class="ot">,</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="dv">28</span><span class="ot">,</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="dv">33</span><span class="ot">,</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="dv">40</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;limitation&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;payment_required&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_message_length&quot;</span><span class="fu">:</span> <span class="dv">65535</span><span class="fu">,</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_event_tags&quot;</span><span class="fu">:</span> <span class="dv">2000</span><span class="fu">,</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max_subscriptions&quot;</span><span class="fu">:</span> <span class="dv">20</span><span class="fu">,</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;auth_required&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;payments_url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://eden.nostr.land&quot;</span><span class="fu">,</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;fees&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;subscription&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="dv">2500000</span><span class="fu">,</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;msats&quot;</span><span class="fu">,</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;period&quot;</span><span class="fu">:</span> <span class="dv">2592000</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>

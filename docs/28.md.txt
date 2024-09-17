@@ -29,17 +29,16 @@ channel metadata (name, about, picture and relays as specified in kind
 
     {
       "content": "{\"name\": \"Demo Channel\", \"about\": \"A test channel.\", \"picture\": \"https://placekitten.com/200/200\", \"relays\": [\"wss://nos.lol\", \"wss://nostr.mom\"]}",
-      ...
+     // other fields...
     }
 
 Kind 41: Set channel metadata
 
 Update a channel&rsquo;s public metadata.
 
-Clients and relays SHOULD handle kind 41 events similar to kind 33
-replaceable events, where the information is used to update the
-metadata, without modifying the event id for the channel.Only the most
-recent kind 41 is needed to be stored.
+Kind 41 is used to update the metadata without modifying the event id
+for the channel. Only the most recent kind 41 per e tag value MAY be
+available.
 
 Clients SHOULD ignore kind 41s from pubkeys other than the kind 40
 pubkey.
@@ -59,7 +58,7 @@ relay.
     {
       "content": "{\"name\": \"Updated Demo Channel\", \"about\": \"Updating a test channel.\", \"picture\": \"https://placekitten.com/201/201\", \"relays\": [\"wss://nos.lol\", \"wss://nostr.mom\"]}",
       "tags": [["e", <channel_create_event_id>, <relay-url>]],
-      ...
+      // other fields...
     }
 
 Kind 42: Create channel message
@@ -76,7 +75,7 @@ Root message:
     {
       "content": <string>,
       "tags": [["e", <kind_40_event_id>, <relay-url>, "root"]],
-      ...
+      // other fields...
     }
 
 Reply to another message:
@@ -87,9 +86,9 @@ Reply to another message:
           ["e", <kind_40_event_id>, <relay-url>, "root"],
           ["e", <kind_42_event_id>, <relay-url>, "reply"],
           ["p", <pubkey>, <relay-url>],
-          ...
+          // rest of tags...
       ],
-      ...
+      // other fields...
     }
 
 Kind 43: Hide message
@@ -111,7 +110,7 @@ an iOS app may choose to hide that message for all iOS clients.)
     {
       "content": "{\"reason\": \"Dick pic\"}",
       "tags": [["e", <kind_42_event_id>]],
-      ...
+      // other fields...
     }
 
 Kind 44: Mute user
@@ -129,7 +128,7 @@ event 44.
     {
       "content": "{\"reason\": \"Posting dick pics\"}",
       "tags": [["p", <pubkey>]],
-      ...
+      // other fields...
     }
 
 Relay recommendations

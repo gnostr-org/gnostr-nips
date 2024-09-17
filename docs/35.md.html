@@ -49,25 +49,26 @@ maps to <code>myanimelist.net/manga/17517</code></p>
 is out of scope for this NIP, the section above is only a guide so that
 implementers have enough information to succsesfully map the url if they
 wish.</p>
-<pre class="jsonc"><code>{
-  &quot;kind&quot;: 2003,
-  &quot;content&quot;: &quot;&lt;long-description-pre-formatted&gt;&quot;,
-  &quot;tags&quot;: [
-    [&quot;title&quot;, &quot;&lt;torrent-title&gt;&quot;],
-    [&quot;x&quot;, &quot;&lt;bittorrent-info-hash&gt;&quot;],
-    [&quot;file&quot;, &quot;&lt;file-name&gt;&quot;, &quot;&lt;file-size-in-bytes&gt;&quot;],
-    [&quot;file&quot;, &quot;&lt;file-name&gt;&quot;, &quot;&lt;file-size-in-bytes&gt;&quot;],
-    [&quot;tracker&quot;, &quot;udp://mytacker.com:1337&quot;],
-    [&quot;tracker&quot;, &quot;http://1337-tracker.net/announce&quot;],
-    [&quot;i&quot;, &quot;tcat:video,movie,4k&quot;],
-    [&quot;i&quot;, &quot;newznab:2045&quot;],
-    [&quot;i&quot;, &quot;.md.htmlb:tt15239678&quot;],
-    [&quot;i&quot;, &quot;.md.htmlb:movie:693134&quot;],
-    [&quot;i&quot;, &quot;ttvdb:movie:290272&quot;],
-    [&quot;t&quot;, &quot;movie&quot;],
-    [&quot;t&quot;, &quot;4k&quot;],
-  ]
-}</code></pre>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">2003</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;long-description-pre-formatted&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;title&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;torrent-title&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;x&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;bittorrent-info-hash&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;file&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;file-name&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;file-size-in-bytes&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;file&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;file-name&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;file-size-in-bytes&gt;&quot;</span><span class="ot">],</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;tracker&quot;</span><span class="ot">,</span> <span class="st">&quot;udp://mytacker.com:1337&quot;</span><span class="ot">],</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;tracker&quot;</span><span class="ot">,</span> <span class="st">&quot;http://1337-tracker.net/announce&quot;</span><span class="ot">],</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;tcat:video,movie,4k&quot;</span><span class="ot">],</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;newznab:2045&quot;</span><span class="ot">],</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;.md.htmlb:tt15239678&quot;</span><span class="ot">],</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;.md.htmlb:movie:693134&quot;</span><span class="ot">],</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;i&quot;</span><span class="ot">,</span> <span class="st">&quot;ttvdb:movie:290272&quot;</span><span class="ot">],</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="st">&quot;movie&quot;</span><span class="ot">],</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="st">&quot;4k&quot;</span><span class="ot">],</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <h2 id="torrent-comments">Torrent Comments</h2>
 <p>A torrent comment is a <code>kind 2004</code> event which is used to
 reply to a torrent event.</p>

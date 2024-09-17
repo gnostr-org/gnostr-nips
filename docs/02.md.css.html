@@ -243,20 +243,19 @@ followed/known profiles one is following.</p>
 where events from that key can be found (can be set to an empty string
 if not needed), and a local name (or “petname”) for that profile (can
 also be set to an empty string or not provided), i.e.,
-<code>["p", &lt;32-bytes hex key&gt;, &lt;main relay URL&gt;, &lt;petname&gt;]</code>.
-The <code>content</code> can be anything and should be ignored.</p>
+<code>["p", &lt;32-bytes hex key&gt;, &lt;main relay URL&gt;, &lt;petname&gt;]</code>.</p>
+<p>The <code>.content</code> is not used.</p>
 <p>For example:</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;91cf9..4e5ca&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://alicerelay.com/&quot;</span><span class="ot">,</span> <span class="st">&quot;alice&quot;</span><span class="ot">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;14aeb..8dad4&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://bobrelay.com/nostr&quot;</span><span class="ot">,</span> <span class="st">&quot;bob&quot;</span><span class="ot">],</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;612ae..e610f&quot;</span><span class="ot">,</span> <span class="st">&quot;ws://carolrelay.com/ws&quot;</span><span class="ot">,</span> <span class="st">&quot;carol&quot;</span><span class="ot">]</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="er">...other</span> <span class="er">fields</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 3,
+  &quot;tags&quot;: [
+    [&quot;p&quot;, &quot;91cf9..4e5ca&quot;, &quot;wss://alicerelay.com/&quot;, &quot;alice&quot;],
+    [&quot;p&quot;, &quot;14aeb..8dad4&quot;, &quot;wss://bobrelay.com/nostr&quot;, &quot;bob&quot;],
+    [&quot;p&quot;, &quot;612ae..e610f&quot;, &quot;ws://carolrelay.com/ws&quot;, &quot;carol&quot;]
+  ],
+  &quot;content&quot;: &quot;&quot;,
+  // other fields...
+}</code></pre>
 <p>Every new following list that gets published overwrites the past
 ones, so it should contain all entries. Relays and clients SHOULD delete
 past following lists as soon as they receive a new one.</p>

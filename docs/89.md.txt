@@ -40,7 +40,8 @@ Recommendation event
         ["d", <supported-event-kind>],
         ["a", "31990:app1-pubkey:<d-identifier>", "wss://relay1", "ios"],
         ["a", "31990:app2-pubkey:<d-identifier>", "wss://relay2", "web"]
-      ]
+      ],
+      // other fields...
     }
 
 The d tag in kind:31989 is the supported event kind this event is
@@ -64,7 +65,8 @@ Handler information
         ["web", "https://..../p/<bech32>", "nprofile"],
         ["web", "https://..../e/<bech32>"],
         ["ios", ".../<bech32>"]
-      ]
+      ],
+      // other fields...
     }
 
 -   content is an optional metadata-like stringified JSON object, as
@@ -102,7 +104,7 @@ users to opt-out of using this tag.
       "tags": [
         ["client", "My Client", "31990:app1-pubkey:<d-identifier>", "wss://relay1"]
       ]
-      ...
+      // other fields...
     }
 
 User flow
@@ -131,7 +133,7 @@ kind:31337-handler.
         ["d", "31337"],
         ["a", "31990:1743058db7078661b94aaf4286429d97ee5257d14a86d6bfa54cb0482b876fb0:abcd", <relay-url>, "web"]
       ],
-      ...
+      // other fields...
     }
 
 User B interacts with a kind:31337-handler
@@ -144,7 +146,7 @@ display the event using its alt tag (as described in NIP-31). When the
 user clicks on the event, the application queries for a handler for this
 kind:
 
-    ["REQ", <id>, '[{ "kinds": [31989], "#d": ["31337"], 'authors': [<user>, <users-contact-list>] }]']
+    ["REQ", <id>, { "kinds": [31989], "#d": ["31337"], "authors": [<user>, <users-contact-list>] }]
 
 User B, who follows User A, sees that kind:31989 event and fetches the
 a-tagged event for the app and handler information.
@@ -160,4 +162,4 @@ an event kind. Clients SHOULD be careful doing this and use
 spam-prevention mechanisms or querying high-quality restricted relays to
 avoid directing users to malicious handlers.
 
-    ["REQ", <id>, '[{ "kinds": [31990], "#k": [<desired-event-kind>], 'authors': [...] }]']
+    ["REQ", <id>, { "kinds": [31990], "#k": [<desired-event-kind>], "authors": [...] }]

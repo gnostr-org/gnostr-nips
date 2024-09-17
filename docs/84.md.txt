@@ -38,7 +38,7 @@ included as the last value of the tag.
         ["p", "<pubkey-hex>", "<relay-url>", "author"],
         ["p", "<pubkey-hex>", "<relay-url>", "editor"]
       ],
-      ...
+      // other fields...
     }
 
 Context

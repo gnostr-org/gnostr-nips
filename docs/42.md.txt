@@ -54,7 +54,7 @@ to any client. created_at should be the current time. Example:
         ["relay", "wss://relay.example.com/"],
         ["challenge", "challengestringhere"]
       ],
-      ...
+      // other fields...
     }
 
 OK and CLOSED machine-readable prefixes

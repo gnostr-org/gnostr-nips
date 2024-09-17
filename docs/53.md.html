@@ -8,37 +8,36 @@ pubkeys in such live activities.</p>
 <h2 id="concepts">Concepts</h2>
 <h3 id="live-event">Live Event</h3>
 <p>A special event with <code>kind:30311</code> &#x201C;Live Event&#x201D; is defined
-as a <em>parameterized replaceable event</em> of public <code>p</code>
-tags. Each <code>p</code> tag SHOULD have a <strong>displayable</strong>
-marker name for the current role (e.g.&#xA0;<code>Host</code>,
-<code>Speaker</code>, <code>Participant</code>) of the user in the event
-and the relay information MAY be empty. This event will be constantly
-updated as participants join and leave the activity.</p>
+as an <em>addressable event</em> of public <code>p</code> tags. Each
+<code>p</code> tag SHOULD have a <strong>displayable</strong> marker
+name for the current role (e.g.&#xA0;<code>Host</code>, <code>Speaker</code>,
+<code>Participant</code>) of the user in the event and the relay
+information MAY be empty. This event will be constantly updated as
+participants join and leave the activity.</p>
 <p>For example:</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">30311</span><span class="fu">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;d&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;unique identifier&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;title&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;name of the event&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;summary&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;description&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;image&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;preview image url&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;t&quot;</span><span class="ot">,</span> <span class="st">&quot;hashtag&quot;</span><span class="ot">]</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;streaming&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;url&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;recording&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;url&gt;&quot;</span><span class="ot">],</span> <span class="er">//</span> <span class="er">used</span> <span class="er">to</span> <span class="er">place</span> <span class="er">the</span> <span class="er">edited</span> <span class="er">video</span> <span class="er">once</span> <span class="er">the</span> <span class="er">activity</span> <span class="er">is</span> <span class="er">over</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;starts&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;unix timestamp in seconds&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;ends&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;unix timestamp in seconds&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;status&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;planned, live, ended&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;current_participants&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;number&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;total_participants&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;number&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;91cf9..4e5ca&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://provider1.com/&quot;</span><span class="ot">,</span> <span class="st">&quot;Host&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;proof&gt;&quot;</span><span class="ot">],</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;14aeb..8dad4&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://provider2.com/nostr&quot;</span><span class="ot">,</span> <span class="st">&quot;Speaker&quot;</span><span class="ot">],</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;612ae..e610f&quot;</span><span class="ot">,</span> <span class="st">&quot;ws://provider3.com/ws&quot;</span><span class="ot">,</span> <span class="st">&quot;Participant&quot;</span><span class="ot">],</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;relays&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://one.com&quot;</span><span class="ot">,</span> <span class="st">&quot;wss://two.com&quot;</span><span class="ot">,</span> <span class="er">...</span><span class="ot">]</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 30311,
+  &quot;tags&quot;: [
+    [&quot;d&quot;, &quot;&lt;unique identifier&gt;&quot;],
+    [&quot;title&quot;, &quot;&lt;name of the event&gt;&quot;],
+    [&quot;summary&quot;, &quot;&lt;description&gt;&quot;],
+    [&quot;image&quot;, &quot;&lt;preview image url&gt;&quot;],
+    [&quot;t&quot;, &quot;hashtag&quot;]
+    [&quot;streaming&quot;, &quot;&lt;url&gt;&quot;],
+    [&quot;recording&quot;, &quot;&lt;url&gt;&quot;], // used to place the edited video once the activity is over
+    [&quot;starts&quot;, &quot;&lt;unix timestamp in seconds&gt;&quot;],
+    [&quot;ends&quot;, &quot;&lt;unix timestamp in seconds&gt;&quot;],
+    [&quot;status&quot;, &quot;&lt;planned, live, ended&gt;&quot;],
+    [&quot;current_participants&quot;, &quot;&lt;number&gt;&quot;],
+    [&quot;total_participants&quot;, &quot;&lt;number&gt;&quot;],
+    [&quot;p&quot;, &quot;91cf9..4e5ca&quot;, &quot;wss://provider1.com/&quot;, &quot;Host&quot;, &quot;&lt;proof&gt;&quot;],
+    [&quot;p&quot;, &quot;14aeb..8dad4&quot;, &quot;wss://provider2.com/nostr&quot;, &quot;Speaker&quot;],
+    [&quot;p&quot;, &quot;612ae..e610f&quot;, &quot;ws://provider3.com/ws&quot;, &quot;Participant&quot;],
+    [&quot;relays&quot;, &quot;wss://one.com&quot;, &quot;wss://two.com&quot;, /*...*/]
+  ],
+  &quot;content&quot;: &quot;&quot;,
+  // other fields...
+}</code></pre>
 <p>A distinct <code>d</code> tag should be used for each activity. All
 other tags are optional.</p>
 <p>Providers SHOULD keep the participant list small (e.g.&#xA0;under 1000
@@ -76,20 +75,18 @@ their followers into the malicious owner&#x2019;s trap.</p>
 MUST include the <code>a</code> tag of the activity with a
 <code>root</code> marker. Other Kind-1 tags such as <code>reply</code>
 and <code>mention</code> can also be used.</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;kind&quot;</span><span class="fu">:</span> <span class="dv">1311</span><span class="fu">,</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;a&quot;</span><span class="ot">,</span> <span class="st">&quot;30311:&lt;Community event author pubkey&gt;:&lt;d-identifier of the community&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;Optional relay url&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;root&quot;</span><span class="ot">],</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;content&quot;</span><span class="fu">:</span> <span class="st">&quot;Zaps to live streams is beautiful.&quot;</span><span class="fu">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 1311,
+  &quot;tags&quot;: [
+    [&quot;a&quot;, &quot;30311:&lt;Community event author pubkey&gt;:&lt;d-identifier of the community&gt;&quot;, &quot;&lt;Optional relay url&gt;&quot;, &quot;root&quot;],
+  ],
+  &quot;content&quot;: &quot;Zaps to live streams is beautiful.&quot;,
+  // other fields...
+}</code></pre>
 <h2 id="use-cases">Use Cases</h2>
 <p>Common use cases include meeting rooms/workshops, watch-together
 activities, or event spaces, such as <a
-href="https://live.snort.social">live.snort.social</a> and <a
-href="https://nostrnests.com">nostrnests.com</a>.</p>
+href="https://zap.stream">zap.stream</a>.</p>
 <h2 id="example">Example</h2>
 <h3 id="live-streaming">Live Streaming</h3>
 <div class="sourceCode" id="cb3"><pre

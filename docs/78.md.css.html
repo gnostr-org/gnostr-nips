@@ -182,11 +182,11 @@ Nostr can still serve as a generalized data storage for these apps in a
 somehow input their preferred relay for storage, which would then enable
 these apps to store application-specific data there.</p>
 <h2 id="nostr-event">Nostr event</h2>
-<p>This NIP specifies the use of event kind <code>30078</code>
-(parameterized replaceable event) with a <code>d</code> tag containing
-some reference to the app name and context – or any other arbitrary
-string. <code>content</code> and other <code>tags</code> can be anything
-or in any format.</p>
+<p>This NIP specifies the use of event kind <code>30078</code> (an
+<em>addressable</em> event) with a <code>d</code> tag containing some
+reference to the app name and context – or any other arbitrary string.
+<code>content</code> and other <code>tags</code> can be anything or in
+any format.</p>
 <h2 id="some-use-cases">Some use cases</h2>
 <ul>
 <li>User personal settings on Nostr clients (and other apps unrelated to

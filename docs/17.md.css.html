@@ -242,20 +242,20 @@ and gift wraps.</p>
 <h2 id="direct-message-kind">Direct Message Kind</h2>
 <p>Kind <code>14</code> is a chat message. <code>p</code> tags identify
 one or more receivers of the message.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;id&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;usual hash&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pubkey&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;sender-pubkey&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;created_at&quot;</span><span class="op">:</span> <span class="fu">now</span>()<span class="op">,</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">14</span><span class="op">,</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;receiver-1-pubkey&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span>]<span class="op">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;p&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;receiver-2-pubkey&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span>]<span class="op">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;e&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;kind-14-id&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span><span class="op">,</span> <span class="st">&quot;reply&quot;</span>] <span class="co">// if this is a reply</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;subject&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;conversation-title&gt;&quot;</span>]<span class="op">,</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at"> </span> <span class="op">...</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&lt;message-in-plain-text&gt;&quot;</span><span class="op">,</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;id&quot;: &quot;&lt;usual hash&gt;&quot;,
+  &quot;pubkey&quot;: &quot;&lt;sender-pubkey&gt;&quot;,
+  &quot;created_at&quot;: &quot;&lt;current-time&gt;&quot;,
+  &quot;kind&quot;: 14,
+  &quot;tags&quot;: [
+    [&quot;p&quot;, &quot;&lt;receiver-1-pubkey&gt;&quot;, &quot;&lt;relay-url&gt;&quot;],
+    [&quot;p&quot;, &quot;&lt;receiver-2-pubkey&gt;&quot;, &quot;&lt;relay-url&gt;&quot;],
+    [&quot;e&quot;, &quot;&lt;kind-14-id&gt;&quot;, &quot;&lt;relay-url&gt;&quot;, &quot;reply&quot;] // if this is a reply
+    [&quot;subject&quot;, &quot;&lt;conversation-title&gt;&quot;],
+    // rest of tags...
+  ],
+  &quot;content&quot;: &quot;&lt;message-in-plain-text&gt;&quot;,
+}</code></pre>
 <p><code>.content</code> MUST be plain text. Fields <code>id</code> and
 <code>created_at</code> are required.</p>
 <p>Tags that mention, quote and assemble threading structures MUST
@@ -320,21 +320,21 @@ generating a gift wrap to the sender’s public key</p>
 <p>Kind <code>10050</code> indicates the user’s preferred relays to
 receive DMs. The event MUST include a list of <code>relay</code> tags
 with relay URIs.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="dv">10050</span><span class="op">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;tags&quot;</span><span class="op">:</span> [</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;relay&quot;</span><span class="op">,</span> <span class="st">&quot;wss://inbox.nostr.wine&quot;</span>]<span class="op">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;relay&quot;</span><span class="op">,</span> <span class="st">&quot;wss://myrelay.nostr1.com&quot;</span>]<span class="op">,</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">//...other fields</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;kind&quot;: 10050,
+  &quot;tags&quot;: [
+    [&quot;relay&quot;, &quot;wss://inbox.nostr.wine&quot;],
+    [&quot;relay&quot;, &quot;wss://myrelay.nostr1.com&quot;],
+  ],
+  &quot;content&quot;: &quot;&quot;,
+  // other fields...
+}</code></pre>
 <p>Clients SHOULD publish kind <code>14</code> events to the
 <code>10050</code>-listed relays. If that is not found that indicates
 the user is not ready to receive messages under this NIP and clients
 shouldn’t try.</p>
 <h2 id="relays">Relays</h2>
-<p>It’s advisable that relays do not serve <code>kind:14</code> to
+<p>It’s advisable that relays do not serve <code>kind:1059</code> to
 clients other than the ones tagged in them.</p>
 <p>It’s advisable that users choose relays that conform to these
 practices.</p>

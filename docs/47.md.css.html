@@ -299,8 +299,8 @@ responding to. Optionally, a request can have an <code>expiration</code>
 tag that has a unix timestamp in seconds. If the request is received
 after this timestamp, it should be ignored.</p>
 <p>The content of requests and responses is encrypted with <a
-href="https://github.com/nostr-protocol/nips/blob/master/04.md.css.html">NIP04</a>,
-and is a JSON-RPCish object with a semi-fixed structure:</p>
+href="04.md.css.html">NIP04</a>, and is a JSON-RPCish object with a semi-fixed
+structure:</p>
 <p>Request:</p>
 <pre class="jsonc"><code>{
     &quot;method&quot;: &quot;pay_invoice&quot;, // method, string
@@ -432,7 +432,7 @@ similar.</p>
         &quot;amount&quot;: 123, // invoice amount in msats, required
         &quot;pubkey&quot;: &quot;03...&quot;, // payee pubkey, required
         &quot;preimage&quot;: &quot;0123456789abcdef...&quot;, // preimage of the payment, optional
-        &quot;tlv_records: [ // tlv records, optional
+        &quot;tlv_records&quot;: [ // tlv records, optional
             {
                 &quot;type&quot;: 5482373484, // tlv type
                 &quot;value&quot;: &quot;0123456789abcdef&quot; // hex encoded tlv value
@@ -459,7 +459,7 @@ similar.</p>
     &quot;method&quot;: &quot;multi_pay_keysend&quot;,
     &quot;params&quot;: {
         &quot;keysends&quot;: [
-          {&quot;id&quot;: &quot;4c5b24a351&quot;, pubkey&quot;: &quot;03...&quot;, &quot;amount&quot;: 123},
+          {&quot;id&quot;: &quot;4c5b24a351&quot;, &quot;pubkey&quot;: &quot;03...&quot;, &quot;amount&quot;: 123},
           {&quot;id&quot;: &quot;3da52c32a1&quot;, &quot;pubkey&quot;: &quot;02...&quot;, &quot;amount&quot;: 567, &quot;preimage&quot;: &quot;abc123..&quot;, &quot;tlv_records&quot;: [{&quot;type&quot;: 696969, &quot;value&quot;: &quot;77616c5f6872444873305242454d353736&quot;}]},
         ],
     }
@@ -580,8 +580,7 @@ Transactions are returned in descending order of creation time.</p>
 <p>Request:</p>
 <pre class="jsonc"><code>{
     &quot;method&quot;: &quot;get_balance&quot;,
-    &quot;params&quot;: {
-    }
+    &quot;params&quot;: {}
 }</code></pre>
 <p>Response:</p>
 <pre class="jsonc"><code>{
@@ -594,8 +593,7 @@ Transactions are returned in descending order of creation time.</p>
 <p>Request:</p>
 <pre class="jsonc"><code>{
     &quot;method&quot;: &quot;get_info&quot;,
-    &quot;params&quot;: {
-    }
+    &quot;params&quot;: {}
 }</code></pre>
 <p>Response:</p>
 <pre class="jsonc"><code>{

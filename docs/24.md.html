@@ -29,7 +29,7 @@ instead.</li>
 </ul>
 <h1 id="kind-3">kind 3</h1>
 <p>These are extra fields not specified in NIP-02 that may be present in
-the stringified JSON of contacts events:</p>
+the stringified JSON of follow events:</p>
 <h3 id="deprecated-fields-1">Deprecated fields</h3>
 <ul>
 <li><code>{&lt;relay-url&gt;: {"read": &lt;true|false&gt;, "write": &lt;true|false&gt;}, ...}</code>:
@@ -41,8 +41,13 @@ href="65.md.html">NIP-65</a> should be used instead.</li>
 different meaning is not specified by some more specific NIP, they have
 the following meanings:</p>
 <ul>
-<li><code>r</code>: a web URL the event is referring to in some way</li>
+<li><code>r</code>: a web URL the event is referring to in some
+way.</li>
+<li><code>i</code>: an external id the event is referring to in some way
+- see <a href="73.md.html">NIP-73</a>.</li>
 <li><code>title</code>: name of <a href="51.md.html">NIP-51</a> sets, <a
 href="52.md.html">NIP-52</a> calendar event, <a href="53.md.html">NIP-53</a> live
-event or <a href="99.md.html">NIP-99</a> listing</li>
+event or <a href="99.md.html">NIP-99</a> listing.</li>
+<li><code>t</code>: a hashtag. The value MUST be a lowercase
+string.</li>
 </ul>

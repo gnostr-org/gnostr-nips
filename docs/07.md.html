@@ -16,6 +16,12 @@ async window.nostr.nip04.encrypt(pubkey, plaintext): string // returns ciphertex
 async window.nostr.nip04.decrypt(pubkey, ciphertext): string // takes ciphertext and iv as specified in nip-04 (deprecated)
 async window.nostr.nip44.encrypt(pubkey, plaintext): string // returns ciphertext as specified in nip-44
 async window.nostr.nip44.decrypt(pubkey, ciphertext): string // takes ciphertext as specified in nip-44</code></pre>
+<h3 id="recommendation-to-extension-authors">Recommendation to Extension
+Authors</h3>
+<p>To make sure that the <code>window.nostr</code> is available to nostr
+clients on page load, the authors who create Chromium and Firefox
+extensions should load their scripts by specifying
+<code>"run_at": "document_end"</code> in the extension&#x2019;s manifest.</p>
 <h3 id="implementation">Implementation</h3>
 <p>See
 https://github.com/aljazceru/awesome-nostr#nip-07-browser-extensions.</p>

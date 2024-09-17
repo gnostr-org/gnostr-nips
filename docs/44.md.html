@@ -214,7 +214,10 @@ The operation produces a shared point, and we encode the shared point&#x2019;s
 32-byte x coordinate, using method <code>bytes(P)</code> from BIP340.
 Private and public keys must be validated as per BIP340: pubkey must be
 a valid, on-curve point, and private key must be a scalar in range
-<code>[1, secp256k1_order - 1]</code>.</li>
+<code>[1, secp256k1_order - 1]</code>. NIP44 doesn&#x2019;t do hashing of the
+output: keep this in mind, because some libraries hash it using sha256.
+As an example, in libsecp256k1, unhashed version is available in
+<code>secp256k1_ec_pubkey_tweak_mul</code></li>
 </ul></li>
 <li>Operators
 <ul>

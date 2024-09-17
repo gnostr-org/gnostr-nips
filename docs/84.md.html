@@ -22,15 +22,14 @@ useful when highlighting non-nostr content for which the client might be
 able to get a nostr pubkey somehow (e.g.&#xA0;prompting the user or reading a
 <code>&lt;meta name="nostr:nprofile1..." /&gt;</code> tag on the
 document). A role MAY be included as the last value of the tag.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;pubkey-hex&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;author&quot;</span><span class="ot">],</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;pubkey-hex&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;author&quot;</span><span class="ot">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="st">&quot;p&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;pubkey-hex&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;&lt;relay-url&gt;&quot;</span><span class="ot">,</span> <span class="st">&quot;editor&quot;</span><span class="ot">]</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<pre class="jsonc"><code>{
+  &quot;tags&quot;: [
+    [&quot;p&quot;, &quot;&lt;pubkey-hex&gt;&quot;, &quot;&lt;relay-url&gt;&quot;, &quot;author&quot;],
+    [&quot;p&quot;, &quot;&lt;pubkey-hex&gt;&quot;, &quot;&lt;relay-url&gt;&quot;, &quot;author&quot;],
+    [&quot;p&quot;, &quot;&lt;pubkey-hex&gt;&quot;, &quot;&lt;relay-url&gt;&quot;, &quot;editor&quot;]
+  ],
+  // other fields...
+}</code></pre>
 <h3 id="context">Context</h3>
 <p>Clients MAY include a <code>context</code> tag, useful when the
 highlight is a subset of a paragraph and displaying the surrounding

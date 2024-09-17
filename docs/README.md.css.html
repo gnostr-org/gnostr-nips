@@ -213,7 +213,7 @@ browsers</a></li>
 <li><a href="08.md.css.html">NIP-08: Handling Mentions</a> —
 <strong>unrecommended</strong>: deprecated in favor of <a
 href="27.md.css.html">NIP-27</a></li>
-<li><a href="09.md.css.html">NIP-09: Event Deletion</a></li>
+<li><a href="09.md.css.html">NIP-09: Event Deletion Request</a></li>
 <li><a href="10.md.css.html">NIP-10: Conventions for clients’ use of
 <code>e</code> and <code>p</code> tags in text events</a></li>
 <li><a href="11.md.css.html">NIP-11: Relay Information Document</a></li>
@@ -253,16 +253,21 @@ marketplaces)</a></li>
 <li><a href="52.md.css.html">NIP-52: Calendar Events</a></li>
 <li><a href="53.md.css.html">NIP-53: Live Activities</a></li>
 <li><a href="54.md.css.html">NIP-54: Wiki</a></li>
+<li><a href="55.md.css.html">NIP-55: Android Signer Application</a></li>
 <li><a href="56.md.css.html">NIP-56: Reporting</a></li>
 <li><a href="57.md.css.html">NIP-57: Lightning Zaps</a></li>
 <li><a href="58.md.css.html">NIP-58: Badges</a></li>
 <li><a href="59.md.css.html">NIP-59: Gift Wrap</a></li>
+<li><a href="64.md.css.html">NIP-64: Chess (PGN)</a></li>
 <li><a href="65.md.css.html">NIP-65: Relay List Metadata</a></li>
+<li><a href="70.md.css.html">NIP-70: Protected Events</a></li>
 <li><a href="71.md.css.html">NIP-71: Video Events</a></li>
 <li><a href="72.md.css.html">NIP-72: Moderated Communities</a></li>
+<li><a href="73.md.css.html">NIP-73: External Content IDs</a></li>
 <li><a href="75.md.css.html">NIP-75: Zap Goals</a></li>
 <li><a href="78.md.css.html">NIP-78: Application-specific data</a></li>
 <li><a href="84.md.css.html">NIP-84: Highlights</a></li>
+<li><a href="88.md.css.html">NIP-88: Polls</a></li>
 <li><a href="89.md.css.html">NIP-89: Recommended Application Handlers</a></li>
 <li><a href="90.md.css.html">NIP-90: Data Vending Machines</a></li>
 <li><a href="92.md.css.html">NIP-92: Media Attachments</a></li>
@@ -274,9 +279,9 @@ marketplaces)</a></li>
 <h2 id="event-kinds">Event Kinds</h2>
 <table>
 <colgroup>
-<col style="width: 20%" />
-<col style="width: 41%" />
-<col style="width: 38%" />
+<col style="width: 15%" />
+<col style="width: 37%" />
+<col style="width: 46%" />
 </colgroup>
 <thead>
 <tr>
@@ -288,7 +293,7 @@ marketplaces)</a></li>
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td>Metadata</td>
+<td>User Metadata</td>
 <td><a href="01.md.css.html">01</a></td>
 </tr>
 <tr>
@@ -313,7 +318,7 @@ marketplaces)</a></li>
 </tr>
 <tr>
 <td><code>5</code></td>
-<td>Event Deletion</td>
+<td>Event Deletion Request</td>
 <td><a href="09.md.css.html">09</a></td>
 </tr>
 <tr>
@@ -367,6 +372,11 @@ marketplaces)</a></li>
 <td><a href="18.md.css.html">18</a></td>
 </tr>
 <tr>
+<td><code>17</code></td>
+<td>Reaction to a website</td>
+<td><a href="25.md.css.html">25</a></td>
+</tr>
+<tr>
 <td><code>40</code></td>
 <td>Channel Creation</td>
 <td><a href="28.md.css.html">28</a></td>
@@ -392,9 +402,19 @@ marketplaces)</a></li>
 <td><a href="28.md.css.html">28</a></td>
 </tr>
 <tr>
+<td><code>64</code></td>
+<td>Chess (PGN)</td>
+<td><a href="64.md.css.html">64</a></td>
+</tr>
+<tr>
 <td><code>818</code></td>
 <td>Merge Requests</td>
 <td><a href="54.md.css.html">54</a></td>
+</tr>
+<tr>
+<td><code>1018</code></td>
+<td>Poll Response</td>
+<td><a href="88.md.css.html">88</a></td>
 </tr>
 <tr>
 <td><code>1021</code></td>
@@ -420,6 +440,11 @@ marketplaces)</a></li>
 <td><code>1063</code></td>
 <td>File Metadata</td>
 <td><a href="94.md.css.html">94</a></td>
+</tr>
+<tr>
+<td><code>1068</code></td>
+<td>Poll</td>
+<td><a href="88.md.css.html">88</a></td>
 </tr>
 <tr>
 <td><code>1311</code></td>
@@ -463,6 +488,16 @@ href="https://github.com/nostrocket/NIPS/blob/main/Problems.md.css.html">nostroc
 <td><a href="32.md.css.html">32</a></td>
 </tr>
 <tr>
+<td><code>1986</code></td>
+<td>Relay reviews</td>
+<td></td>
+</tr>
+<tr>
+<td><code>1987</code></td>
+<td>AI Embeddings / Vector lists</td>
+<td><a href="https://wikistr.com/nkbip-02">NKBIP-02</a></td>
+</tr>
+<tr>
 <td><code>2003</code></td>
 <td>Torrent</td>
 <td><a href="35.md.css.html">35</a></td>
@@ -471,6 +506,12 @@ href="https://github.com/nostrocket/NIPS/blob/main/Problems.md.css.html">nostroc
 <td><code>2004</code></td>
 <td>Torrent Comment</td>
 <td><a href="35.md.css.html">35</a></td>
+</tr>
+<tr>
+<td><code>2022</code></td>
+<td>Coinjoin Pool</td>
+<td><a
+href="https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md.css.html">joinstr</a></td>
 </tr>
 <tr>
 <td><code>4550</code></td>
@@ -501,6 +542,11 @@ href="https://github.com/nostrocket/NIPS/blob/main/Problems.md.css.html">nostroc
 <td><code>9041</code></td>
 <td>Zap Goal</td>
 <td><a href="75.md.css.html">75</a></td>
+</tr>
+<tr>
+<td><code>9467</code></td>
+<td>Tidal login</td>
+<td><a href="https://wikistr.com/tidal-nostr">Tidal-nostr</a></td>
 </tr>
 <tr>
 <td><code>9734</code></td>
@@ -575,7 +621,12 @@ href="https://github.com/nostrocket/NIPS/blob/main/Problems.md.css.html">nostroc
 <tr>
 <td><code>10050</code></td>
 <td>Relay list to receive DMs</td>
-<td><a href="17.md.css.html">17</a></td>
+<td><a href="51.md.css.html">51</a>, <a href="17.md.css.html">17</a></td>
+</tr>
+<tr>
+<td><code>10063</code></td>
+<td>User server list</td>
+<td><a href="https://wikistr.com/blossom">blossom</a></td>
 </tr>
 <tr>
 <td><code>10096</code></td>
@@ -614,6 +665,11 @@ href="https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/
 <td><a href="46.md.css.html">46</a></td>
 </tr>
 <tr>
+<td><code>24242</code></td>
+<td>Blobs stored on mediaservers</td>
+<td><a href="https://wikistr.com/blossom">blossom</a></td>
+</tr>
+<tr>
 <td><code>27235</code></td>
 <td>HTTP Auth</td>
 <td><a href="98.md.css.html">98</a></td>
@@ -646,6 +702,11 @@ href="https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/
 <tr>
 <td><code>30005</code></td>
 <td>Video sets</td>
+<td><a href="51.md.css.html">51</a></td>
+</tr>
+<tr>
+<td><code>30007</code></td>
+<td>Kind mute sets</td>
 <td><a href="51.md.css.html">51</a></td>
 </tr>
 <tr>
@@ -699,6 +760,16 @@ href="https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/
 <td><a href="51.md.css.html">51</a></td>
 </tr>
 <tr>
+<td><code>30040</code></td>
+<td>Modular Article Header</td>
+<td><a href="https://wikistr.com/nkbip-01">NKBIP-01</a></td>
+</tr>
+<tr>
+<td><code>30041</code></td>
+<td>Modular Article Content</td>
+<td><a href="https://wikistr.com/nkbip-01">NKBIP-01</a></td>
+</tr>
+<tr>
 <td><code>30063</code></td>
 <td>Release artifact sets</td>
 <td><a href="51.md.css.html">51</a></td>
@@ -734,6 +805,11 @@ href="https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/
 <td><a href="34.md.css.html">34</a></td>
 </tr>
 <tr>
+<td><code>30618</code></td>
+<td>Repository state announcements</td>
+<td><a href="34.md.css.html">34</a></td>
+</tr>
+<tr>
 <td><code>30818</code></td>
 <td>Wiki article</td>
 <td><a href="54.md.css.html">54</a></td>
@@ -746,8 +822,7 @@ href="https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/
 <tr>
 <td><code>31890</code></td>
 <td>Feed</td>
-<td><a href="https://wikifreedia.xyz/cip-01/97c70a44366a6535c1">NUD:
-Custom Feeds</a></td>
+<td><a href="https://wikifreedia.xyz/cip-01/">NUD: Custom Feeds</a></td>
 </tr>
 <tr>
 <td><code>31922</code></td>
@@ -901,8 +976,6 @@ Custom Feeds</a></td>
 </tr>
 </tbody>
 </table>
-<p>Please update these lists when proposing NIPs introducing new event
-kinds.</p>
 <h2 id="standardized-tags">Standardized Tags</h2>
 <table style="width:100%;">
 <colgroup>
@@ -945,16 +1018,28 @@ kinds.</p>
 <td><a href="01.md.css.html">01</a></td>
 </tr>
 <tr>
+<td><code>-</code></td>
+<td>–</td>
+<td>–</td>
+<td><a href="70.md.css.html">70</a></td>
+</tr>
+<tr>
 <td><code>g</code></td>
 <td>geohash</td>
 <td>–</td>
 <td><a href="52.md.css.html">52</a></td>
 </tr>
 <tr>
+<td><code>h</code></td>
+<td>group id</td>
+<td>–</td>
+<td><a href="29.md.css.html">29</a></td>
+</tr>
+<tr>
 <td><code>i</code></td>
-<td>identity</td>
-<td>proof</td>
-<td><a href="39.md.css.html">39</a></td>
+<td>external identity</td>
+<td>proof, url hint</td>
+<td><a href="39.md.css.html">39</a>, <a href="73.md.css.html">73</a></td>
 </tr>
 <tr>
 <td><code>k</code></td>
@@ -966,7 +1051,7 @@ href="72.md.css.html">72</a></td>
 <tr>
 <td><code>l</code></td>
 <td>label, label namespace</td>
-<td>annotations</td>
+<td>–</td>
 <td><a href="32.md.css.html">32</a></td>
 </tr>
 <tr>
@@ -990,8 +1075,8 @@ href="72.md.css.html">72</a></td>
 <tr>
 <td><code>r</code></td>
 <td>a reference (URL, etc)</td>
-<td>petname</td>
-<td></td>
+<td>–</td>
+<td><a href="24.md.css.html">24</a>, <a href="25.md.css.html">25</a></td>
 </tr>
 <tr>
 <td><code>r</code></td>
@@ -1003,7 +1088,7 @@ href="72.md.css.html">72</a></td>
 <td><code>t</code></td>
 <td>hashtag</td>
 <td>–</td>
-<td></td>
+<td><a href="24.md.css.html">24</a></td>
 </tr>
 <tr>
 <td><code>alt</code></td>
@@ -1088,7 +1173,8 @@ href="58.md.css.html">58</a></td>
 <td><code>image</code></td>
 <td>image URL</td>
 <td>dimensions in pixels</td>
-<td><a href="23.md.css.html">23</a>, <a href="58.md.css.html">58</a></td>
+<td><a href="23.md.css.html">23</a>, <a href="52.md.css.html">52</a>, <a
+href="58.md.css.html">58</a></td>
 </tr>
 <tr>
 <td><code>imeta</code></td>
@@ -1112,12 +1198,13 @@ href="58.md.css.html">58</a></td>
 <td><code>name</code></td>
 <td>name</td>
 <td>–</td>
-<td><a href="34.md.css.html">34</a>, <a href="58.md.css.html">58</a></td>
+<td><a href="34.md.css.html">34</a>, <a href="58.md.css.html">58</a>, <a
+href="72.md.css.html">72</a></td>
 </tr>
 <tr>
 <td><code>nonce</code></td>
 <td>random</td>
-<td>–</td>
+<td>difficulty</td>
 <td><a href="13.md.css.html">13</a></td>
 </tr>
 <tr>
@@ -1170,9 +1257,9 @@ href="58.md.css.html">58</a></td>
 </tr>
 <tr>
 <td><code>summary</code></td>
-<td>article summary</td>
+<td>summary</td>
 <td>–</td>
-<td><a href="23.md.css.html">23</a></td>
+<td><a href="23.md.css.html">23</a>, <a href="52.md.css.html">52</a></td>
 </tr>
 <tr>
 <td><code>thumb</code></td>
@@ -1200,11 +1287,12 @@ href="58.md.css.html">58</a></td>
 </tr>
 </tbody>
 </table>
+<p>Please update these lists when proposing new NIPs.</p>
 <h2 id="criteria-for-acceptance-of-nips">Criteria for acceptance of
 NIPs</h2>
 <ol type="1">
-<li>They should be implemented in at least two clients and one relay –
-when applicable.</li>
+<li>They should be fully implemented in at least two clients and one
+relay – when applicable.</li>
 <li>They should make sense.</li>
 <li>They should be optional and backwards-compatible: care must be taken
 such that clients and relays that choose to not implement them do not

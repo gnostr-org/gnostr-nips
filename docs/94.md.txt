@@ -53,7 +53,7 @@ description of the file content, and a list of tags described below:
         ["alt", <description>]
       ],
       "content": "<caption>",
-      ...
+      // other fields...
     }
 
 Suggested use cases
