@@ -12,10 +12,10 @@ exclude = ["examples/todo-ps/dist/**/*", "examples/elm-counter/index.html"]
 publish = false
 
 [dependencies]
-web-view = { path = "..", version = "0.7.3" }
+nips = { path = ".." }
 
 [features]
-edge = ["web-view/edge"]
+edge = ["nips/edge"]
 
 [dev-dependencies]
 tinyfiledialogs = "3.3"

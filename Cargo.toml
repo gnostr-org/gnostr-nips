@@ -1,17 +1,19 @@
 [package]
-name = "web-view"
-version = "0.7.3"
-authors = ["Boscop", "zxey <r.hozak@seznam.cz>", "Sam Green <sam.green81@gmail.com>"]
+name = "nips"
+version = "0.0.1"
+authors = ["gnostr <admin@gnostr.org>"]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/Boscop/web-view"
-description = "Rust bindings for webview, a tiny cross-platform library to render web-based GUIs for desktop applications"
-keywords = ["web", "gui", "desktop", "electron", "webkit"]
+repository = "https://github.com/gnostr-org/nips"
+description = "nostr: nip view"
+keywords = ["web", "gui"]
 categories = ["gui", "web-programming", "api-bindings", "rendering", "visualization"]
 exclude = ["webview-sys/**", "webview-examples/**", ".github/**", "Cargo.lock"]
 
 [dependencies]
 boxfnonce = "0.1"
+include_dir = { git = "https://github.com/gnostr-org/include_dir.git", version = "0.0.3" }
+include_dir_macros = { git = "https://github.com/gnostr-org/include_dir.git", version = "0.0.3" }
 tinyfiledialogs = "3.3"
 urlencoding = "1.1"
 webview-sys = { path = "webview-sys", version = "0.6.2" }
