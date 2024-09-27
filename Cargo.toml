@@ -1,0 +1,28 @@
+[package]
+name = "nips"
+version = "0.0.1"
+authors = ["gnostr <admin@gnostr.org>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/gnostr-org/nips.git"
+description = "nips: viewer"
+keywords = ["nostr", "nips"]
+categories = ["gui", "web-programming", "api-bindings", "rendering", "visualization"]
+exclude = ["webview-sys/**", "webview-examples/**", ".github/**", "Cargo.lock"]
+
+[dependencies]
+boxfnonce = "0.1"
+include_dir = { git = "https://github.com/gnostr-org/include_dir.git", version = "0.0.3" }
+include_dir_macros = { git = "https://github.com/gnostr-org/include_dir.git", version = "0.0.3" }
+tinyfiledialogs = "3.3"
+urlencoding = "1.1"
+webview-sys = { path = "webview-sys", version = "0.6.2" }
+
+[features]
+edge = ["webview-sys/edge"]
+
+[workspace]
+members = [
+    "webview-examples",
+    "webview-sys",
+]
