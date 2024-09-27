@@ -11,16 +11,18 @@ categories = ["gui", "web-programming", "api-bindings", "rendering", "visualizat
 exclude = ["webview-sys/**", "webview-examples/**", ".github/**", "Cargo.lock"]
 
 [dependencies]
+boxfnonce = "0.1"
+include_dir = { git = "https://github.com/gnostr-org/include_dir.git", version = "0.0.3" }
+include_dir_macros = { git = "https://github.com/gnostr-org/include_dir.git", version = "0.0.3" }
+tinyfiledialogs = "3.3"
 urlencoding = "1.1"
 webview-sys = { path = "webview-sys", version = "0.6.2" }
-boxfnonce = "0.1"
-tinyfiledialogs = "3.3"
 
 [features]
 edge = ["webview-sys/edge"]
 
 [workspace]
 members = [
-    "webview-sys",
     "webview-examples",
+    "webview-sys",
 ]

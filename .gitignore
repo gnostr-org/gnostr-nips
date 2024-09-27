@@ -1,7 +1,2 @@
 foo.txt
 /target
-target/
-**/*.rs.bk
-Cargo.lock
-TODO.md
-.idea

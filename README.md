@@ -1,215 +1,335 @@
-# web-view &emsp; ![.github/workflows/ci.yml](https://github.com/Boscop/web-view/workflows/.github/workflows/ci.yml/badge.svg) [![Latest Version]][crates.io] <!-- omit in toc -->
+# NIPs
 
-[Build Status]: https://api.travis-ci.org/Boscop/web-view.svg?branch=master
-[travis]: https://travis-ci.org/Boscop/web-view
-[Latest Version]: https://img.shields.io/crates/v/web-view.svg
-[crates.io]: https://crates.io/crates/web-view 
+NIPs stand for **Nostr Implementation Possibilities**.
 
-- [Prerequisites](#prerequisites)
-- [Installation and Configuration](#installation-and-configuration)
-- [Known Issues and Limitations](#known-issues-and-limitations)
-- [Suggestions](#suggestions)
-- [Contribution opportunities](#contribution-opportunities)
-- [Ideas for apps](#ideas-for-apps)
-- [Showcase](#showcase)
-
-> **Important:** requires Rust 1.30 stable or newer.
-
-This library provides a Rust binding to the original implementation of [webview](https://github.com/zserge/webview), a tiny cross-platform library to render web-based GUIs as desktop applications.
-
-<p align="center"><img alt="screenshot" src="https://i.imgur.com/Z3c2zwD.png"></p>
-
-Two-way binding between your Rust and JavaScript code is made simple via the `external` JS object and `webview.eval` Rust function. We have full [working examples](https://github.com/Boscop/web-view/tree/master/webview-examples/examples), but the core is as follows:
- 
-```rust
-// ... Simplified for the sake of brevity.
-web_view::builder()    
-    .invoke_handler(|webview, arg| {
-        match arg {
-            "test_one" => {
-                // Do something in Rust!
-            }
-            "test_two" => {
-                // Invoke a JavaScript function!
-                webview.eval(&format!("myFunction({}, {})", 123, 456))
-            }
-            _ => unimplemented!(),
-        };
-    })
-```
- 
-```javascript
-// Executes our "invoke_handler" - passing the value "test_one" as the second parameter.
-external.invoke('test_one');
-
-// Executes our "invoke_handler", which in turn calls "myFunction" below.
-external.invoke('test_two');
-
-function myFunction(paramOne, paramTwo) {
-    console.log(paramOne);
-    console.log(paramTwo);
-}
-```
- 
-In addition, by relying on the default rendering engine of the host Operating System, you should be met with a *significantly* leaner binary to distribute compared to alternatives such as [Electron](https://github.com/electron/electron) which have to bundle Chromium with each distribution. 
- 
-> *You should also see comparatively less memory usage, and this section will be updated with benchmarks to highlight this in due course.*
- 
-Finally, the supported platforms and the engines you can expect to render your application content are as follows:
- 
-| Operating System | Browser Engine Used |
-| ---------------- | ------------------- |
-| Windows          | MSHTML or EdgeHTML  |
-| Linux            | Gtk-webkit2         |
-| OSX              | Cocoa/WebKit        |
- 
-> Note: by default the MSHTML (IE) rendering engine is used to display the application on Windows. If you want to make use of EdgeHTML (Edge) then you'll need to enable it with a feature switch (see the [installation and configuration section](#installation-and-configuration)).
- 
-## Prerequisites
- 
-If you're planning on targeting Linux you **must** ensure that `Webkit2gtk` is already installed and available for discovery via the [pkg-config](https://linux.die.net/man/1/pkg-config) command.
- 
-If you skip this step you will see a similarly formatted error message as below informing you of what's missing:
- 
-```text
-Compiling webview-sys v0.3.3
-error: failed to run custom build command for `webview-sys v0.3.3`
-Caused by:
-process didn't exit successfully: `/home/username/rust-projects/my-project/target/debug/build/webview-sys-9020ddaf41e4df7d/build-script-build` (exit code: 101)
---- stderr
-thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: Command { command: "\"pkg-config\" \"--libs\" \"--cflags\" \"webkit2gtk-4.0\" \"webkit2gtk-4.0 >= 2.8\"", cause: Os { code: 2, kind: NotFound, message: "No such file or directory" } }', src/libcore/result.rs:1165:5
-```
-
-## Installation and Configuration
-
-Let's start off with the basic Rust application. Run `cargo new my-project` in a shell of your choice and change into the `my-project` directory.
-
-As this library can be found as a crate on the [Rust Community Registry](https://crates.io/crates/web-view) all you have to do to add this as a dependency is update your `Cargo.toml` file to have the following under its dependencies section:
-
-```toml
-[dependencies]
-web-view = { version = "0.7" }
-```
-
-If you want to make use of **Edge** on Windows environments, you will need to have Windows 10 SDK installed through Visual Studio Installer and you'll need to use the following syntax instead:
-
-```toml
-[dependencies]
-web-view = { version = "0.7", features = ["edge"] }
-```
-
-Now let's write some Rust code that makes use of the library. Open up the `main.rs` file in an editor of your choice:
-
-```bash
-vim src/main.rs
-```
-
-And replace the contents with the following:
-
-```rust
-use web_view::*;
-
-fn main() {
-    let html_content = "<html><body><h1>Hello, World!</h1></body></html>";
-	
-    web_view::builder()
-        .title("My Project")
-        .content(Content::Html(html_content))
-        .size(320, 480)
-        .resizable(false)
-        .debug(true)
-        .user_data(())
-        .invoke_handler(|_webview, _arg| Ok(()))
-        .run()
-        .unwrap();
-}
-```
-
-You should now be able to run `cargo build` and see something similar to the output below:
-
-```text
-$ cargo build
-Updating crates.io index
-Compiling pkg-config v0.3.17
-Compiling cc v1.0.47
-Compiling boxfnonce v0.1.1
-Compiling urlencoding v1.0.0
-Compiling webview-sys v0.3.3
-Compiling web-view v0.5.4
-Compiling my-project v0.1.0 (C:\Users\Username\source\rust-projects\my-project)
-Finished dev [unoptimized + debuginfo] target(s) in 8.36s
-```
- 
-Assuming you get a successful build all you have to do now is run it with: `cargo run`. Hopefully you'll see the same as below:
-
-<p align="center"><img alt="screenshot" src="https://i.imgur.com/vQrS2p2.png"></p>
-
-For more usage info please check out the [examples](https://github.com/Boscop/web-view/tree/master/webview-examples/examples) and the [original README](https://github.com/zserge/webview/blob/master/README.md).
-
-## Known Issues and Limitations
- 
-* `Edge` feature switch not working on Windows 10 if run as `Administrator`. This was the root cause of the issue raised in [#96](https://github.com/Boscop/web-view/issues/96) and is the result of a bug in `Microsoft.Toolkit.Win32` which is [tracked here](https://github.com/windows-toolkit/Microsoft.Toolkit.Win32/issues/50).
-* `Edge` sandbox restrictions. If you decide to make use of an embedded Web Server to return your content you will need to run the following command to bypass the restriction that prevents communication with `localhost`:
- 
-    ``` powershell
-    $ # Requires administrative privileges.
-    $ CheckNetIsolation.exe LoopbackExempt -a -n="Microsoft.Win32WebViewHost_cw5n1h2txyewy"
-    ```
- 
-    This is usually used with Windows IoT Core, when allowing TCP/IP connections between two processes. You can read some more about this in the [Microsoft Documentation here](https://docs.microsoft.com/en-us/windows/iot-core/develop-your-app/loopback).
- 
-* `IE` rendering content in a legacy, compatibility format. By default, content rendered inside a Web Browser Control will be done so in compatibility mode ([specifically IE7](https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730(v=vs.85)?redirectedfrom=MSDN)). To get round this on Windows systems where Edge is not available you can force the use of the highest version of IE installed via a [Registry tweak](https://blogs.msdn.microsoft.com/patricka/2015/01/12/controlling-webbrowser-control-compatibility/).
- 
-## Suggestions
- 
-- If you like type safety, write your frontend in [Elm](http://elm-lang.org/) or [PureScript](http://www.purescript.org/)<sup>[*](#n1)</sup>, or use a Rust frontend framework that compiles to asm.js, like [yew](https://github.com/DenisKolodin/yew).
-- Use [parcel](https://parceljs.org/) to bundle & minify your frontend code.
-- Use [inline-assets](https://www.npmjs.com/package/inline-assets) to inline all your assets (css, js, html) into one index.html file and embed it in your Rust app using `include_str!()`.
-- If your app runs on windows, [add an icon](https://github.com/mxre/winres) to your Rust executable to make it look more professional™
-- Use custom npm scripts or [just](https://github.com/casey/just) or [cargo-make](https://github.com/sagiegurari/cargo-make) to automate the build steps.
-- Make your app state persistent between sessions using localStorage in the frontend or [rustbreak](https://crates.io/crates/rustbreak) in the backend.
-- Btw, instead of injecting app resources via the js api, you can also serve them from a local http server (e.g. bound to an ephemeral port).
-- Happy coding :)
- 
-<a name="n1">*</a> The free [PureScript By Example](https://leanpub.com/purescript/read) book contains several practical projects for PureScript beginners.
- 
-## Contribution opportunities
- 
-- Create an issue for any question you have
-- Docs
-- Feedback on this library's API and code
-- Test it on non-windows platforms, report any issues you find
-- Showcase your app
-- Add an example that uses Elm or Rust compiled to asm.js
-- Add a PureScript example that does two-way communication with the backend
-- Contribute to the original webview library: E.g. [add HDPI support on Windows](https://github.com/zserge/webview/issues/54)
-- Make it possible to create the webview window as a child window of a given parent window. This would allow webview to be used for the GUIs of [VST audio plugins in Rust](https://github.com/rust-dsp/rust-vst).
- 
-## Ideas for apps
- 
-- Rust IDE (by porting [xi-electron](https://github.com/acheronfail/xi-electron) to web-view)
-- Data visualization / plotting lib for Rust, to make Rust more useful for data science
-- Crypto coin wallet
-- IRC client, or client for other chat protocols
-- Midi song editor, VJ controller
-- Rust project template wizard: Generate new Rust projects from templates with user-friendly steps
-- GUI for [pijul](https://pijul.org/)
-- Implement [Gooey](https://github.com/chriskiehl/Gooey) alternative with [web-view](https://github.com/Boscop/web-view) and [clap-rs](https://github.com/clap-rs/clap)
- 
-## Showcase
- 
-*Feel free to open a PR if you want your project to be listed here!*  
- 
-- [Juggernaut](https://github.com/ShashankaNataraj/Juggernaut) - The unstoppable programmers editor
-- [FrakeGPS](https://github.com/frafra/frakegps) - Simulate a simple GPS device
-- [Compactor](https://github.com/Freaky/Compactor) - Windows 10 filesystem compression utility
-- [neutrino](https://github.com/alexislozano/neutrino/) - A GUI frontend in Rust based on web-view
-- [SOUNDSENSE-RS](https://github.com/prixt/soundsense-rs) - Sound-engine tool for Dwarf Fortress
-- [WV Linewise](https://github.com/forbesmyester/wv-linewise) - Add your own interactive HTML/CSS/JS in the middle of your UNIX pipelines
-- [Bloop](https://github.com/Blakeinstein/Bloop) - A light weight aesthetic scratchpad for developers.
+They exist to document what may be implemented by [Nostr](https://github.com/nostr-protocol/nostr)-compatible _relay_ and _client_ software.
 
 ---
 
-Contributions and feedback welcome :)
+- [List](#list)
+- [Event Kinds](#event-kinds)
+- [Message Types](#message-types)
+  - [Client to Relay](#client-to-relay)
+  - [Relay to Client](#relay-to-client)
+- [Standardized Tags](#standardized-tags)
+- [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
+- [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
+- [How this repository works](#how-this-repository-works)
+- [Breaking Changes](#breaking-changes)
+- [License](#license)
 
 ---
+
+## List
+
+- [NIP-01: Basic protocol flow description](01.md)
+- [NIP-02: Follow List](02.md)
+- [NIP-03: OpenTimestamps Attestations for Events](03.md)
+- [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-17](17.md)
+- [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
+- [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
+- [NIP-07: `window.nostr` capability for web browsers](07.md)
+- [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
+- [NIP-09: Event Deletion Request](09.md)
+- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-11: Relay Information Document](11.md)
+- [NIP-13: Proof of Work](13.md)
+- [NIP-14: Subject tag in text events](14.md)
+- [NIP-15: Nostr Marketplace (for resilient marketplaces)](15.md)
+- [NIP-17: Private Direct Messages](17.md)
+- [NIP-18: Reposts](18.md)
+- [NIP-19: bech32-encoded entities](19.md)
+- [NIP-21: `nostr:` URI scheme](21.md)
+- [NIP-23: Long-form Content](23.md)
+- [NIP-24: Extra metadata fields and tags](24.md)
+- [NIP-25: Reactions](25.md)
+- [NIP-26: Delegated Event Signing](26.md)
+- [NIP-27: Text Note References](27.md)
+- [NIP-28: Public Chat](28.md)
+- [NIP-29: Relay-based Groups](29.md)
+- [NIP-30: Custom Emoji](30.md)
+- [NIP-31: Dealing with Unknown Events](31.md)
+- [NIP-32: Labeling](32.md)
+- [NIP-34: `git` stuff](34.md)
+- [NIP-35: Torrents](35.md)
+- [NIP-36: Sensitive Content](36.md)
+- [NIP-38: User Statuses](38.md)
+- [NIP-39: External Identities in Profiles](39.md)
+- [NIP-40: Expiration Timestamp](40.md)
+- [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-44: Versioned Encryption](44.md)
+- [NIP-45: Counting results](45.md)
+- [NIP-46: Nostr Connect](46.md)
+- [NIP-47: Wallet Connect](47.md)
+- [NIP-48: Proxy Tags](48.md)
+- [NIP-49: Private Key Encryption](49.md)
+- [NIP-50: Search Capability](50.md)
+- [NIP-51: Lists](51.md)
+- [NIP-52: Calendar Events](52.md)
+- [NIP-53: Live Activities](53.md)
+- [NIP-54: Wiki](54.md)
+- [NIP-55: Android Signer Application](55.md)
+- [NIP-56: Reporting](56.md)
+- [NIP-57: Lightning Zaps](57.md)
+- [NIP-58: Badges](58.md)
+- [NIP-59: Gift Wrap](59.md)
+- [NIP-64: Chess (PGN)](64.md)
+- [NIP-65: Relay List Metadata](65.md)
+- [NIP-70: Protected Events](70.md)
+- [NIP-71: Video Events](71.md)
+- [NIP-72: Moderated Communities](72.md)
+- [NIP-73: External Content IDs](73.md)
+- [NIP-75: Zap Goals](75.md)
+- [NIP-78: Application-specific data](78.md)
+- [NIP-84: Highlights](84.md)
+- [NIP-89: Recommended Application Handlers](89.md)
+- [NIP-90: Data Vending Machines](90.md)
+- [NIP-92: Media Attachments](92.md)
+- [NIP-94: File Metadata](94.md)
+- [NIP-96: HTTP File Storage Integration](96.md)
+- [NIP-98: HTTP Auth](98.md)
+- [NIP-99: Classified Listings](99.md)
+
+## Event Kinds
+
+| kind          | description                     | NIP                                    |
+| ------------- | ------------------------------- | -------------------------------------- |
+| `0`           | User Metadata                   | [01](01.md)                            |
+| `1`           | Short Text Note                 | [01](01.md)                            |
+| `2`           | Recommend Relay                 | 01 (deprecated)                        |
+| `3`           | Follows                         | [02](02.md)                            |
+| `4`           | Encrypted Direct Messages       | [04](04.md)                            |
+| `5`           | Event Deletion Request          | [09](09.md)                            |
+| `6`           | Repost                          | [18](18.md)                            |
+| `7`           | Reaction                        | [25](25.md)                            |
+| `8`           | Badge Award                     | [58](58.md)                            |
+| `9`           | Group Chat Message              | [29](29.md)                            |
+| `10`          | Group Chat Threaded Reply       | [29](29.md)                            |
+| `11`          | Group Thread                    | [29](29.md)                            |
+| `12`          | Group Thread Reply              | [29](29.md)                            |
+| `13`          | Seal                            | [59](59.md)                            |
+| `14`          | Direct Message                  | [17](17.md)                            |
+| `16`          | Generic Repost                  | [18](18.md)                            |
+| `17`          | Reaction to a website           | [25](25.md)                            |
+| `40`          | Channel Creation                | [28](28.md)                            |
+| `41`          | Channel Metadata                | [28](28.md)                            |
+| `42`          | Channel Message                 | [28](28.md)                            |
+| `43`          | Channel Hide Message            | [28](28.md)                            |
+| `44`          | Channel Mute User               | [28](28.md)                            |
+| `64`          | Chess (PGN)                     | [64](64.md)                            |
+| `818`         | Merge Requests                  | [54](54.md)                            |
+| `1021`        | Bid                             | [15](15.md)                            |
+| `1022`        | Bid confirmation                | [15](15.md)                            |
+| `1040`        | OpenTimestamps                  | [03](03.md)                            |
+| `1059`        | Gift Wrap                       | [59](59.md)                            |
+| `1063`        | File Metadata                   | [94](94.md)                            |
+| `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1617`        | Patches                         | [34](34.md)                            |
+| `1621`        | Issues                          | [34](34.md)                            |
+| `1622`        | Replies                         | [34](34.md)                            |
+| `1630`-`1633` | Status                          | [34](34.md)                            |
+| `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
+| `1984`        | Reporting                       | [56](56.md)                            |
+| `1985`        | Label                           | [32](32.md)                            |
+| `1986`        | Relay reviews                   |                                        |
+| `1987`        | AI Embeddings / Vector lists    | [NKBIP-02]                             |
+| `2003`        | Torrent                         | [35](35.md)                            |
+| `2004`        | Torrent Comment                 | [35](35.md)                            |
+| `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `4550`        | Community Post Approval         | [72](72.md)                            |
+| `5000`-`5999` | Job Request                     | [90](90.md)                            |
+| `6000`-`6999` | Job Result                      | [90](90.md)                            |
+| `7000`        | Job Feedback                    | [90](90.md)                            |
+| `9000`-`9030` | Group Control Events            | [29](29.md)                            |
+| `9041`        | Zap Goal                        | [75](75.md)                            |
+| `9467`        | Tidal login                     | [Tidal-nostr]                          |
+| `9734`        | Zap Request                     | [57](57.md)                            |
+| `9735`        | Zap                             | [57](57.md)                            |
+| `9802`        | Highlights                      | [84](84.md)                            |
+| `10000`       | Mute list                       | [51](51.md)                            |
+| `10001`       | Pin list                        | [51](51.md)                            |
+| `10002`       | Relay List Metadata             | [65](65.md)                            |
+| `10003`       | Bookmark list                   | [51](51.md)                            |
+| `10004`       | Communities list                | [51](51.md)                            |
+| `10005`       | Public chats list               | [51](51.md)                            |
+| `10006`       | Blocked relays list             | [51](51.md)                            |
+| `10007`       | Search relays list              | [51](51.md)                            |
+| `10009`       | User groups                     | [51](51.md), [29](29.md)               |
+| `10015`       | Interests list                  | [51](51.md)                            |
+| `10030`       | User emoji list                 | [51](51.md)                            |
+| `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
+| `10063`       | User server list                | [blossom]                              |
+| `10096`       | File storage server list        | [96](96.md)                            |
+| `13194`       | Wallet Info                     | [47](47.md)                            |
+| `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
+| `22242`       | Client Authentication           | [42](42.md)                            |
+| `23194`       | Wallet Request                  | [47](47.md)                            |
+| `23195`       | Wallet Response                 | [47](47.md)                            |
+| `24133`       | Nostr Connect                   | [46](46.md)                            |
+| `24242`       | Blobs stored on mediaservers    | [blossom]                              |
+| `27235`       | HTTP Auth                       | [98](98.md)                            |
+| `30000`       | Follow sets                     | [51](51.md)                            |
+| `30001`       | Generic lists                   | [51](51.md)                            |
+| `30002`       | Relay sets                      | [51](51.md)                            |
+| `30003`       | Bookmark sets                   | [51](51.md)                            |
+| `30004`       | Curation sets                   | [51](51.md)                            |
+| `30005`       | Video sets                      | [51](51.md)                            |
+| `30007`       | Kind mute sets                  | [51](51.md)                            |
+| `30008`       | Profile Badges                  | [58](58.md)                            |
+| `30009`       | Badge Definition                | [58](58.md)                            |
+| `30015`       | Interest sets                   | [51](51.md)                            |
+| `30017`       | Create or update a stall        | [15](15.md)                            |
+| `30018`       | Create or update a product      | [15](15.md)                            |
+| `30019`       | Marketplace UI/UX               | [15](15.md)                            |
+| `30020`       | Product sold as an auction      | [15](15.md)                            |
+| `30023`       | Long-form Content               | [23](23.md)                            |
+| `30024`       | Draft Long-form Content         | [23](23.md)                            |
+| `30030`       | Emoji sets                      | [51](51.md)                            |
+| `30040`       | Modular Article Header          | [NKBIP-01]                             |
+| `30041`       | Modular Article Content         | [NKBIP-01]                             |
+| `30063`       | Release artifact sets           | [51](51.md)                            |
+| `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30311`       | Live Event                      | [53](53.md)                            |
+| `30315`       | User Statuses                   | [38](38.md)                            |
+| `30402`       | Classified Listing              | [99](99.md)                            |
+| `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30617`       | Repository announcements        | [34](34.md)                            |
+| `30618`       | Repository state announcements  | [34](34.md)                            |
+| `30818`       | Wiki article                    | [54](54.md)                            |
+| `30819`       | Redirects                       | [54](54.md)                            |
+| `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
+| `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
+| `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
+| `31924`       | Calendar                        | [52](52.md)                            |
+| `31925`       | Calendar Event RSVP             | [52](52.md)                            |
+| `31989`       | Handler recommendation          | [89](89.md)                            |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `34235`       | Video Event                     | [71](71.md)                            |
+| `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
+| `34237`       | Video View Event                | [71](71.md)                            |
+| `34550`       | Community Definition            | [72](72.md)                            |
+| `39000-9`     | Group metadata events           | [29](29.md)                            |
+
+[NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
+[nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
+[lnpub]: https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/client.md
+[joinstr]: https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md
+[NKBIP-01]: https://wikistr.com/nkbip-01
+[NKBIP-02]: https://wikistr.com/nkbip-02
+[Blossom]: https://wikistr.com/blossom
+[Tidal-nostr]: https://wikistr.com/tidal-nostr
+
+## Message types
+
+### Client to Relay
+
+| type    | description                                         | NIP         |
+| ------- | --------------------------------------------------- | ----------- |
+| `EVENT` | used to publish events                              | [01](01.md) |
+| `REQ`   | used to request events and subscribe to new updates | [01](01.md) |
+| `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
+| `AUTH`  | used to send authentication events                  | [42](42.md) |
+| `COUNT` | used to request event counts                        | [45](45.md) |
+
+### Relay to Client
+
+| type     | description                                             | NIP         |
+| -------- | ------------------------------------------------------- | ----------- |
+| `EOSE`   | used to notify clients all stored events have been sent | [01](01.md) |
+| `EVENT`  | used to send events requested to clients                | [01](01.md) |
+| `NOTICE` | used to send human-readable messages to clients         | [01](01.md) |
+| `OK`     | used to notify clients if an EVENT was successful       | [01](01.md) |
+| `CLOSED` | used to notify clients that a REQ was ended and why     | [01](01.md) |
+| `AUTH`   | used to send authentication challenges                  | [42](42.md) |
+| `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
+
+## Standardized Tags
+
+| name              | value                                | other parameters                | NIP                                   |
+| ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
+| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)              |
+| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
+| `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
+| `d`               | identifier                           | --                              | [01](01.md)                           |
+| `-`               | --                                   | --                              | [70](70.md)                           |
+| `g`               | geohash                              | --                              | [52](52.md)                           |
+| `h`               | group id                             | --                              | [29](29.md)                           |
+| `i`               | external identity                    | proof, url hint                 | [39](39.md), [73](73.md)              |
+| `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
+| `l`               | label, label namespace               | --                              | [32](32.md)                           |
+| `L`               | label namespace                      | --                              | [32](32.md)                           |
+| `m`               | MIME type                            | --                              | [94](94.md)                           |
+| `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
+| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)              |
+| `r`               | relay url                            | marker                          | [65](65.md)                           |
+| `t`               | hashtag                              | --                              | [24](24.md)                           |
+| `alt`             | summary                              | --                              | [31](31.md)                           |
+| `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                           |
+| `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                           |
+| `challenge`       | challenge string                     | --                              | [42](42.md)                           |
+| `client`          | name, address                        | relay URL                       | [89](89.md)                           |
+| `clone`           | git clone URL                        | --                              | [34](34.md)                           |
+| `content-warning` | reason                               | --                              | [36](36.md)                           |
+| `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                           |
+| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md) |
+| `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                           |
+| `encrypted`       | --                                   | --                              | [90](90.md)                           |
+| `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                           |
+| `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                           |
+| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md) |
+| `imeta`           | inline metadata                      | --                              | [92](92.md)                           |
+| `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                           |
+| `location`        | location string                      | --                              | [52](52.md), [99](99.md)              |
+| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md) |
+| `nonce`           | random                               | difficulty                      | [13](13.md)                           |
+| `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                           |
+| `price`           | price                                | currency, frequency             | [99](99.md)                           |
+| `proxy`           | external ID                          | protocol                        | [48](48.md)                           |
+| `published_at`    | unix timestamp (string)              | --                              | [23](23.md)                           |
+| `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)              |
+| `relays`          | relay list                           | --                              | [57](57.md)                           |
+| `server`          | file storage server url              | --                              | [96](96.md)                           |
+| `subject`         | subject                              | --                              | [14](14.md), [17](17.md)              |
+| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)              |
+| `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
+| `title`           | article title                        | --                              | [23](23.md)                           |
+| `web`             | webpage URL                          | --                              | [34](34.md)                           |
+| `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                           |
+
+Please update these lists when proposing new NIPs.
+
+## Criteria for acceptance of NIPs
+
+1. They should be fully implemented in at least two clients and one relay -- when applicable.
+2. They should make sense.
+3. They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.
+4. There should be no more than one way of doing the same thing.
+5. Other rules will be made up when necessary.
+
+## Is this repository a centralizing factor?
+
+To promote interoperability, we standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
+
+It can even fork into multiple and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
+
+There is a list of notable Nostr software developers who have commit access to this repository, but that exists mostly for practical reasons, as by the nature of the thing we're dealing with the repository owner can revoke membership and rewrite history as they want -- and if these actions are unjustified or perceived as bad or evil the community must react.
+
+## How this repository works
+
+Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking **backwards-compatibility** and the principle of having **a single way of doing things**, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.
+
+These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
+
+## Breaking Changes
+
+[Breaking Changes](BREAKING.md)
+
+## License
+
+All NIPs are public domain.
+
+## Contributors
+
+<a align="center" href="https://github.com/nostr-protocol/nips/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nostr-protocol/nips" />
+</a>

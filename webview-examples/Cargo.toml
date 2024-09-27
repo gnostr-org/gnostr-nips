@@ -12,7 +12,7 @@ exclude = ["examples/todo-ps/dist/**/*", "examples/elm-counter/index.html"]
 publish = false
 
 [dependencies]
-nips = { path = "..", version = "0.0.1" }
+nips = { path = ".." }
 
 [features]
 edge = ["nips/edge"]

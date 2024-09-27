@@ -2,7 +2,6 @@ use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 use include_dir::{include_dir, Dir};
-extern crate comrak;
 
 use comrak::nodes::NodeValue;
 use comrak::{format_html, parse_document, Arena, Options};
