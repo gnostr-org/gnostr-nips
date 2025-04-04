@@ -164,15 +164,20 @@ fn main() {
     let script_name = "install_script.sh";
     let script_path = Path::new(filename_to_extract);
 
+    let relative_dot = Path::new(".");
+    let canonical_dot = canonicalize_path(relative_dot).expect("");
+    println!("Canonical path of '.': {}", canonical_dot.display());
+    let script_path = Path::new(".").join(script_name);
+
     if script_path.exists() {
         println!("170:Attempting to make '{}' executable...", script_name);
-        match make_executable(script_path) {
+        match make_executable(&script_path) {
             Ok(_) => println!("Successfully made '{}' executable.", script_name),
             Err(e) => eprintln!("Error making '{}' executable: {}", script_name, e),
         }
 
         println!("Now attempting to execute '{}'...", script_name);
-        //execute_script(script_path).expect("");
+        execute_script(&script_path).expect("");
 
     } else {
         eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
