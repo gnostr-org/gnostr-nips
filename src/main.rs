@@ -14,6 +14,7 @@ use std::io::Write;
 #[folder = "./template"]
 struct Template;
 
+
 fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
     // First, make the path absolute if it's not already.
     let absolute_path = if path.is_relative() {
@@ -34,23 +35,19 @@ fn extract(filename: &str){
    // Create a Path from the current directory.
     let current_dir_path = Path::new(".");
 
-    let relative_dot = Path::new(".");
-    let canonical_dot = canonicalize_path(relative_dot).expect("");
-    println!("Canonical path of '.': {}", canonical_dot.display());
-
     // You can now work with this Path object.
     println!("Path to current directory: {}", current_dir_path.display());
 
-    // You can also use it to join with other paths relative to the current directory.
-    let sub_dir_path = current_dir_path.join("my_folder");
-    println!("Path to a subdirectory: {}", sub_dir_path.display());
+    //// You can also use it to join with other paths relative to the current directory.
+    //let sub_dir_path = current_dir_path.join("my_folder");
+    //println!("Path to a subdirectory: {}", sub_dir_path.display());
 
-    let file_path = current_dir_path.join("my_file.txt");
-    println!("Path to a file: {}", file_path.display());
+    //let file_path = current_dir_path.join("my_file.txt");
+    //println!("Path to a file: {}", file_path.display());
 
-    //let output_path = Path::new("extract_result").join(filename);
-    let output_path = Path::new(".").join(filename);
-    let _ = std::fs::create_dir_all(output_path.parent().unwrap());
+    let output_path = Path::new("extract_result").join(filename);
+    //let output_path = Path::new(".").join(filename);
+    //let _ = std::fs::create_dir_all(output_path.parent().unwrap());
     match Template::get(filename) {
         Some(embedded_file) => {
             let outfile = File::create(&output_path);
@@ -98,42 +95,44 @@ fn main() {
     println!("Canonical path of '{}': {}", absolute_path_str, canonical_absolute.display());
 
     // Example 4: Path with ".."
-    let path_with_parent = Path::new("template");
-    let canonical_with_parent = canonicalize_path(path_with_parent).expect("");
-    println!("Canonical path of '{}': {}", path_with_parent.display(), canonical_with_parent.display());
+    //let path_with_parent = Path::new("some_folder/../another_folder/file.txt");
+    //let canonical_with_parent = canonicalize_path(path_with_parent).expect("");
+    //println!("Canonical path of '{}': {}", path_with_parent.display(), canonical_with_parent.display());
 
 
 
     let filename_to_extract = "Makefile";
 	extract(filename_to_extract);
+    //let filename_to_extract = "GNUmakefile";
+	//extract(filename_to_extract);
     let filename_to_extract = "install_script.sh";
 	extract(filename_to_extract);
     let filename_to_extract = "default_config.conf";
 	extract(filename_to_extract);
 
-    let install_script = Template::get("install_script.sh").unwrap();
-    let mut content: Cow<str>;// = std::str::from_utf8(install_script.data.as_ref()).unwrap().into();
-    for filename in Template::iter() {
-        //tracing::debug!("Embedded StaticFile:\n{}", filename.as_ref());
-        //println!("Embedded StaticFile:\n{}", filename.as_ref());
-        if let Some(file) = Template::get(filename.as_ref()) {
+    //let install_script = Template::get("install_script.sh").unwrap();
+    //let mut content: Cow<str>;// = std::str::from_utf8(install_script.data.as_ref()).unwrap().into();
+    //for filename in Template::iter() {
+    //    //tracing::debug!("Embedded StaticFile:\n{}", filename.as_ref());
+    //    //println!("Embedded StaticFile:\n{}", filename.as_ref());
+    //    if let Some(file) = Template::get(filename.as_ref()) {
 
-            let mut outfile = File::create(&filename.as_ref());
-            content = String::from_utf8_lossy(file.data.as_ref());
-    //        outfile?.write_all(content).expect("");
-
-
-            content = String::from_utf8_lossy(file.data.as_ref());
-            //tracing::debug!("Content:\n{}", content);
-            //println!("Content:\n{}", content);
-        }
-    }
+    //        let mut outfile = File::create(&filename.as_ref());
+    //        content = String::from_utf8_lossy(file.data.as_ref());
+    ////        outfile?.write_all(content).expect("");
 
 
-    let touch_makefile = Command::new("touch")
-        .arg("Makefile")
-        .status()
-        .expect("Failed to execute install script");
+    //        content = String::from_utf8_lossy(file.data.as_ref());
+    //        //tracing::debug!("Content:\n{}", content);
+    //        //println!("Content:\n{}", content);
+    //    }
+    //}
+
+
+    //let touch_makefile = Command::new("touch")
+    //    .arg("Makefile")
+    //    .status()
+    //    .expect("Failed to execute install script");
 
 
 
