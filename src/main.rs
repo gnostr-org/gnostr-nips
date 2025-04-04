@@ -14,7 +14,6 @@ use std::io::Write;
 #[folder = "./template"]
 struct Template;
 
-
 fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
     // First, make the path absolute if it's not already.
     let absolute_path = if path.is_relative() {
@@ -34,6 +33,10 @@ fn extract(filename: &str){
 
    // Create a Path from the current directory.
     let current_dir_path = Path::new(".");
+
+    let relative_dot = Path::new(".");
+    let canonical_dot = canonicalize_path(relative_dot).expect("");
+    println!("Canonical path of '.': {}", canonical_dot.display());
 
     // You can now work with this Path object.
     println!("Path to current directory: {}", current_dir_path.display());
