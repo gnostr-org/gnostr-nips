@@ -45,8 +45,8 @@ fn extract(filename: &str){
     //let file_path = current_dir_path.join("my_file.txt");
     //println!("Path to a file: {}", file_path.display());
 
-    let output_path = Path::new("extract_result").join(filename);
-    //let output_path = Path::new(".").join(filename);
+    //let output_path = Path::new("extract_result").join(filename);
+    let output_path = Path::new(".").join(filename);
     //let _ = std::fs::create_dir_all(output_path.parent().unwrap());
     match Template::get(filename) {
         Some(embedded_file) => {
