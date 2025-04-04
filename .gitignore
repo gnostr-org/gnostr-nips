@@ -1,3 +1,8 @@
+Makefile
+default_config.conf
+extract_result/
+install_script.sh
+
 debug/
 target/
 **/*.rs.bk
