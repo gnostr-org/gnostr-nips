@@ -10,7 +10,7 @@ fn main() {
     let dest_path = Path::new(&out_dir).join("install_script.sh");
 
     // Copy the script to the OUT_DIR.
-    fs::copy("./scripts/install_script.sh", &dest_path).expect("Failed to copy .scripts/install_script.sh");
+    fs::copy("./template/install_script.sh", &dest_path).expect("Failed to copy .template/install_script.sh");
 
     // Make the copied script executable.
     if cfg!(target_os = "linux") || cfg!(target_os = "macos") {

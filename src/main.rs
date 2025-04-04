@@ -8,11 +8,25 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-
-
 #[derive(Embed)]
-#[folder = "./scripts"]
-struct Scripts;
+#[folder = "./template"]
+struct Template;
+
+fn extract(filename: &str){
+    let output_path = Path::new("extract_result").join(filename);
+    let _ = std::fs::create_dir_all(output_path.parent().unwrap());
+    match Template::get(filename) {
+        Some(embedded_file) => {
+            let outfile = File::create(&output_path);
+            outfile.expect("").write_all(embedded_file.data.as_ref()).expect("");
+            println!("Successfully extracted '{}' to '{}'", filename, output_path.display());
+        }
+        None => {
+            eprintln!("Error: Embedded file '{}' not found!", filename);
+        }
+    }
+
+}
 
 //fn main() -> Result<(), std::io::Error> {
 fn main() {
@@ -20,39 +34,22 @@ fn main() {
     let subscriber = Registry::default()
         .with(fmt::layer().with_writer(std::io::stdout)) // Configure the fmt layer
         .with(EnvFilter::from_default_env());        // Add the EnvFilter layer
-
-    // Set the global default subscriber
     tracing::subscriber::set_global_default(subscriber)
         .expect("Failed to set global default subscriber");
 
+    let filename_to_extract = "Makefile";
+	extract(filename_to_extract);
+    let filename_to_extract = "install_script.sh";
+	extract(filename_to_extract);
+    let filename_to_extract = "default_config.conf";
+	extract(filename_to_extract);
 
-
-
-    let filename_to_extract = "Makefile"; // Replace with the name of your embedded file
-    let output_path = Path::new("extracted_files").join(filename_to_extract);
-
-    // Ensure the output directory exists
-    std::fs::create_dir_all(output_path.parent().unwrap());
-
-    match Scripts::get(filename_to_extract) {
-        Some(embedded_file) => {
-            let mut outfile = File::create(&output_path);
-            outfile.expect("").write_all(embedded_file.data.as_ref()).expect("");
-            println!("Successfully extracted '{}' to '{}'", filename_to_extract, output_path.display());
-        }
-        None => {
-            eprintln!("Error: Embedded file '{}' not found!", filename_to_extract);
-        }
-    }
-
-
-
-    let install_script = Scripts::get("install_script.sh").unwrap();
+    let install_script = Template::get("install_script.sh").unwrap();
     let mut content: Cow<str>;// = std::str::from_utf8(install_script.data.as_ref()).unwrap().into();
-    for filename in Scripts::iter() {
+    for filename in Template::iter() {
         //tracing::debug!("Embedded StaticFile:\n{}", filename.as_ref());
         //println!("Embedded StaticFile:\n{}", filename.as_ref());
-        if let Some(file) = Scripts::get(filename.as_ref()) {
+        if let Some(file) = Template::get(filename.as_ref()) {
 
             let mut outfile = File::create(&filename.as_ref());
             content = String::from_utf8_lossy(file.data.as_ref());
