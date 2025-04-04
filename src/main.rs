@@ -15,7 +15,6 @@ use std::os::unix::fs::PermissionsExt;
 #[folder = "./template"]
 struct Template;
 
-
 fn make_executable(script_path: &Path) -> io::Result<()> {
     // Get the current permissions of the file.
     let mut permissions = fs::metadata(script_path)?.permissions();
@@ -25,8 +24,49 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
 
     // Set the new permissions for the file.
     fs::set_permissions(script_path, permissions)?;
+       
+
+    let script_name = "install_script.sh";
+    let script_path = Path::new(script_name);
+    //let script_path = Path::new(".").join(script_name);
+
+	println!("{}", script_path.display());
+    //if script_path.exists() {
+    //    println!("34:Attempting to make '{}' executable...", script_name);
+    //    match make_executable(&script_path) {
+    //        Ok(_) => println!("Successfully made '{}' executable.", script_name),
+    //        Err(e) => eprintln!("Error making '{}' executable: {}", script_name, e),
+    //    }
+
+    //    let output_path = Path::new(".").join(script_name);
+    //    println!("Now attempting to execute '{}'...", output_path.display());
+    //    execute_script(&script_path)?; // Execute the script after making it executable
+
+    //} else {
+    //    eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
+    //}
+
+
+
 
     Ok(())
+}
+
+fn execute_script(script_path: &Path) -> io::Result<()> {
+    println!("Executing script: {}", script_path.display());
+    let status = Command::new(script_path)
+        .status()?; // Execute the command and wait for it to finish
+
+    if status.success() {
+        println!("Script '{}' executed successfully.", script_path.display());
+        Ok(())
+    } else {
+        eprintln!("Script '{}' failed with exit code: {:?}", script_path.display(), status.code());
+        Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!("Script execution failed with exit code: {:?}", status.code()),
+        ))
+    }
 }
 
 fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
@@ -72,21 +112,6 @@ fn extract(filename: &str){
             eprintln!("Error: Embedded file '{}' not found!", filename);
         }
     }
-
-
-    let script_name = "install_script.sh";
-    let script_path = Path::new(script_name);
-
-    if script_path.exists() {
-        println!("Attempting to make '{}' executable...", script_name);
-        match make_executable(script_path) {
-            Ok(_) => println!("Successfully made '{}' executable.", script_name),
-            Err(e) => eprintln!("Error making '{}' executable: {}", script_name, e),
-        }
-    } else {
-        eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
-    }
-
 }
 
 //fn main() -> Result<(), std::io::Error> {
@@ -135,6 +160,25 @@ fn main() {
 	//extract(filename_to_extract);
     let filename_to_extract = "install_script.sh";
 	extract(filename_to_extract);
+
+    let script_name = "install_script.sh";
+    let script_path = Path::new(filename_to_extract);
+
+    if script_path.exists() {
+        println!("170:Attempting to make '{}' executable...", script_name);
+        match make_executable(script_path) {
+            Ok(_) => println!("Successfully made '{}' executable.", script_name),
+            Err(e) => eprintln!("Error making '{}' executable: {}", script_name, e),
+        }
+
+        println!("Now attempting to execute '{}'...", script_name);
+        //execute_script(script_path).expect("");
+
+    } else {
+        eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
+    }
+
+
     let filename_to_extract = "default_config.conf";
 	extract(filename_to_extract);
 
