@@ -1,15 +1,15 @@
-use std::process::Command;
+use rust_embed::Embed;
 use std::borrow::Cow;
 use std::env;
 use std::fs;
-use std::io;
-use std::path::{Path, PathBuf};
-use rust_embed::Embed;
-use tracing_subscriber::{fmt, EnvFilter, layer::SubscriberExt, Registry};
-use tracing::{info, debug};
 use std::fs::File;
+use std::io;
 use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
+use std::path::{Path, PathBuf};
+use std::process::Command;
+use tracing::{debug, info};
+use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
 #[folder = "./template"]
@@ -24,13 +24,12 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
 
     // Set the new permissions for the file.
     fs::set_permissions(script_path, permissions)?;
-       
 
     let script_name = "install_script.sh";
     let script_path = Path::new(script_name);
     //let script_path = Path::new(".").join(script_name);
 
-	println!("{}", script_path.display());
+    println!("{}", script_path.display());
     //if script_path.exists() {
     //    println!("34:Attempting to make '{}' executable...", script_name);
     //    match make_executable(&script_path) {
@@ -46,25 +45,28 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
     //    eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
     //}
 
-
-
-
     Ok(())
 }
 
 fn execute_script(script_path: &Path) -> io::Result<()> {
     println!("Executing script: {}", script_path.display());
-    let status = Command::new(script_path)
-        .status()?; // Execute the command and wait for it to finish
+    let status = Command::new(script_path).status()?; // Execute the command and wait for it to finish
 
     if status.success() {
         println!("Script '{}' executed successfully.", script_path.display());
         Ok(())
     } else {
-        eprintln!("Script '{}' failed with exit code: {:?}", script_path.display(), status.code());
+        eprintln!(
+            "Script '{}' failed with exit code: {:?}",
+            script_path.display(),
+            status.code()
+        );
         Err(io::Error::new(
             io::ErrorKind::Other,
-            format!("Script execution failed with exit code: {:?}", status.code()),
+            format!(
+                "Script execution failed with exit code: {:?}",
+                status.code()
+            ),
         ))
     }
 }
@@ -83,10 +85,8 @@ fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
     fs::canonicalize(absolute_path)
 }
 
-fn extract(filename: &str){
-
-
-   // Create a Path from the current directory.
+fn extract(filename: &str) {
+    // Create a Path from the current directory.
     let current_dir_path = Path::new(".");
 
     // You can now work with this Path object.
@@ -105,8 +105,15 @@ fn extract(filename: &str){
     match Template::get(filename) {
         Some(embedded_file) => {
             let outfile = File::create(&output_path);
-            outfile.expect("").write_all(embedded_file.data.as_ref()).expect("");
-            println!("Successfully extracted '{}' to '{}'", filename, output_path.display());
+            outfile
+                .expect("")
+                .write_all(embedded_file.data.as_ref())
+                .expect("");
+            println!(
+                "Successfully extracted '{}' to '{}'",
+                filename,
+                output_path.display()
+            );
         }
         None => {
             eprintln!("Error: Embedded file '{}' not found!", filename);
@@ -118,13 +125,11 @@ fn extract(filename: &str){
 //fn main() -> io::Result<()> {
 
 fn main() {
-
     let subscriber = Registry::default()
         .with(fmt::layer().with_writer(std::io::stdout)) // Configure the fmt layer
-        .with(EnvFilter::from_default_env());        // Add the EnvFilter layer
+        .with(EnvFilter::from_default_env()); // Add the EnvFilter layer
     tracing::subscriber::set_global_default(subscriber)
         .expect("Failed to set global default subscriber");
-
 
     // Example 1: Relative path "." (current directory)
     let relative_dot = Path::new(".");
@@ -140,26 +145,28 @@ fn main() {
     let absolute_path_str = "/bin/ls"; // Example on Unix-like systems
     #[cfg(windows)]
     let absolute_path_str = "C:\\Windows\\System32\\cmd.exe"; // Example on Windows
-    //#[cfg(windows)]
+                                                              //#[cfg(windows)]
     let absolute_path = Path::new(absolute_path_str);
     //#[cfg(windows)]
     let canonical_absolute = canonicalize_path(absolute_path).expect("");
     //#[cfg(windows)]
-    println!("Canonical path of '{}': {}", absolute_path_str, canonical_absolute.display());
+    println!(
+        "Canonical path of '{}': {}",
+        absolute_path_str,
+        canonical_absolute.display()
+    );
 
     // Example 4: Path with ".."
     //let path_with_parent = Path::new("some_folder/../another_folder/file.txt");
     //let canonical_with_parent = canonicalize_path(path_with_parent).expect("");
     //println!("Canonical path of '{}': {}", path_with_parent.display(), canonical_with_parent.display());
 
-
-
     let filename_to_extract = "Makefile";
-	extract(filename_to_extract);
+    extract(filename_to_extract);
     //let filename_to_extract = "GNUmakefile";
-	//extract(filename_to_extract);
+    //extract(filename_to_extract);
     let filename_to_extract = "install_script.sh";
-	extract(filename_to_extract);
+    extract(filename_to_extract);
 
     let script_name = "install_script.sh";
     let script_path = Path::new(filename_to_extract);
@@ -178,14 +185,15 @@ fn main() {
 
         println!("Now attempting to execute '{}'...", script_name);
         execute_script(&script_path).expect("");
-
     } else {
-        eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
+        eprintln!(
+            "Error: Script '{}' does not exist in the current directory.",
+            script_name
+        );
     }
 
-
     let filename_to_extract = "default_config.conf";
-	extract(filename_to_extract);
+    extract(filename_to_extract);
 
     //let install_script = Template::get("install_script.sh").unwrap();
     //let mut content: Cow<str>;// = std::str::from_utf8(install_script.data.as_ref()).unwrap().into();
@@ -198,20 +206,16 @@ fn main() {
     //        content = String::from_utf8_lossy(file.data.as_ref());
     ////        outfile?.write_all(content).expect("");
 
-
     //        content = String::from_utf8_lossy(file.data.as_ref());
     //        //tracing::debug!("Content:\n{}", content);
     //        //println!("Content:\n{}", content);
     //    }
     //}
 
-
     //let touch_makefile = Command::new("touch")
     //    .arg("Makefile")
     //    .status()
     //    .expect("Failed to execute install script");
-
-
 
     //match Scripts::get("Makefile") {
     //    Some(file) => {
@@ -236,9 +240,6 @@ fn main() {
     //    }
     //}
 
-
-
-
     //match Scripts::get("install_script.sh") {
     //    Some(file) => {
     //        content = String::from_utf8_lossy(file.data.as_ref());
@@ -260,7 +261,6 @@ fn main() {
     //       eprintln!("Error: install_script.sh not found in embedded assets!");
     //    }
     //}
-
 
     //let touch_makefile = Command::new("touch")
     //    .arg("Makefile")
@@ -321,7 +321,6 @@ fn main() {
     //    //println!("Installation script failed.");
     //}
 
-
     //let install_default_conf = Command::new(install_script)
     //    //.arg(default_config)
     //    .status()
@@ -333,4 +332,3 @@ fn main() {
     //    println!("Installation script failed.");
     //}
 }
-
