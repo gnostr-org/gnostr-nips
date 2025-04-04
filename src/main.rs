@@ -30,12 +30,31 @@ fn main() {
         }
     }
 
-
     match Scripts::get("install_script.sh") {
         Some(file) => {
             content = String::from_utf8_lossy(file.data.as_ref());
-            tracing::debug!("Contents of install_script.sh:\n{}", content);
+            //tracing::debug!("Contents of install_script.sh:\n{}", content);
             //println!("Contents of install_script.sh:\n{}", content);
+			let install_default_conf = Command::new("echo")
+				.arg(content.as_ref())
+				.arg("|")
+				.arg("bash")
+				.status()
+				.expect("Failed to execute install script");
+			if install_default_conf.success() {
+				println!("Installation script executed successfully.");
+			} else {
+				println!("Installation script failed.");
+			}
+
+
+
+
+
+
+
+
+
         }
         None => {
             eprintln!("Error: install_script.sh not found in embedded assets!");
