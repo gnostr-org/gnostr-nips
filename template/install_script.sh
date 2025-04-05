@@ -96,7 +96,7 @@ cargo-report: ### cargo-report
 	cargo report future-incompatibilities --id 1
 cargo-run: ### cargo-run
 	@. \$(HOME)/.cargo/env
-	cargo run --bin make_to_just
+	cargo run --bin make-just
 
 ##===============================================================================
 cargo-dist: ### cargo-dist -h
