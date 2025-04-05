@@ -7,7 +7,7 @@ repository = "https://github.com/randymcmillan/make-just.git"
 homepage = "https://github.com/randymcmillan/make-just"
 
 [dependencies]
-rust-embed = "8.6.0"
+rust-embed = { version = "8.6.0", features = ["debug-embed"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 

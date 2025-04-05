@@ -332,10 +332,11 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use rust_embed::RustEmbed;
 
     #[derive(RustEmbed)]
-    #[folder = "test_files"] // Create a 'test_files' directory with 'tabbed.txt'
+    #[folder = "./test_files"] // Create a 'test_files' directory with 'tabbed.txt'
     struct EmbeddedAssets;
 
     #[test]
@@ -350,14 +351,39 @@ mod tests {
             assert_eq!(embedded_content, test_file_content);
             assert!(embedded_content.contains("\t"));
             assert!(embedded_content.contains("	"));
-            assert!(embedded_content.lines().nth(0).unwrap().contains('\t'));
-            assert!(embedded_content.lines().nth(1).unwrap().contains('\t'));
+            assert!(embedded_content.lines().nth(0).unwrap().contains('\t')); //Line with	tab.
+            assert!(embedded_content.lines().nth(0).unwrap().contains("	"));
+			//
+            assert!(embedded_content.lines().nth(1).unwrap().contains('\t')); //Another		tabbed line.
+            assert!(embedded_content.lines().nth(1).unwrap().contains("	"));
+            assert!(embedded_content.lines().nth(1).unwrap().contains("\t\t")); //Another		tabbed line.
+            assert!(embedded_content.lines().nth(1).unwrap().contains("		"));
+			//
+            assert!(embedded_content.lines().nth(2).unwrap().contains('\t')); //	Leading tab.
+            assert!(embedded_content.lines().nth(2).unwrap().contains("	"));
+			//
+            //assert!(embedded_content.lines().nth(3).unwrap().contains('\t')); //\tThis line starts with a literal backslash-t
+            //assert!(embedded_content.lines().nth(3).unwrap().contains("\t"));
+            //assert!(embedded_content.lines().nth(3).unwrap().contains("	"));
+			//
+            assert!(embedded_content.lines().nth(4).unwrap().contains('\t'));
+            assert!(embedded_content.lines().nth(4).unwrap().contains("	"));
+			//
             assert!(embedded_content.lines().nth(2).unwrap().starts_with('\t'));
+            assert!(embedded_content.lines().nth(2).unwrap().starts_with("	"));
+            assert!(!embedded_content.lines().nth(3).unwrap().starts_with('\t'));
+            assert!(!embedded_content.lines().nth(3).unwrap().starts_with("\t"));
+            assert!(!embedded_content.lines().nth(3).unwrap().starts_with("	"));
+            assert!(embedded_content.lines().nth(0).expect("REASON").contains("h\t"));
+            assert!(embedded_content.lines().nth(1).expect("REASON").contains("r\t"));
+            assert!(embedded_content.lines().nth(2).expect("REASON").contains("\tL"));
+            //assert!(embedded_content.lines().nth(3).expect("REASON").contains("\tT"));
+            //assert!(embedded_content.lines().nth(4).expect("REASON").contains(":\tl"));
         } else {
             panic!("Failed to embed 'tabbed.txt'");
         }
 
-        //// Clean up the test file and directory
+        // Clean up the test file and directory
         //std::fs::remove_file("test_files/tabbed.txt").unwrap();
         //std::fs::remove_dir("test_files").unwrap();
     }
