@@ -7,6 +7,7 @@ use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::process::Stdio;
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
@@ -33,7 +34,18 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
 
 fn execute_script(script_path: &Path) -> io::Result<()> {
     tracing::debug!("Executing script: {}", script_path.display());
-    let status = Command::new(script_path).status()?;
+
+    let log_file = File::create("output.log")?;
+    let error_file = File::create("error.log")?;
+
+    let mut command = Command::new(script_path);
+    command
+        .stdout(Stdio::from(log_file))
+        .stderr(Stdio::from(error_file));
+
+    let status = command.spawn()?.wait()?;
+
+    //    let status = Command::new(script_path).status()?;
 
     if status.success() {
         tracing::debug!("Script '{}' executed successfully.", script_path.display());
@@ -73,7 +85,7 @@ fn extract(filename: &str) {
     let current_dir_path = Path::new(".");
 
     // You can now work with this Path object.
-    //println!("Path to current directory: {}", current_dir_path.display());
+    tracing::debug!("Path to current directory: {}", current_dir_path.display());
 
     //// You can also use it to join with other paths relative to the current directory.
     //let sub_dir_path = current_dir_path.join("my_folder");
@@ -122,10 +134,12 @@ fn main() {
     tracing::debug!("Canonical path of 'src': {}", canonical_subdir.display());
 
     // Example 3: Absolute path
+    #[cfg(windows)]
     let absolute_path_str = "/bin/ls"; // Example on Unix-like systems
     #[cfg(windows)]
     let absolute_path_str = "C:\\Windows\\System32\\cmd.exe"; // Example on Windows
                                                               //#[cfg(windows)]
+    #[cfg(windows)]
     let absolute_path = Path::new(absolute_path_str);
     #[cfg(windows)]
     let canonical_absolute = canonicalize_path(absolute_path).expect("");
