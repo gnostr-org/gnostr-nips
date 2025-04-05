@@ -198,6 +198,8 @@ fn main() {
 mod tests {
     use super::*;
     use rust_embed::RustEmbed;
+    use std::thread;
+    use std::time::Duration;
 
     //#[derive(RustEmbed)]
     //#[folder = "test_files"] // Create a 'test_files' directory with 'tabbed.txt'
@@ -213,6 +215,9 @@ mod tests {
         let script_path = Path::new(&test_files).join(script_path);
         println!("{}", script_path.display());
         std::fs::create_dir_all(test_files).unwrap();
+
+        let duration = Duration::from_secs(1);
+        thread::sleep(duration);
         std::fs::write(script_path, test_file_content).unwrap();
     }
     #[test]
@@ -229,7 +234,16 @@ mod tests {
         println!("{}", test_files.display());
         let script_path = Path::new(&test_files).join(script_path);
         println!("{}", script_path.display());
-        std::fs::create_dir_all(test_files).unwrap();
+
+        if test_files.exists() {
+            println!("Directory '{}' already exists.", test_files.display());
+        } else {
+            println!("Creating directory '{}'...", test_files.display());
+            fs::create_dir_all(&test_files).expect("");
+            println!("Directory '{}' created.", test_files.display());
+        }
+
+        //std::fs::create_dir_all(test_files).unwrap();
         std::fs::write(script_path, test_file_content).unwrap();
 
         #[derive(RustEmbed)]
@@ -318,8 +332,34 @@ mod tests {
         let test_files = Path::new(path).join("test_files");
         let script_path = Path::new(&test_files).join(script_path);
         println!("{}", script_path.display());
-        // Clean up the test file and directory
-        //std::fs::remove_file(script_path);
-        //std::fs::remove_dir("test_files").unwrap();
+        //let _ = remove_dir_all_custom();
+    }
+    #[test]
+    fn remove_dir_all_custom() -> io::Result<()> {
+        let dot_path = Path::new(".");
+        let path = Path::new(dot_path).join("test_files");
+        let _ = if path.is_dir() {
+            for entry_result in fs::read_dir(&path)? {
+                let entry = entry_result?;
+                let entry_path = entry.path();
+                if entry_path.is_dir() {
+                    remove_dir_all_custom()?; // Recursively remove subdirectories
+                } else {
+                    fs::remove_file(&entry_path)?; // Remove files
+                }
+            }
+            fs::remove_dir(path)?; // Finally, remove the now-empty directory
+            Ok(())
+        } else if path.is_file() {
+            fs::remove_file(path)?; // Remove a file if the path points to one
+            Ok(())
+        } else {
+            Err(io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("Path not found: {}", path.display()),
+            ))
+        };
+        test_make_test_file();
+        Ok(())
     }
 }
