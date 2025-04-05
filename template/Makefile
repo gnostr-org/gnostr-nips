@@ -69,7 +69,7 @@ cargo-report:### 	cargo-report
 	cargo report future-incompatibilities --id 1
 cargo-run:### 	cargo-run
 	@. $(HOME)/.cargo/env
-	cargo run --bin make-just
+	cargo run --bin nips
 
 ##===============================================================================
 cargo-dist:### 	cargo-dist -h
