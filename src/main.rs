@@ -10,8 +10,9 @@ use std::process::Command;
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
-#[folder = "./template"]
+#[folder = "."]
 #[exclude = "*.DS_Store"]
+#[exclude = "target/*"]
 struct Template;
 
 fn make_executable(script_path: &Path) -> io::Result<()> {
@@ -160,7 +161,7 @@ fn main() {
     //let canonical_with_parent = canonicalize_path(path_with_parent).expect("");
     //println!("Canonical path of '{}': {}", path_with_parent.display(), canonical_with_parent.display());
 
-    let filename_to_extract = "Makefile";
+    let filename_to_extract = "README.md";
     extract(filename_to_extract);
     //let filename_to_extract = "GNUmakefile";
     //extract(filename_to_extract);
