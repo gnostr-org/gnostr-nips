@@ -27,33 +27,16 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
 
     let script_name = "install_script.sh";
     let script_path = Path::new(script_name);
-    //let script_path = Path::new(".").join(script_name);
-
-    println!("{}", script_path.display());
-    //if script_path.exists() {
-    //    println!("34:Attempting to make '{}' executable...", script_name);
-    //    match make_executable(&script_path) {
-    //        Ok(_) => println!("Successfully made '{}' executable.", script_name),
-    //        Err(e) => eprintln!("Error making '{}' executable: {}", script_name, e),
-    //    }
-
-    //    let output_path = Path::new(".").join(script_name);
-    //    println!("Now attempting to execute '{}'...", output_path.display());
-    //    execute_script(&script_path)?; // Execute the script after making it executable
-
-    //} else {
-    //    eprintln!("Error: Script '{}' does not exist in the current directory.", script_name);
-    //}
-
+    tracing::debug!("{}", script_path.display());
     Ok(())
 }
 
 fn execute_script(script_path: &Path) -> io::Result<()> {
-    println!("Executing script: {}", script_path.display());
+    //println!("Executing script: {}", script_path.display());
     let status = Command::new(script_path).status()?; // Execute the command and wait for it to finish
 
     if status.success() {
-        println!("Script '{}' executed successfully.", script_path.display());
+        //println!("Script '{}' executed successfully.", script_path.display());
         Ok(())
     } else {
         eprintln!(
@@ -90,7 +73,7 @@ fn extract(filename: &str) {
     let current_dir_path = Path::new(".");
 
     // You can now work with this Path object.
-    println!("Path to current directory: {}", current_dir_path.display());
+    //println!("Path to current directory: {}", current_dir_path.display());
 
     //// You can also use it to join with other paths relative to the current directory.
     //let sub_dir_path = current_dir_path.join("my_folder");
@@ -109,7 +92,7 @@ fn extract(filename: &str) {
                 .expect("")
                 .write_all(embedded_file.data.as_ref())
                 .expect("");
-            println!(
+            tracing::debug!(
                 "Successfully extracted '{}' to '{}'",
                 filename,
                 output_path.display()
@@ -121,9 +104,6 @@ fn extract(filename: &str) {
     }
 }
 
-//fn main() -> Result<(), std::io::Error> {
-//fn main() -> io::Result<()> {
-
 fn main() {
     let subscriber = Registry::default()
         .with(fmt::layer().with_writer(std::io::stdout)) // Configure the fmt layer
@@ -134,12 +114,12 @@ fn main() {
     // Example 1: Relative path "." (current directory)
     let relative_dot = Path::new(".");
     let canonical_dot = canonicalize_path(relative_dot).expect("");
-    println!("Canonical path of '.': {}", canonical_dot.display());
+    tracing::debug!("Canonical path of '.': {}", canonical_dot.display());
 
     // Example 2: Relative path to a subdirectory
     let relative_subdir = Path::new("src"); // Assuming you have a 'src' directory
     let canonical_subdir = canonicalize_path(relative_subdir).expect("");
-    println!("Canonical path of 'src': {}", canonical_subdir.display());
+    tracing::debug!("Canonical path of 'src': {}", canonical_subdir.display());
 
     // Example 3: Absolute path
     let absolute_path_str = "/bin/ls"; // Example on Unix-like systems
@@ -147,10 +127,10 @@ fn main() {
     let absolute_path_str = "C:\\Windows\\System32\\cmd.exe"; // Example on Windows
                                                               //#[cfg(windows)]
     let absolute_path = Path::new(absolute_path_str);
-    //#[cfg(windows)]
+    #[cfg(windows)]
     let canonical_absolute = canonicalize_path(absolute_path).expect("");
-    //#[cfg(windows)]
-    println!(
+    #[cfg(windows)]
+    tracing::debug!(
         "Canonical path of '{}': {}",
         absolute_path_str,
         canonical_absolute.display()
@@ -172,17 +152,17 @@ fn main() {
 
     let relative_dot = Path::new(".");
     let canonical_dot = canonicalize_path(relative_dot).expect("");
-    println!("Canonical path of '.': {}", canonical_dot.display());
+    tracing::debug!("Canonical path of '.': {}", canonical_dot.display());
     let script_path = Path::new(".").join(script_name);
 
     if script_path.exists() {
-        println!("170:Attempting to make '{}' executable...", script_name);
+        tracing::debug!("Attempting to make '{}' executable...", script_name);
         match make_executable(&script_path) {
-            Ok(_) => println!("Successfully made '{}' executable.", script_name),
+            Ok(_) => tracing::debug!("Successfully made '{}' executable.", script_name),
             Err(e) => eprintln!("Error making '{}' executable: {}", script_name, e),
         }
 
-        println!("Now attempting to execute '{}'...", script_name);
+        tracing::debug!("Now attempting to execute '{}'...", script_name);
         execute_script(&script_path).expect("");
     } else {
         eprintln!(
@@ -214,7 +194,7 @@ mod tests {
         let path = Path::new(".");
         let test_files = Path::new(path).join("test_files");
         let script_path = Path::new(&test_files).join(script_path);
-        println!("{}", script_path.display());
+        tracing::debug!("{}", script_path.display());
         std::fs::create_dir_all(test_files).unwrap();
 
         let duration = Duration::from_secs(1);
