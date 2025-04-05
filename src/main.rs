@@ -32,11 +32,11 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
 }
 
 fn execute_script(script_path: &Path) -> io::Result<()> {
-    //println!("Executing script: {}", script_path.display());
-    let status = Command::new(script_path).status()?; // Execute the command and wait for it to finish
+    tracing::debug!("Executing script: {}", script_path.display());
+    let status = Command::new(script_path).status()?;
 
     if status.success() {
-        //println!("Script '{}' executed successfully.", script_path.display());
+        tracing::debug!("Script '{}' executed successfully.", script_path.display());
         Ok(())
     } else {
         eprintln!(
