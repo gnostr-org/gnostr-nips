@@ -329,3 +329,40 @@ fn main() {
     //    println!("Installation script failed.");
     //}
 }
+
+
+#[cfg(test)]
+mod tests {
+    use rust_embed::RustEmbed;
+
+    #[derive(RustEmbed)]
+    #[folder = "test_files"] // Create a 'test_files' directory with 'tabbed.txt'
+    struct EmbeddedAssets;
+
+    #[test]
+    fn test_preserve_tabs() {
+        // Create a test file with tabs
+        let test_file_content = "Line with\ttab.\nAnother\t\ttabbed line.\n\tLeading tab.\n\\tThis line starts with a literal backslash-t.\nThis line has a tab in the middle:	like this.";
+        std::fs::create_dir_all("test_files").unwrap();
+        std::fs::write("test_files/tabbed.txt", test_file_content).unwrap();
+
+        if let Some(file) = EmbeddedAssets::get("tabbed.txt") {
+        //    let embedded_content = String::from_utf8_lossy(file.data.as_ref()).to_string();
+
+        //    // Assert that the embedded content matches the original content
+        //    assert_eq!(embedded_content, test_file_content);
+
+        //    // Optionally, you can further verify the presence of tabs
+        //    assert!(embedded_content.contains("\t"));
+        //    assert!(embedded_content.lines().nth(0).unwrap().contains('\t'));
+        //    assert!(embedded_content.lines().nth(1).unwrap().contains('\t'));
+        //    assert!(embedded_content.lines().nth(2).unwrap().starts_with('\t'));
+        } else {
+        //    panic!("Failed to embed 'tabbed.txt'");
+        }
+
+        //// Clean up the test file and directory
+        //std::fs::remove_file("test_files/tabbed.txt").unwrap();
+        //std::fs::remove_dir("test_files").unwrap();
+    }
+}

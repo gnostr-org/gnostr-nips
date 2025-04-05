@@ -1,0 +1,5 @@
+Line with	tab.
+Another		tabbed line.
+	Leading tab.
+\tThis line starts with a literal backslash-t.
+This line has a tab in the middle:	like this.
