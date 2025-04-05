@@ -1,10 +1,20 @@
-test_files/*.txt
-Makefile
-default_config.conf
-extract_result/
-install_script.sh
-
-debug/
+/target
 target/
 **/*.rs.bk
-*.pdb
+Cargo.lock
+TODO.md
+.idea
+
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+#/target
+
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+#/target

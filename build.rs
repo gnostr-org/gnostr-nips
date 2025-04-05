@@ -1,27 +1,59 @@
-use std::fs;
-use std::path::Path;
 use std::process::Command;
+use std::{env, fs};
 
-fn main() {
-    // Re-run this build script if the script changes.
-    println!("cargo:rerun-if-changed=install_script.sh");
+fn main() -> std::io::Result<()> {
+    let _out_dir = env::var("OUT_DIR").unwrap();
 
-    let out_dir = std::env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("install_script.sh");
+    Command::new("git")
+        .args(&[
+            "remote",
+            "add",
+            "upstream",
+            "https://github.com/nostr-protocol/nips.git",
+        ])
+        .status()
+        .unwrap();
+    Command::new("git")
+        .args(&["fetch", "--all"])
+        .status()
+        .unwrap();
+    Command::new("git")
+        .args(&["fetch", "--all", "--tags"])
+        .status()
+        .unwrap();
+    Command::new("git")
+        .args(&["rebase", "upstream/master"])
+        .status()
+        .unwrap();
 
-    // Copy the script to the OUT_DIR.
-    fs::copy("./template/install_script.sh", &dest_path)
-        .expect("Failed to copy .template/install_script.sh");
+    ////pandoc README.md | sed 's/.md/.html/g'  > readme.html
+    //
+    //let mut count: u8 = 0;
+    //let glob = "**/*.md";
+    //let mut nip_vec = Vec::<String>::new(); // Create an empty Vec
+    //
+    //for entry in PROJECT_DIR.find(glob).unwrap() {
+    //    count = count + 1;
+    //    //println!("count={}", count);
+    //    //println!("{}", entry.path().display());
+    //    nip_vec.push((entry.path().display()).to_string().replace(".md",
+    // ".html"));        //nip_vec.push("md content".to_string());
+    //let mut md_content = PROJECT_DIR.get_file(entry.path()).unwrap();
+    //let content = md_content.contents_utf8().unwrap();
 
-    // Make the copied script executable.
-    if cfg!(target_os = "linux") || cfg!(target_os = "macos") {
-        Command::new("chmod")
-            .arg("+x")
-            .arg(&dest_path)
-            .status()
-            .expect("Failed to make install_script.sh executable");
-    }
+    let script_name = "./script.sh";
 
-    // Tell cargo to include the script in the package.
-    println!("cargo:rustc-env=INSTALL_SCRIPT={}", dest_path.display());
+    // Build the command
+    let mut _command = Command::new(script_name);
+
+    // Add arguments if needed (optional)
+    // command.arg("argument1");
+    // command.arg("argument2");
+
+    Command::new(script_name)
+        .current_dir(".")
+        .spawn()
+        .expect("script.sh command failed to start");
+
+    Ok(())
 }
