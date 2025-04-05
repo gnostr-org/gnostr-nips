@@ -63,7 +63,7 @@ cargo-test:### 	cargo-test
 cargo-test-nightly:### 	cargo-test-nightly
 	@. $(HOME)/.cargo/env
 	#@cargo test
-	cargo test --features nightly -p make-just #utils::pathing::tests::test_unix_config_path #example
+	cargo +nightly test
 cargo-report:### 	cargo-report
 	@. $(HOME)/.cargo/env
 	cargo report future-incompatibilities --id 1
