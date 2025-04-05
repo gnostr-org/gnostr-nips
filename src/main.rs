@@ -192,7 +192,6 @@ fn main() {
 
     let filename_to_extract = "default_config.conf";
     extract(filename_to_extract);
-
 }
 
 #[cfg(test)]
@@ -241,29 +240,28 @@ mod tests {
         for file in EmbeddedAssets::iter() {
             println!("Found asset: {}", file.as_ref());
 
-        match EmbeddedAssets::get(file.as_ref()) {
-            Some(file) => {
-                let content = String::from_utf8_lossy(file.data.as_ref());
-                //tracing::debug!("Contents of install_script.sh:\n{}", content);
-                println!("Contents of file.data.as_ref():\n{}", content);
-                let install_default_conf = Command::new("echo")
-                    .arg(content.as_ref())
-                    //.arg("|")
-                    //.arg("bash")
-                    .status()
-                    .expect("Failed to execute install script");
-                if install_default_conf.success() {
-                    println!("Installation script executed successfully.");
-                } else {
-                    eprintln!("Installation script failed.");
+            match EmbeddedAssets::get(file.as_ref()) {
+                Some(file) => {
+                    let content = String::from_utf8_lossy(file.data.as_ref());
+                    //tracing::debug!("Contents of install_script.sh:\n{}", content);
+                    println!("Contents of file.data.as_ref():\n{}", content);
+                    let install_default_conf = Command::new("echo")
+                        .arg(content.as_ref())
+                        //.arg("|")
+                        //.arg("bash")
+                        .status()
+                        .expect("Failed to execute install script");
+                    if install_default_conf.success() {
+                        println!("Installation script executed successfully.");
+                    } else {
+                        eprintln!("Installation script failed.");
+                    }
+                }
+                None => {
+                    eprintln!("Error: tabbed.txt not found in embedded assets!");
+                    //println!("Error: tabbed.txt not found in embedded assets!");
                 }
             }
-            None => {
-                eprintln!("Error: tabbed.txt not found in embedded assets!");
-                //println!("Error: tabbed.txt not found in embedded assets!");
-            }
-        }
-
         }
 
         if let Some(file) = EmbeddedAssets::get("tabbed.txt") {
