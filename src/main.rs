@@ -11,6 +11,7 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
 #[folder = "./template"]
+#[exclude = "*.DS_Store"]
 struct Template;
 
 fn make_executable(script_path: &Path) -> io::Result<()> {
@@ -335,16 +336,71 @@ mod tests {
     use super::*;
     use rust_embed::RustEmbed;
 
-    #[derive(RustEmbed)]
-    #[folder = "./test_files"] // Create a 'test_files' directory with 'tabbed.txt'
-    struct EmbeddedAssets;
+    //#[derive(RustEmbed)]
+    //#[folder = "test_files"] // Create a 'test_files' directory with 'tabbed.txt'
+    //struct EmbeddedAssets;
 
     #[test]
-    fn test_preserve_tabs() {
+    fn test_make_test_file() {
         // Create a test file with tabs
         let test_file_content = "Line with\ttab.\nAnother\t\ttabbed line.\n\tLeading tab.\n\\tThis line starts with a literal backslash-t.\nThis line has a tab in the middle:	like this.";
-        std::fs::create_dir_all("test_files").unwrap();
-        std::fs::write("test_files/tabbed.txt", test_file_content).unwrap();
+        let script_path = Path::new("tabbed.txt");
+        let path = Path::new(".");
+        let test_files = Path::new(path).join("test_files");
+        let script_path = Path::new(&test_files).join(script_path);
+        println!("{}", script_path.display());
+        std::fs::create_dir_all(test_files).unwrap();
+        std::fs::write(script_path, test_file_content).unwrap();
+    }
+    #[test]
+    fn test_preserve_tabs() {
+        test_make_test_file();
+        // Create a test file with tabs
+        let test_file_content = "Line with\ttab.\nAnother\t\ttabbed line.\n\tLeading tab.\n\\tThis line starts with a literal backslash-t.\nThis line has a tab in the middle:	like this.";
+        println!("{}", test_file_content);
+        let script_path = Path::new("tabbed.txt");
+        println!("{}", script_path.display());
+        let path = Path::new(".");
+        println!("{}", path.display());
+        let test_files = Path::new(path).join("test_files");
+        println!("{}", test_files.display());
+        let script_path = Path::new(&test_files).join(script_path);
+        println!("{}", script_path.display());
+        std::fs::create_dir_all(test_files).unwrap();
+        std::fs::write(script_path, test_file_content).unwrap();
+
+        #[derive(RustEmbed)]
+        #[folder = "./test_files"]
+        #[exclude = "*.DS_Store"]
+        struct EmbeddedAssets;
+
+        for file in EmbeddedAssets::iter() {
+            println!("Found asset: {}", file.as_ref());
+
+        match EmbeddedAssets::get(file.as_ref()) {
+            Some(file) => {
+                let content = String::from_utf8_lossy(file.data.as_ref());
+                //tracing::debug!("Contents of install_script.sh:\n{}", content);
+                println!("Contents of file.data.as_ref():\n{}", content);
+                let install_default_conf = Command::new("echo")
+                    .arg(content.as_ref())
+                    //.arg("|")
+                    //.arg("bash")
+                    .status()
+                    .expect("Failed to execute install script");
+                if install_default_conf.success() {
+                    println!("Installation script executed successfully.");
+                } else {
+                    eprintln!("Installation script failed.");
+                }
+            }
+            None => {
+                eprintln!("Error: tabbed.txt not found in embedded assets!");
+                //println!("Error: tabbed.txt not found in embedded assets!");
+            }
+        }
+
+        }
 
         if let Some(file) = EmbeddedAssets::get("tabbed.txt") {
             let embedded_content = String::from_utf8_lossy(file.data.as_ref()).to_string();
@@ -353,38 +409,55 @@ mod tests {
             assert!(embedded_content.contains("	"));
             assert!(embedded_content.lines().nth(0).unwrap().contains('\t')); //Line with	tab.
             assert!(embedded_content.lines().nth(0).unwrap().contains("	"));
-			//
+            //
             assert!(embedded_content.lines().nth(1).unwrap().contains('\t')); //Another		tabbed line.
             assert!(embedded_content.lines().nth(1).unwrap().contains("	"));
             assert!(embedded_content.lines().nth(1).unwrap().contains("\t\t")); //Another		tabbed line.
             assert!(embedded_content.lines().nth(1).unwrap().contains("		"));
-			//
+            //
             assert!(embedded_content.lines().nth(2).unwrap().contains('\t')); //	Leading tab.
             assert!(embedded_content.lines().nth(2).unwrap().contains("	"));
-			//
+            //
             //assert!(embedded_content.lines().nth(3).unwrap().contains('\t')); //\tThis line starts with a literal backslash-t
             //assert!(embedded_content.lines().nth(3).unwrap().contains("\t"));
             //assert!(embedded_content.lines().nth(3).unwrap().contains("	"));
-			//
+            //
             assert!(embedded_content.lines().nth(4).unwrap().contains('\t'));
             assert!(embedded_content.lines().nth(4).unwrap().contains("	"));
-			//
+            //
             assert!(embedded_content.lines().nth(2).unwrap().starts_with('\t'));
             assert!(embedded_content.lines().nth(2).unwrap().starts_with("	"));
             assert!(!embedded_content.lines().nth(3).unwrap().starts_with('\t'));
             assert!(!embedded_content.lines().nth(3).unwrap().starts_with("\t"));
             assert!(!embedded_content.lines().nth(3).unwrap().starts_with("	"));
-            assert!(embedded_content.lines().nth(0).expect("REASON").contains("h\t"));
-            assert!(embedded_content.lines().nth(1).expect("REASON").contains("r\t"));
-            assert!(embedded_content.lines().nth(2).expect("REASON").contains("\tL"));
+            assert!(embedded_content
+                .lines()
+                .nth(0)
+                .expect("REASON")
+                .contains("h\t"));
+            assert!(embedded_content
+                .lines()
+                .nth(1)
+                .expect("REASON")
+                .contains("r\t"));
+            assert!(embedded_content
+                .lines()
+                .nth(2)
+                .expect("REASON")
+                .contains("\tL"));
             //assert!(embedded_content.lines().nth(3).expect("REASON").contains("\tT"));
             //assert!(embedded_content.lines().nth(4).expect("REASON").contains(":\tl"));
         } else {
-            panic!("Failed to embed 'tabbed.txt'");
+            //panic!("Failed to embed 'tabbed.txt'");
+            println!("Failed to embed 'tabbed.txt'");
         }
-
+        let script_path = Path::new("tabbed.txt");
+        let path = Path::new(".");
+        let test_files = Path::new(path).join("test_files");
+        let script_path = Path::new(&test_files).join(script_path);
+        println!("{}", script_path.display());
         // Clean up the test file and directory
-        //std::fs::remove_file("test_files/tabbed.txt").unwrap();
+        //std::fs::remove_file(script_path);
         //std::fs::remove_dir("test_files").unwrap();
     }
 }

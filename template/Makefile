@@ -58,7 +58,8 @@ cargo-bench:### 	cargo-bench
 cargo-test:### 	cargo-test
 	@. $(HOME)/.cargo/env
 	#@cargo test
-	cargo test -p make-just #utils::pathing::tests::test_unix_config_path #example
+	@echo $(shell date +%s) > ./test_files/$(shell date +%s).txt
+	cargo test -- --nocapture
 cargo-test-nightly:### 	cargo-test-nightly
 	@. $(HOME)/.cargo/env
 	#@cargo test
