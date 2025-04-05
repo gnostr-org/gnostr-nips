@@ -1,5 +1,4 @@
 use rust_embed::Embed;
-use std::borrow::Cow;
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -8,7 +7,6 @@ use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use tracing::{debug, info};
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
@@ -169,7 +167,6 @@ fn main() {
     extract(filename_to_extract);
 
     let script_name = "install_script.sh";
-    let script_path = Path::new(filename_to_extract);
 
     let relative_dot = Path::new(".");
     let canonical_dot = canonicalize_path(relative_dot).expect("");
