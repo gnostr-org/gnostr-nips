@@ -1,3 +1,4 @@
+*.log
 test_files/*.txt
 Makefile
 default_config.conf
