@@ -20,8 +20,7 @@ cargo-help:### 	cargo-help
 
 cargo-release-all:### 	cargo-release-all
 ## 	cargo-release-all recursively cargo build --release
-	for t in */Cargo.toml;  do echo $$t; cargo b -r -vv --manifest-path $$t; done
-	for t in ffi/*/Cargo.toml;  do echo $$t; cargo b -r -vv --manifest-path $$t; done
+	for t in *Cargo.toml;  do echo $$t; cargo b -r -vv --manifest-path $$t; done
 cargo-clean-release:### 	cargo-clean-release - clean release artifacts
 ## 	cargo-clean-release 	recursively cargo clean --release
 	for t in *Cargo.toml;  do echo $$t && cargo clean --release -vv --manifest-path $$t 2>/dev/null; done
@@ -59,25 +58,25 @@ cargo-bench:### 	cargo-bench
 cargo-test:### 	cargo-test
 	@. $(HOME)/.cargo/env
 	#@cargo test
-	cargo test -p rust-project-template utils::pathing::tests::test_unix_config_path
+	cargo test -p make-just #utils::pathing::tests::test_unix_config_path #example
 cargo-test-nightly:### 	cargo-test-nightly
 	@. $(HOME)/.cargo/env
 	#@cargo test
-	cargo test --features nightly -p rust-project-template utils::pathing::tests::test_unix_config_path
+	cargo test --features nightly -p make-just #utils::pathing::tests::test_unix_config_path #example
 cargo-report:### 	cargo-report
 	@. $(HOME)/.cargo/env
 	cargo report future-incompatibilities --id 1
 cargo-run:### 	cargo-run
 	@. $(HOME)/.cargo/env
-	cargo run --bin make_to_just
+	cargo run --bin make-just
 
 ##===============================================================================
 cargo-dist:### 	cargo-dist -h
-	cargo dist -h
+	dist -h
 cargo-dist-build:### 	cargo-dist-build
-	RUSTFLAGS="--cfg tokio_unstable" cargo dist build
-cargo-dist-manifest:### 	cargo dist manifest --artifacts=all
-	cargo dist manifest --artifacts=all
+	RUSTFLAGS="--cfg tokio_unstable" dist build
+cargo-dist-manifest:### 	dist manifest --artifacts=all
+	dist manifest --artifacts=all
 
 # vim: set noexpandtab:
 # vim: set setfiletype make
