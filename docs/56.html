@@ -1,0 +1,80 @@
+<h1>NIP-56</h1>
+<h2>Reporting</h2>
+<p><code>optional</code></p>
+<p>A report is a <code>kind 1984</code> event that signals to users and relays that
+some referenced content is objectionable. The definition of objectionable is
+obviously subjective and all agents on the network (users, apps, relays, etc.)
+may consume and take action on them as they see fit.</p>
+<p>The <code>content</code> MAY contain additional information submitted by the entity
+reporting the content.</p>
+<h2>Tags</h2>
+<p>The report event MUST include a <code>p</code> tag referencing the pubkey of the user you
+are reporting.</p>
+<p>If reporting a note, an <code>e</code> tag MUST also be included referencing the note id.</p>
+<p>A <code>report type</code> string MUST be included as the 3rd entry to the <code>e</code>, <code>p</code> or <code>x</code> tag
+being reported, which consists of the following report types:</p>
+<ul>
+<li><code>nudity</code> - depictions of nudity, porn, etc.</li>
+<li><code>malware</code> - virus, trojan horse, worm, robot, spyware, adware, back door, ransomware, rootkit, kidnapper, etc.</li>
+<li><code>profanity</code> - profanity, hateful speech, etc.</li>
+<li><code>illegal</code> - something which may be illegal in some jurisdiction</li>
+<li><code>spam</code> - spam</li>
+<li><code>impersonation</code> - someone pretending to be someone else</li>
+<li><code>other</code> - for reports that don't fit in the above categories</li>
+</ul>
+<p>Some report tags only make sense for profile reports, such as <code>impersonation</code>.</p>
+<ul>
+<li><code>x</code> tags SHOULD be info hash of a blob which is intended to be report. when the <code>x</code> tag is represented client MUST include an <code>e</code> tag which is the id of the event that contains the mentioned blob. also, additionally these events can contain a <code>server</code> tag to point to media servers which may contain the mentioned media.</li>
+</ul>
+<p><code>l</code> and <code>L</code> tags MAY be also be used as defined in <a href="32.md">NIP-32</a> to support
+further qualification and querying.</p>
+<h2>Example events</h2>
+<pre><code class="language-jsonc">{
+  "kind": 1984,
+  "tags": [
+    ["p", "&lt;pubkey&gt;", "nudity"],
+    ["L", "social.nos.ontology"],
+    ["l", "NS-nud", "social.nos.ontology"]
+  ],
+  "content": "",
+  // other fields...
+}
+</code></pre>
+<pre><code class="language-jsonc">{
+  "kind": 1984,
+  "tags": [
+    ["e", "&lt;eventId&gt;", "illegal"],
+    ["p", "&lt;pubkey&gt;"]
+  ],
+  "content": "He's insulting the king!",
+  // other fields...
+}
+</code></pre>
+<pre><code class="language-jsonc">{
+  "kind": 1984,
+  "tags": [
+    ["p", "&lt;impersonator pubkey&gt;", "impersonation"]
+  ],
+  "content": "Profile is impersonating nostr:&lt;victim bech32 pubkey&gt;",
+  // other fields...
+}
+</code></pre>
+<pre><code class="language-jsonc">{
+  "kind": 1984,
+  "tags": [
+    ["x", "&lt;blob hash&gt;", "malware"],
+    ["e", "&lt;event id which contains the blob on x tag&gt;", "malware"],
+    ["server", "https://you-may-find-the-blob-here.com/path-to-url.ext"]
+  ],
+  "content": "This file contains malware software in it.",
+  // other fields...
+}
+</code></pre>
+<h2>Client behavior</h2>
+<p>Clients can use reports from friends to make moderation decisions if they
+choose to. For instance, if 3+ of your friends report a profile for <code>nudity</code>,
+clients can have an option to automatically blur photos from said account.</p>
+<h2>Relay behavior</h2>
+<p>It is not recommended that relays perform automatic moderation using reports,
+as they can be easily gamed. Admins could use reports from trusted moderators to
+takedown illegal or explicit content if the relay does not allow such things.</p>

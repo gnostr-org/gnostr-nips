@@ -1,0 +1,77 @@
+<h1>NIP-54</h1>
+<h2>Wiki</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:30818</code> (an <em>addressable event</em>) for descriptions (or encyclopedia entries) of particular subjects, and it's expected that multiple people will write articles about the exact same subjects, with either small variations or completely independent content.</p>
+<p>Articles are identified by lowercase, normalized ascii <code>d</code> tags.</p>
+<h3>Articles</h3>
+<pre><code class="language-json">{
+  "content": "A wiki is a hypertext publication collaboratively edited and managed by its own audience.",
+  "tags": [
+    ["d", "wiki"],
+    ["title", "Wiki"],
+  ]
+}
+</code></pre>
+<h3><code>d</code> tag normalization rules</h3>
+<ul>
+<li>Any non-letter character MUST be converted to a <code>-</code>.</li>
+<li>All letters MUST be converted to lowercase.</li>
+</ul>
+<h3>Content</h3>
+<p>The <code>content</code> should be Asciidoc with two extra functionalities: <strong>wikilinks</strong> and <strong>nostr:...</strong> links.</p>
+<p>Unlike normal Asciidoc links <code>http://example.com[]</code> that link to external webpages, wikilinks <code>[[]]</code> link to other articles in the wiki. In this case, the wiki is the entirety of Nostr. Clicking on a wikilink should cause the client to ask relays for events with <code>d</code> tags equal to the target of that wikilink.</p>
+<p>Wikilinks can take these two forms:</p>
+<ol>
+<li><code>[[Target Page]]</code> -- in this case it will link to the page <code>target-page</code> (according to <code>d</code> tag normalization rules above) and be displayed as <code>Target Page</code>;</li>
+<li><code>[[target page|see this]]</code> -- in this case it will link to the page <code>target-page</code>, but will be displayed as <code>see this</code>.</li>
+</ol>
+<p><code>nostr:...</code> links, as per <a href="21.md">NIP-21</a>, should link to profiles or arbitrary Nostr events. Although it is not recommended to link to specific versions of articles -- instead the <em>wikilink</em> syntax should be preferred, since it should be left to the reader and their client to decide what version of any given article they want to read.</p>
+<h3>Optional extra tags</h3>
+<ul>
+<li><code>title</code>: for when the display title should be different from the <code>d</code> tag.</li>
+<li><code>summary</code>: for display in lists.</li>
+<li><code>a</code> and <code>e</code>: for referencing the original event a wiki article was forked from.</li>
+</ul>
+<h3>Merge Requests</h3>
+<p>Event <code>kind:818</code> represents a request to merge from a forked article into the source. It is directed to a pubkey and references the original article and the modified event.</p>
+<p>[INSERT EVENT EXAMPLE]</p>
+<h3>Redirects</h3>
+<p>Event <code>kind:30819</code> is also defined to stand for "wiki redirects", i.e. if one thinks <code>Shell structure</code> should redirect to <code>Thin-shell structure</code> they can issue one of these events instead of replicating the content. These events can be used for automatically redirecting between articles on a client, but also for generating crowdsourced "disambiguation" pages (<a href="https://en.wikipedia.org/wiki/Help:Disambiguation">common in Wikipedia</a>).</p>
+<p>[INSERT EVENT EXAMPLE]</p>
+<h2>How to decide what article to display</h2>
+<p>As there could be many articles for each given name, some kind of prioritization must be done by clients. Criteria for this should vary between users and clients, but some means that can be used are described below:</p>
+<h3>Reactions</h3>
+<p><a href="25.md">NIP-25</a> reactions are very simple and can be used to create a simple web-of-trust between wiki article writers and their content. While just counting a raw number of "likes" is unproductive, reacting to any wiki article event with a <code>+</code> can be interpreted as a recommendation for that article specifically and a partial recommendation of the author of that article. When 2 or 3-level deep recommendations are followed, suddenly a big part of all the articles may have some form of tagging.</p>
+<h3>Relays</h3>
+<p><a href="51.md">NIP-51</a> lists of relays can be created with the kind 10102 and then used by wiki clients in order to determine where to query articles first and to rank these differently in relation to other events fetched from other relays.</p>
+<h3>Contact lists</h3>
+<p><a href="02.md">NIP-02</a> contact lists can form the basis of a recommendation system that is then expanded with relay lists and reaction lists through nested queries. These lists form a good starting point only because they are so widespread.</p>
+<h3>Wiki-related contact lists</h3>
+<p><a href="51.md">NIP-51</a> lists can also be used to create a list of users that are trusted only in the context of wiki authorship or wiki curationship.</p>
+<h2>Forks</h2>
+<p>Wiki-events can tag other wiki-events with a <code>fork</code> marker to specify that this event came from a different version. Both <code>a</code> and <code>e</code> tags SHOULD be used and have the <code>fork</code> marker applied, to identify the exact version it was forked from.</p>
+<h2>Deference</h2>
+<p>Wiki-events can tag other wiki-events with a <code>defer</code> marker to indicate that it considers someone else's entry as a "better" version of itself. If using a <code>defer</code> marker both <code>a</code> and <code>e</code> tags SHOULD be used.</p>
+<p>This is a stronger signal of trust than a <code>+</code> reaction.</p>
+<p>This marker is useful when a user edits someone else's entry; if the original author includes the editor's changes and the editor doesn't want to keep/maintain an independent version, the <code>link</code> tag could effectively be a considered a "deletion" of the editor's version and putting that pubkey's WoT weight behind the original author's version.</p>
+<h2>Why Asciidoc?</h2>
+<p>Wikitext is <a href="nostr:nevent1qqsqt0gcggry60n72uglhuhypdlmr2dm6swjj69jex5v530gcpazlzsprpmhxue69uhhyetvv9ujumn0wdmksetjv5hxxmmdqy28wumn8ghj7un9d3shjtnyv9kh2uewd9hsygpm7rrrljungc6q0tuh5hj7ue863q73qlheu4vywtzwhx42a7j9n5ueneex">garbage</a> and Markdown is not powerful enough (besides being too freeform and unspecified and prone to generate incompatibilities in the future).</p>
+<p>Asciidoc has a strict spec, multiple implementations in many languages, and support for features that are very much necessary in a wiki article, like <em>sidebars</em>, <em>tables</em> (with rich markup inside cells), many levels of <em>headings</em>, <em>footnotes</em>, <em>superscript</em> and <em>subscript</em> markup and <em>description lists</em>. It is also arguably easier to read in its plaintext format than Markdown (and certainly much better than Wikitext).</p>
+<h1>Appendix 1: Merge requests</h1>
+<p>Users can request other users to get their entries merged into someone else's entry by creating a <code>kind:818</code> event.</p>
+<pre><code class="language-json">{
+  "content": "I added information about how to make hot ice-creams",
+  "kind": 818,
+  "tags": [
+    [ "a", "30818:&lt;destination-pubkey&gt;:hot-ice-creams", "&lt;relay-url&gt;" ],
+    [ "e", "&lt;version-against-which-the-modification-was-made&gt;", "&lt;relay-url&gt;" ],
+    [ "p", "&lt;destination-pubkey&gt;" ],
+    [ "e", "&lt;version-to-be-merged&gt;", "&lt;relay-url&gt;", "source" ]
+  ]
+}
+</code></pre>
+<p><code>.content</code>: an optional explanation detailing why this merge is being requested.
+<code>a</code> tag: tag of the article which should be modified (i.e. the target of this merge request).
+<code>e</code> tag: optional version of the article in which this modifications is based
+<code>e</code> tag with <code>source</code> marker: the ID of the event that should be merged. This event id MUST be of a <code>kind:30818</code> as defined in this NIP.</p>
+<p>The destination-pubkey is the pubkey being requested to merge something into their article can create <a href="NIP-25">NIP-25</a> reactions that tag the <code>kind:818</code> event with <code>+</code> or <code>-</code></p>

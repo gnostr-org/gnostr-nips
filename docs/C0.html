@@ -1,0 +1,55 @@
+<h1>NIP-C0: Code Snippets</h1>
+<p><code>draft</code> <code>optional</code></p>
+<h2>Abstract</h2>
+<p>This NIP defines a new event kind for sharing and storing code snippets. Unlike regular text notes (<code>kind:1</code>), code snippets have specialized metadata like language, extension, and other code-specific attributes that enhance discoverability, syntax highlighting, and improved user experience.</p>
+<h2>Event Kind</h2>
+<p>This NIP defines <code>kind:1337</code> as a code snippet event.</p>
+<p>The <code>.content</code> field contains the actual code snippet text.</p>
+<h2>Optional Tags</h2>
+<ul>
+<li><code>l</code> - Programming language name (lowercase). Examples: "javascript", "python", "rust"</li>
+<li><code>name</code> - Name of the code snippet, commonly a filename. Examples: "hello-world.js", "quick-sort.py"</li>
+<li><code>extension</code> - File extension (without the dot). Examples: "js", "py", "rs"</li>
+<li><code>description</code> - Brief description of what the code does</li>
+<li><code>runtime</code> - Runtime or environment specification (e.g., "node v18.15.0", "python 3.11")</li>
+<li><code>license</code> - License under which the code is shared (e.g., "MIT", "GPL-3.0", "Apache-2.0")</li>
+<li><code>dep</code> - Dependency required for the code to run (can be repeated)</li>
+<li><code>repo</code> - Reference to a repository where this code originates</li>
+</ul>
+<h2>Format</h2>
+<pre><code class="language-json">{
+  "id": "&lt;32-bytes lowercase hex-encoded SHA-256 of the the serialized event data&gt;",
+  "pubkey": "&lt;32-bytes lowercase hex-encoded public key of the event creator&gt;",
+  "created_at": &lt;Unix timestamp in seconds&gt;,
+  "kind": 1337,
+  "content": "function helloWorld() {\n  console.log('Hello, Nostr!');\n}\n\nhelloWorld();",
+  "tags": [
+    ["l", "javascript"],
+    ["extension", "js"],
+    ["name", "hello-world.js"],
+    ["description", "A basic JavaScript function that prints 'Hello, Nostr!' to the console"],
+    ["runtime", "node v18.15.0"],
+    ["license", "MIT"],
+    ["repo", "https://github.com/nostr-protocol/nostr"]
+  ],
+  "sig": "&lt;64-bytes signature of the id&gt;"
+}
+</code></pre>
+<h2>Client Behavior</h2>
+<p>Clients that support this NIP SHOULD:</p>
+<ol>
+<li>Display code snippets with proper syntax highlighting based on the language.</li>
+<li>Allow copying the full code snippet with a single action.</li>
+<li>Render the code with appropriate formatting, preserving whitespace and indentation.</li>
+<li>Display the language and extension prominently.</li>
+<li>Provide "run" functionality for supported languages when possible.</li>
+<li>Display the description (if available) as part of the snippet presentation.</li>
+</ol>
+<p>Clients MAY provide additional functionality such as:</p>
+<ol>
+<li>Code editing capabilities</li>
+<li>Forking/modifying snippets</li>
+<li>Creating executable environments based on the runtime/dependencies</li>
+<li>Downloading the snippet as a file using the provided extension</li>
+<li>Sharing the snippet with attribution</li>
+</ol>

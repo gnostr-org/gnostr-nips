@@ -1,0 +1,59 @@
+<h1>NIP-35</h1>
+<h2>Torrents</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defined a new <code>kind 2003</code> which is a Torrent.</p>
+<p><code>kind 2003</code> is a simple torrent index where there is enough information to search for content and construct the magnet link. No torrent files exist on nostr.</p>
+<h2>Tags</h2>
+<ul>
+<li><code>x</code>: V1 BitTorrent Info Hash, as seen in the <a href="https://www.bittorrent.org/beps/bep_0053.html">magnet link</a> <code>magnet:?xt=urn:btih:HASH</code></li>
+<li><code>file</code>: A file entry inside the torrent, including the full path ie. <code>info/example.txt</code></li>
+<li><code>tracker</code>: (Optional) A tracker to use for this torrent</li>
+</ul>
+<p>In order to make torrents searchable by general category, you SHOULD include a few tags like <code>movie</code>, <code>tv</code>, <code>HD</code>, <code>UHD</code> etc.</p>
+<h2>Tag prefixes</h2>
+<p>Tag prefixes are used to label the content with references, ie. <code>["i", "imdb:1234"]</code></p>
+<ul>
+<li><code>tcat</code>: A comma separated text category path, ie. <code>["i", "tcat:video,movie,4k"]</code>, this should also match the <code>newznab</code> category in a best effort approach.</li>
+<li><code>newznab</code>: The category ID from <a href="https://github.com/Prowlarr/Prowlarr/blob/develop/src/NzbDrone.Core/Indexers/NewznabStandardCategory.cs">newznab</a></li>
+<li><code>tmdb</code>: <a href="https://www.themoviedb.org/">The movie database</a> id.</li>
+<li><code>ttvdb</code>: <a href="https://thetvdb.com/">TV database</a> id.</li>
+<li><code>imdb</code>: <a href="https://www.imdb.com/">IMDB</a> id.</li>
+<li><code>mal</code>: <a href="https://myanimelist.net/">MyAnimeList</a> id.</li>
+<li><code>anilist</code>: <a href="https://anilist.co/">AniList</a> id.</li>
+</ul>
+<p>A second level prefix should be included where the database supports multiple media types.</p>
+<ul>
+<li><code>tmdb:movie:693134</code> maps to <code>themoviedb.org/movie/693134</code></li>
+<li><code>ttvdb:movie:290272</code> maps to <code>thetvdb.com/movies/dune-part-two</code></li>
+<li><code>mal:anime:9253</code> maps to <code>myanimelist.net/anime/9253</code></li>
+<li><code>mal:manga:17517</code> maps to <code>myanimelist.net/manga/17517</code></li>
+</ul>
+<p>In some cases the url mapping isnt direct, mapping the url in general is out of scope for this NIP, the section above is only a guide so that implementers have enough information to succsesfully map the url if they wish.</p>
+<pre><code class="language-json">{
+  "kind": 2003,
+  "content": "&lt;long-description-pre-formatted&gt;",
+  "tags": [
+    ["title", "&lt;torrent-title&gt;"],
+    ["x", "&lt;bittorrent-info-hash&gt;"],
+    ["file", "&lt;file-name&gt;", "&lt;file-size-in-bytes&gt;"],
+    ["file", "&lt;file-name&gt;", "&lt;file-size-in-bytes&gt;"],
+    ["tracker", "udp://mytacker.com:1337"],
+    ["tracker", "http://1337-tracker.net/announce"],
+    ["i", "tcat:video,movie,4k"],
+    ["i", "newznab:2045"],
+    ["i", "imdb:tt15239678"],
+    ["i", "tmdb:movie:693134"],
+    ["i", "ttvdb:movie:290272"],
+    ["t", "movie"],
+    ["t", "4k"],
+  ]
+}
+</code></pre>
+<h2>Torrent Comments</h2>
+<p>A torrent comment is a <code>kind 2004</code> event which is used to reply to a torrent event.</p>
+<p>This event works exactly like a <code>kind 1</code> and should follow <code>NIP-10</code> for tagging.</p>
+<h2>Implementations</h2>
+<ol>
+<li><a href="https://git.v0l.io/Kieran/dtan">dtan.xyz</a></li>
+<li><a href="https://github.com/hzrd149/nostrudel/tree/next/src/views/torrents">nostrudel.ninja</a></li>
+</ol>

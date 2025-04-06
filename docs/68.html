@@ -1,0 +1,80 @@
+<h1>NIP-68</h1>
+<h2>Picture-first feeds</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines event kind <code>20</code> for picture-first clients. Images must be self-contained. They are hosted externally and referenced using <code>imeta</code> tags.</p>
+<p>The idea is for this type of event to cater to Nostr clients resembling platforms like Instagram, Flickr, Snapchat, or 9GAG, where the picture itself takes center stage in the user experience.</p>
+<h2>Picture Events</h2>
+<p>Picture events contain a <code>title</code> tag and description in the <code>.content</code>.</p>
+<p>They may contain multiple images to be displayed as a single post.</p>
+<pre><code class="language-jsonc">{
+  "id": &lt;32-bytes lowercase hex-encoded SHA-256 of the the serialized event data&gt;,
+  "pubkey": &lt;32-bytes lowercase hex-encoded public key of the event creator&gt;,
+  "created_at": &lt;Unix timestamp in seconds&gt;,
+  "kind": 20,
+  "content": "&lt;description of post&gt;",
+  "tags": [
+    ["title", "&lt;short title of post&gt;"],
+
+    // Picture Data
+    [
+      "imeta",
+      "url https://nostr.build/i/my-image.jpg",
+      "m image/jpeg",
+      "blurhash eVF$^OI:${M{o#*0-nNFxakD-?xVM}WEWB%iNKxvR-oetmo#R-aen$",
+      "dim 3024x4032",
+      "alt A scenic photo overlooking the coast of Costa Rica",
+      "x &lt;sha256 hash as specified in NIP 94&gt;",
+      "fallback https://nostrcheck.me/alt1.jpg",
+      "fallback https://void.cat/alt1.jpg"
+    ],
+    [
+      "imeta",
+      "url https://nostr.build/i/my-image2.jpg",
+      "m image/jpeg",
+      "blurhash eVF$^OI:${M{o#*0-nNFxakD-?xVM}WEWB%iNKxvR-oetmo#R-aen$",
+      "dim 3024x4032",
+      "alt Another scenic photo overlooking the coast of Costa Rica",
+      "x &lt;sha256 hash as specified in NIP 94&gt;",
+      "fallback https://nostrcheck.me/alt2.jpg",
+      "fallback https://void.cat/alt2.jpg",
+
+      "annotate-user &lt;32-bytes hex of a pubkey&gt;:&lt;posX&gt;:&lt;posY&gt;" // Tag users in specific locations in the picture
+    ],
+
+    ["content-warning", "&lt;reason&gt;"], // if NSFW
+
+    // Tagged users
+    ["p", "&lt;32-bytes hex of a pubkey&gt;", "&lt;optional recommended relay URL&gt;"],
+    ["p", "&lt;32-bytes hex of a pubkey&gt;", "&lt;optional recommended relay URL&gt;"],
+
+    // Specify the media type for filters to allow clients to filter by supported kinds
+    ["m", "image/jpeg"],
+
+    // Hashes of each image to make them queryable
+    ["x", "&lt;sha256&gt;"]
+
+    // Hashtags
+    ["t", "&lt;tag&gt;"],
+    ["t", "&lt;tag&gt;"],
+
+    // location
+    ["location", "&lt;location&gt;"], // city name, state, country
+    ["g", "&lt;geohash&gt;"],
+
+    // When text is written in the image, add the tag to represent the language
+    ["L", "ISO-639-1"],
+    ["l", "en", "ISO-639-1"]
+  ]
+}
+</code></pre>
+<p>The <code>imeta</code> tag <code>annotate-user</code> places a user link in the specific position in the image.</p>
+<p>Only the following media types are accepted:</p>
+<ul>
+<li><code>image/apng</code>: Animated Portable Network Graphics (APNG)</li>
+<li><code>image/avif</code>: AV1 Image File Format (AVIF)</li>
+<li><code>image/gif</code>: Graphics Interchange Format (GIF)</li>
+<li><code>image/jpeg</code>: Joint Photographic Expert Group image (JPEG)</li>
+<li><code>image/png</code>: Portable Network Graphics (PNG)</li>
+<li><code>image/webp</code>: Web Picture format (WEBP)</li>
+</ul>
+<p>Picture events might be used with <a href="71.md">NIP-71</a>'s kind <code>22</code> to display short vertical videos in the same feed.</p>

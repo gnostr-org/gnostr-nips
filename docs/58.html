@@ -1,0 +1,101 @@
+<h1>NIP-58</h1>
+<h2>Badges</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Three special events are used to define, award and display badges in
+user profiles:</p>
+<ol>
+<li>
+<p>A "Badge Definition" event is defined as an addressable event with kind <code>30009</code> having a <code>d</code> tag with a value that uniquely identifies the badge (e.g. <code>bravery</code>) published by the badge issuer. Badge definitions can be updated.</p>
+</li>
+<li>
+<p>A "Badge Award" event is a kind <code>8</code> event with a single <code>a</code> tag referencing a "Badge Definition" event and one or more <code>p</code> tags, one for each pubkey the badge issuer wishes to award. Awarded badges are immutable and non-transferrable.</p>
+</li>
+<li>
+<p>A "Profile Badges" event is defined as an <em>addressable event</em> with kind <code>30008</code> with a <code>d</code> tag with the value <code>profile_badges</code>.
+Profile badges contain an ordered list of pairs of <code>a</code> and <code>e</code> tags referencing a <code>Badge Definition</code> and a <code>Badge Award</code> for each badge to be displayed.</p>
+</li>
+</ol>
+<h3>Badge Definition event</h3>
+<p>The following tags MUST be present:</p>
+<ul>
+<li><code>d</code> tag with the unique name of the badge.</li>
+</ul>
+<p>The following tags MAY be present:</p>
+<ul>
+<li>A <code>name</code> tag with a short name for the badge.</li>
+<li><code>image</code> tag whose value is the URL of a high-resolution image representing the badge. The second value optionally specifies the dimensions of the image as  <code>width</code>x<code>height</code> in pixels. Badge recommended dimensions is 1024x1024 pixels.</li>
+<li>A <code>description</code> tag whose value MAY contain a textual representation of the
+image, the meaning behind the badge, or the reason of its issuance.</li>
+<li>One or more <code>thumb</code> tags whose first value is an URL pointing to a thumbnail version of the image referenced in the <code>image</code> tag. The second value optionally specifies the dimensions of the thumbnail as <code>width</code>x<code>height</code> in pixels.</li>
+</ul>
+<h3>Badge Award event</h3>
+<p>The following tags MUST be present:</p>
+<ul>
+<li>An <code>a</code> tag referencing a kind <code>30009</code> Badge Definition event.</li>
+<li>One or more <code>p</code> tags referencing each pubkey awarded.</li>
+</ul>
+<h3>Profile Badges Event</h3>
+<p>The number of badges a pubkey can be awarded is unbounded. The Profile Badge
+event allows individual users to accept or reject awarded badges, as well
+as choose the display order of badges on their profiles.</p>
+<p>The following tags MUST be present:</p>
+<ul>
+<li>A <code>d</code> tag with the unique identifier <code>profile_badges</code></li>
+</ul>
+<p>The following tags MAY be present:</p>
+<ul>
+<li>Zero or more ordered consecutive pairs of <code>a</code> and <code>e</code> tags referencing a kind <code>30009</code> Badge Definition and kind <code>8</code> Badge Award, respectively. Clients SHOULD
+ignore <code>a</code> without corresponding <code>e</code> tag and viceversa. Badge Awards referenced
+by the <code>e</code> tags should contain the same <code>a</code> tag.</li>
+</ul>
+<h3>Motivation</h3>
+<p>Users MAY be awarded badges (but not limited to) in recognition, in gratitude, for participation, or in appreciation of a certain goal, task or cause.</p>
+<p>Users MAY choose to decorate their profiles with badges for fame, notoriety, recognition, support, etc., from badge issuers they deem reputable.</p>
+<h3>Recommendations</h3>
+<p>Clients MAY whitelist badge issuers (pubkeys) for the purpose of ensuring they retain a valuable/special factor for their users.</p>
+<p>Badge image recommended aspect ratio is 1:1 with a high-res size of 1024x1024 pixels.</p>
+<p>Badge thumbnail image recommended dimensions are: 512x512 (xl), 256x256 (l), 64x64 (m), 32x32 (s) and 16x16 (xs).</p>
+<p>Clients MAY choose to render less badges than those specified by users in the Profile Badges event or replace the badge image and thumbnails with ones that fits the theme of the client.</p>
+<p>Clients SHOULD attempt to render the most appropriate badge thumbnail according to the number of badges chosen by the user and space available. Clients SHOULD attempt render the high-res version on user action (click, tap, hover).</p>
+<h3>Example of a Badge Definition event</h3>
+<pre><code class="language-jsonc">{
+  "pubkey": "alice",
+  "kind": 30009,
+  "tags": [
+    ["d", "bravery"],
+    ["name", "Medal of Bravery"],
+    ["description", "Awarded to users demonstrating bravery"],
+    ["image", "https://nostr.academy/awards/bravery.png", "1024x1024"],
+    ["thumb", "https://nostr.academy/awards/bravery_256x256.png", "256x256"]
+  ],
+  // other fields...
+}
+</code></pre>
+<h3>Example of Badge Award event</h3>
+<pre><code class="language-jsonc">{
+  "id": "&lt;badge award event id&gt;",
+  "kind": 8,
+  "pubkey": "alice",
+  "tags": [
+    ["a", "30009:alice:bravery"],
+    ["p", "bob", "wss://relay"],
+    ["p", "charlie", "wss://relay"]
+  ],
+  // other fields...
+}
+</code></pre>
+<h3>Example of a Profile Badges event</h3>
+<p>Honorable Bob The Brave:</p>
+<pre><code class="language-jsonc">{
+  "kind": 30008,
+  "pubkey": "bob",
+  "tags": [
+    ["d", "profile_badges"],
+    ["a", "30009:alice:bravery"],
+    ["e", "&lt;bravery badge award event id&gt;", "wss://nostr.academy"],
+    ["a", "30009:alice:honor"],
+    ["e", "&lt;honor badge award event id&gt;", "wss://nostr.academy"]
+  ],
+  // other fields...
+}
+</code></pre>
