@@ -1,0 +1,38 @@
+<h1>NIP-62</h1>
+<h2>Request to Vanish</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP offers a Nostr-native way to request a complete reset of a key's fingerprint on the web. This procedure is legally binding in some jurisdictions, and thus, supporters of this NIP should truly delete events from their database.</p>
+<h2>Request to Vanish from Relay</h2>
+<p>Kind <code>62</code> requests a specific relay to delete everything, including <a href="09.md">NIP-09</a> Deletion Events, from the <code>.pubkey</code> until its <code>.created_at</code>.</p>
+<pre><code class="language-jsonc">{
+  "kind": 62,
+  "pubkey": &lt;32-byte hex-encoded public key of the event creator&gt;,
+  "tags": [
+    ["relay", "&lt;relay url&gt;"]
+  ],
+  "content": "&lt;reason or note&gt;",
+  //...other fields
+}
+</code></pre>
+<p>The tag list MUST include at least one <code>relay</code> value.</p>
+<p>Content MAY include a reason or a legal notice to the relay operator.</p>
+<p>Relays MUST fully delete any events from the <code>.pubkey</code> if their service URL is tagged in the event.</p>
+<p>Relays SHOULD delete all <a href="59.md">NIP-59</a> Gift Wraps that p-tagged the <code>.pubkey</code> if their service URL is tagged in the event, deleting all DMs to the pubkey.</p>
+<p>Relays MUST ensure the deleted events cannot be re-broadcasted into the relay.</p>
+<p>Relays MAY store the signed request to vanish for bookkeeping.</p>
+<p>Paid relays or relays that restrict who can post MUST also follow the request to vanish regardless of the user's status.</p>
+<p>Publishing a deletion request event (Kind <code>5</code>) against a request to vanish has no effect. Clients and relays are not obliged to support "unrequest vanish" functionality.</p>
+<p>Clients SHOULD send this event to the target relays only.</p>
+<h2>Global Request to Vanish</h2>
+<p>To request ALL relays to delete everything, the event MUST include a <code>relay</code> tag with the value <code>ALL_RELAYS</code> in uppercase.</p>
+<pre><code class="language-jsonc">{
+  "kind": 62,
+  "pubkey": &lt;32-byte hex-encoded public key of the event creator&gt;,
+  "tags": [
+    ["relay", "ALL_RELAYS"]
+  ],
+  "content": "&lt;reason&gt;",
+  //...other fields
+}
+</code></pre>
+<p>Clients SHOULD broadcast this event to as many relays as possible.</p>

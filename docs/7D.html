@@ -1,0 +1,24 @@
+<h1>NIP-7D</h1>
+<h2>Threads</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>A thread is a <code>kind 11</code> event.  Threads SHOULD include a <code>subject</code> with a summary
+of the thread's topic.</p>
+<pre><code class="language-json">{
+  "kind": 11,
+  "content": "Good morning",
+  "tags": [
+    ["subject", "GM"]
+  ]
+}
+</code></pre>
+<p>Replies to <code>kind 11</code> MUST use <a href="./22.md">NIP-22</a> <code>kind 1111</code> comments. Replies should
+always be to the root <code>kind 11</code> to avoid arbitrarily nested reply hierarchies.</p>
+<pre><code class="language-json">{
+  "kind": 1111,
+  "content": "Cool beans",
+  "tags": [
+    ["K", "11"],
+    ["E", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;pubkey&gt;]
+  ]
+}
+</code></pre>
