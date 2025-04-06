@@ -38,19 +38,23 @@ async fn main() {
 }
 
 fn using_serve_dir() -> Router {
-    // serve the file in the "assets" directory under `/assets`
+    // serve the file in the "docs" directory under `/docs`
     Router::new().nest_service("/docs", ServeDir::new("docs"))
 }
 
 fn using_serve_dir_with_assets_fallback() -> Router {
     // `ServeDir` allows setting a fallback if an asset is not found
-    // so with this `GET /assets/doesnt-exist.jpg` will return `index.html`
+    // so with this `GET /assets/doesnt-exist.jpg` will return `readme.html`
     // rather than a 404
-    let serve_dir = ServeDir::new("assets").not_found_service(ServeFile::new("assets/index.html"));
+    let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
 
     Router::new()
-        .route("/foo", get(|| async { "Hi from /foo" }))
-        .nest_service("/assets", serve_dir.clone())
+        .route("/readme", get(|| async { "Hi from /readme.html" })) //TODO route each nip
+        .route("/01.md", get(|| async { "Hi from /01.html" })) //TODO route each nip
+        .route("/02.md", get(|| async { "Hi from /02.html" })) //TODO route each nip
+        .route("/03.md", get(|| async { "Hi from /03.html" })) //TODO route each nip
+        .route("/04.md", get(|| async { "Hi from /04.html" })) //TODO route each nip
+        .nest_service("/docs", serve_dir.clone())
         .fallback_service(serve_dir)
 }
 
