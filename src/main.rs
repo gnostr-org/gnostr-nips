@@ -180,13 +180,14 @@ fn view_area() -> Area {
     area
 }
 
-static MD: &str = r#"# Scrollable Markdown in Termimad"#;
-fn run_app(skin: MadSkin) -> Result<(), Error> {
+static _MD: &str = r#"# Scrollable Markdown in Termimad"#;
+fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     let mut w = stdout(); // we could also have used stderr
     queue!(w, EnterAlternateScreen)?;
     terminal::enable_raw_mode()?;
     queue!(w, Hide)?; // hiding the cursor
-    let mut view = MadView::from(MD.to_owned(), view_area(), skin);
+                      // let mut view = MadView::from(MD.to_owned(), view_area(), skin);
+    let mut view = MadView::from(nip.to_owned(), view_area(), skin);
     loop {
         view.write_on(&mut w)?;
         w.flush()?;
@@ -258,7 +259,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         match Template::get(&filename) {
             Some(embedded_file) => {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
-                println!("{}", content);
+                //println!("{}", content);
+                let skin = make_skin();
+                //let res = run_app(skin, &content);
+                let _res = run_app(skin, (&content).to_string());
                 return Ok(()); // Exit early after showing the file
             }
             None => {
