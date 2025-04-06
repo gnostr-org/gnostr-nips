@@ -1,5 +1,5 @@
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
@@ -27,8 +27,8 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
-use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 use tokio::net::TcpListener;
+use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
 #[folder = "."]
@@ -90,7 +90,6 @@ struct Args {
     /// The address and port to bind the Axum server to.
     #[clap(long, value_name = "ADDR:PORT", default_value = "0.0.0.0:3000")]
     bind_address: String,
-
 }
 
 fn _make_executable(script_path: &Path) -> io::Result<()> {
@@ -272,33 +271,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-	if args.serve {
+    if args.serve {
+        // Define the routing for our application.
+        let app = Router::new().route("/", get(handler));
 
+        // Bind the server to a specific address and port.
+        let addr = "0.0.0.0:3000";
+        let listener = TcpListener::bind(addr).await?;
+        println!("Server listening on {}", addr);
 
-		    // Define the routing for our application.
-    let app = Router::new().route("/", get(handler));
-
-    // Bind the server to a specific address and port.
-    let addr = "0.0.0.0:3000";
-    let listener = TcpListener::bind(addr).await?;
-    println!("Server listening on {}", addr);
-
-    // Start serving the application.
-    axum::serve(listener, app).await?;
-
-       //let state = Arc::new(AppState { args: args.clone() });
-       // let app = Router::new()
-       //     .route("/", get(list_files))
-       //     .route("/show/:filename", get(show_file))
-       //     .with_state(state);
-
-       // let addr = args.bind_address.parse::<SocketAddr>()?;
-       // tracing::info!("Serving on {}", addr);
-       // //axum::Server::bind(&addr)
-       // //    .serve(app.into_make_service())
-       // //    .await?;
-
-	}
+        // Start serving the application.
+        axum::serve(listener, app).await?;
+    }
     if args.export {
         tracing::info!("Exporting all embedded files to the current directory...");
         let current_dir = env::current_dir()?;
