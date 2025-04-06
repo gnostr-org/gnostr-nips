@@ -4,11 +4,19 @@ use std::env;
 use std::fs;
 use std::fs::File;
 use std::io;
-use std::io::Write;
+use std::io::{stdout, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::process::Stdio;
+use termimad::crossterm::{
+    cursor::{Hide, Show},
+    event::{self, Event, KeyCode::*, KeyEvent},
+    queue,
+    style::Color::*,
+    terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use termimad::*;
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
@@ -24,30 +32,30 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 #[exclude = ".justfile"]
 #[exclude = ".nojekyll"]
 #[exclude = "build.rs"]
-#[exclude = "default_config.conf"]
+//#[exclude = "default_config.conf"]
 #[exclude = "dist-workspace.toml"]
 #[exclude = "error.log"]
-#[exclude = "install_script.sh"]
+//#[exclude = "install_script.sh"]
 #[exclude = "output.log"]
 #[exclude = "post-commit-history"]
 #[exclude = "script.sh"]
 #[exclude = "src/lib.rs"]
 #[exclude = "src/main.rs"]
 #[exclude = "template/Makefile"]
-#[exclude = "template/default_config.conf"]
-#[exclude = "template/install_script.sh"]
+//#[exclude = "template/default_config.conf"]
+//#[exclude = "template/install_script.sh"]
 #[exclude = "test_files/tabbed.txtbuild.rs"]
-#[exclude = "default_config.conf"]
+//#[exclude = "default_config.conf"]
 #[exclude = "dist-workspace.toml"]
 #[exclude = "error.log"]
-#[exclude = "install_script.sh"]
+//#[exclude = "install_script.sh"]
 #[exclude = "output.log"]
 #[exclude = "post-commit-history"]
 #[exclude = "script.sh"]
 #[exclude = "src/lib.rs"]
 #[exclude = "src/main.rs"]
 #[exclude = "template/Makefile"]
-#[exclude = "template/default_config.conf"]
+//#[exclude = "template/default_config.conf"]
 #[exclude = "template/install_script.sh"]
 #[exclude = "test_files/tabbed.txt"]
 #[exclude = "Cargo.lock"]
@@ -164,6 +172,55 @@ fn extract(filename: &str) {
             eprintln!("Error: Embedded file '{}' not found!", filename);
         }
     }
+}
+
+fn view_area() -> Area {
+    let mut area = Area::full_screen();
+    area.pad_for_max_width(120); // we don't want a too wide text column
+    area
+}
+
+static MD: &str = r#"# Scrollable Markdown in Termimad"#;
+fn run_app(skin: MadSkin) -> Result<(), Error> {
+    let mut w = stdout(); // we could also have used stderr
+    queue!(w, EnterAlternateScreen)?;
+    terminal::enable_raw_mode()?;
+    queue!(w, Hide)?; // hiding the cursor
+    let mut view = MadView::from(MD.to_owned(), view_area(), skin);
+    loop {
+        view.write_on(&mut w)?;
+        w.flush()?;
+        match event::read() {
+            Ok(Event::Key(KeyEvent { code, .. })) => match code {
+                Up => view.try_scroll_lines(-1),
+                Down => view.try_scroll_lines(1),
+                PageUp => view.try_scroll_pages(-1),
+                PageDown => view.try_scroll_pages(1),
+                _ => break,
+            },
+            Ok(Event::Resize(..)) => {
+                queue!(w, Clear(ClearType::All))?;
+                view.resize(&view_area());
+            }
+            _ => {}
+        }
+    }
+    terminal::disable_raw_mode()?;
+    queue!(w, Show)?; // we must restore the cursor
+    queue!(w, LeaveAlternateScreen)?;
+    w.flush()?;
+    Ok(())
+}
+
+fn make_skin() -> MadSkin {
+    let mut skin = MadSkin::default();
+    skin.table.align = Alignment::Center;
+    skin.set_headers_fg(AnsiValue(178));
+    skin.bold.set_fg(Yellow);
+    skin.italic.set_fg(Magenta);
+    skin.scrollbar.thumb.set_fg(AnsiValue(178));
+    skin.code_block.align = Alignment::Center;
+    skin
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
