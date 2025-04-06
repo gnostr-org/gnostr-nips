@@ -73,7 +73,7 @@ struct Args {
     export_path: Option<PathBuf>,
 }
 
-fn make_executable(script_path: &Path) -> io::Result<()> {
+fn _make_executable(script_path: &Path) -> io::Result<()> {
     let mut permissions = fs::metadata(script_path)?.permissions();
     permissions.set_mode(permissions.mode() | 0o111);
     fs::set_permissions(script_path, permissions)?;
@@ -81,7 +81,7 @@ fn make_executable(script_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn execute_script(script_path: &Path) -> io::Result<()> {
+fn _execute_script(script_path: &Path) -> io::Result<()> {
     tracing::debug!("Executing script: {}", script_path.display());
     let log_file = File::create("output.log")?;
     let error_file = File::create("error.log")?;
