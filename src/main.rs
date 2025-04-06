@@ -184,9 +184,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::debug!("Parsed arguments: {:?}", args);
 
     if args.list_embedded {
-        println!("Embedded files:");
+        tracing::debug!("Embedded files:");
         for file in Template::iter() {
-            println!("  {}", file.as_ref());
+            println!("{}", file.as_ref());
         }
         return Ok(()); // Exit early after listing embedded files
     }
@@ -201,7 +201,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         match Template::get(&filename) {
             Some(embedded_file) => {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
-                println!("Contents of '{}':\n{}", filename, content);
+                println!("{}", content);
                 return Ok(()); // Exit early after showing the file
             }
             None => {
