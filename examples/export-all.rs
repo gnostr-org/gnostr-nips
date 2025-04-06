@@ -61,16 +61,12 @@ struct Args {
     list_embedded: bool,
 
     /// Show the contents of an embedded file using a pager.
-    #[clap(short, long, value_name = "NIP", default_value = "README.md")]
+    #[clap(short, long, value_name = "NIP")]
     show: Option<String>,
 
     /// Export all embedded files to the current directory.
-    #[clap(short, long)]
+    #[clap(long)]
     export: bool,
-
-    /// Export all embedded files to the specified path.
-    #[clap(long, value_name = "PATH")]
-    export_path: Option<PathBuf>,
 }
 
 fn make_executable(script_path: &Path) -> io::Result<()> {
@@ -231,29 +227,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         tracing::info!("Successfully exported {} embedded files.", export_count);
-        return Ok(());
-    }
-    if let Some(export_path) = &args.export_path {
-        tracing::info!(
-            "Exporting all embedded files to '{}'...",
-            export_path.display()
-        );
-        let mut export_count = 0;
-        for file in Template::iter() {
-            match extract(file.as_ref(), export_path) {
-                Ok(_) => {
-                    export_count += 1;
-                }
-                Err(e) => {
-                    eprintln!("Error exporting '{}': {}", file.as_ref(), e);
-                }
-            }
-        }
-        tracing::info!(
-            "Successfully exported {} embedded files to '{}'.",
-            export_count,
-            export_path.display()
-        );
         return Ok(());
     }
 
