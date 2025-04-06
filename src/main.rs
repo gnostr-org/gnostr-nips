@@ -74,7 +74,7 @@ struct Args {
     debug: bool,
 
     /// List all embedded files.
-    #[clap(long)]
+    #[clap(short, long)]
     list_embedded: bool,
 
     /// Show the contents of an embedded file.
@@ -191,15 +191,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(()); // Exit early after listing embedded files
     }
 
-    if let Some(filename) = &args.show {
-        match Template::get(filename) {
+    if let Some(nip_arg) = &args.show {
+        let filename = if nip_arg.ends_with(".md") {
+            nip_arg.clone()
+        } else {
+            format!("{:02}.md", nip_arg)
+        };
+
+        match Template::get(&filename) {
             Some(embedded_file) => {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
                 println!("Contents of '{}':\n{}", filename, content);
                 return Ok(()); // Exit early after showing the file
             }
             None => {
-                eprintln!("Error: Embedded file '{}' not found!", filename);
+                eprintln!("Error: Embedded NIP file '{}' not found!", filename);
                 std::process::exit(1); // Exit with an error code
             }
         }
