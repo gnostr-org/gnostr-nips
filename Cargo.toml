@@ -8,6 +8,7 @@ homepage = "https://github.com/gnostr-org/gnostr-nips"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
+pulldown-cmark = "0.13.0"
 rust-embed = { version = "8.6.0", features = ["debug-embed", "include-exclude"] }
 termimad = "0.31.2"
 tracing = "0.1.37"
