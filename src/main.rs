@@ -15,6 +15,46 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 #[folder = "."]
 #[exclude = "*.DS_Store"]
 #[exclude = "target/*"]
+#[exclude = ".git"]
+#[exclude = ".git/*"]
+#[exclude = ".github/workflows/ci.yml"]
+#[exclude = ".github/workflows/release.yml"]
+#[exclude = ".github/workflows/static.yml"]
+#[exclude = ".gitignore"]
+#[exclude = ".justfile"]
+#[exclude = ".nojekyll"]
+#[exclude = "build.rs"]
+#[exclude = "default_config.conf"]
+#[exclude = "dist-workspace.toml"]
+#[exclude = "error.log"]
+#[exclude = "install_script.sh"]
+#[exclude = "output.log"]
+#[exclude = "post-commit-history"]
+#[exclude = "script.sh"]
+#[exclude = "src/lib.rs"]
+#[exclude = "src/main.rs"]
+#[exclude = "template/Makefile"]
+#[exclude = "template/default_config.conf"]
+#[exclude = "template/install_script.sh"]
+#[exclude = "test_files/tabbed.txtbuild.rs"]
+#[exclude = "default_config.conf"]
+#[exclude = "dist-workspace.toml"]
+#[exclude = "error.log"]
+#[exclude = "install_script.sh"]
+#[exclude = "output.log"]
+#[exclude = "post-commit-history"]
+#[exclude = "script.sh"]
+#[exclude = "src/lib.rs"]
+#[exclude = "src/main.rs"]
+#[exclude = "template/Makefile"]
+#[exclude = "template/default_config.conf"]
+#[exclude = "template/install_script.sh"]
+#[exclude = "test_files/tabbed.txt"]
+#[exclude = "Cargo.lock"]
+#[exclude = "Cargo.toml"]
+#[exclude = "LICENSE"]
+#[exclude = "Makefile"]
+
 struct Template;
 
 /// A simple tool to extract embedded templates and execute an install script.
@@ -32,6 +72,14 @@ struct Args {
     /// Enable debug logging.
     #[clap(short, long)]
     debug: bool,
+
+    /// List all embedded files.
+    #[clap(long)]
+    list_embedded: bool,
+
+    /// Show the contents of an embedded file.
+    #[clap(long, value_name = "FILE")]
+    show: Option<String>,
 }
 
 fn make_executable(script_path: &Path) -> io::Result<()> {
@@ -135,8 +183,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::debug!("Parsed arguments: {:?}", args);
 
-    tracing::debug!("Canonical path of '.': {}", canonicalize_path(Path::new("."))?.display());
-    tracing::debug!("Canonical path of 'src': {}", canonicalize_path(Path::new("src"))?.display());
+    if args.list_embedded {
+        println!("Embedded files:");
+        for file in Template::iter() {
+            println!("  {}", file.as_ref());
+        }
+        return Ok(()); // Exit early after listing embedded files
+    }
+
+    if let Some(filename) = &args.show {
+        match Template::get(filename) {
+            Some(embedded_file) => {
+                let content = String::from_utf8_lossy(embedded_file.data.as_ref());
+                println!("Contents of '{}':\n{}", filename, content);
+                return Ok(()); // Exit early after showing the file
+            }
+            None => {
+                eprintln!("Error: Embedded file '{}' not found!", filename);
+                std::process::exit(1); // Exit with an error code
+            }
+        }
+    }
+
+    tracing::debug!(
+        "Canonical path of '.': {}",
+        canonicalize_path(Path::new("."))?.display()
+    );
+    tracing::debug!(
+        "Canonical path of 'src': {}",
+        canonicalize_path(Path::new("src"))?.display()
+    );
 
     #[cfg(windows)]
     let absolute_path_str = "C:\\Windows\\System32\\cmd.exe";
