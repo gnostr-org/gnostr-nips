@@ -7,6 +7,7 @@ repository = "https://github.com/gnostr-org/gnostr-nips.git"
 homepage = "https://github.com/gnostr-org/gnostr-nips"
 
 [dependencies]
+clap = { version = "4.4", features = ["derive"] }
 rust-embed = { version = "8.6.0", features = ["debug-embed", "include-exclude"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
