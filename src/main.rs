@@ -1,4 +1,6 @@
 use clap::Parser;
+use pulldown_cmark::Options;
+use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
 use std::env;
 use std::fs;
@@ -148,7 +150,13 @@ fn view_area() -> Area {
     area
 }
 
+#[allow(unused_variables)]
 fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
+    let res = markdown_to_html(&nip);
+    tracing::debug!("{}", res);
+    print!("{}", res);
+    //std::process::exit(0);
+    //#[allow(unreachable_code)]
     let mut w = stdout();
     queue!(w, EnterAlternateScreen)?;
     terminal::enable_raw_mode()?;
@@ -189,6 +197,31 @@ fn make_skin() -> MadSkin {
     skin.scrollbar.thumb.set_fg(AnsiValue(178));
     skin.code_block.align = Alignment::Center;
     skin
+}
+
+fn markdown_to_html(markdown_input: &str) -> String {
+    let mut options = Options::empty();
+    //options.insert(Options::all());
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_FOOTNOTES);
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TASKLISTS);
+    //options.insert(Options::ENABLE_SMART_PUNCTUATION);
+    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
+    options.insert(Options::ENABLE_YAML_STYLE_METADATA_BLOCKS);
+    options.insert(Options::ENABLE_PLUSES_DELIMITED_METADATA_BLOCKS);
+    options.insert(Options::ENABLE_OLD_FOOTNOTES);
+    options.insert(Options::ENABLE_MATH);
+    options.insert(Options::ENABLE_GFM);
+    options.insert(Options::ENABLE_DEFINITION_LIST);
+    options.insert(Options::ENABLE_SUPERSCRIPT);
+    options.insert(Options::ENABLE_SUBSCRIPT);
+    options.insert(Options::ENABLE_WIKILINKS);
+
+    let parser = HTMLParser::new_ext(markdown_input, options);
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+    html_output
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -267,6 +300,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         match Template::get(&filename) {
             Some(embedded_file) => {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
+                let res = markdown_to_html(&content);
+                tracing::debug!("{}", res);
+                print!("{}", res);
+                std::process::exit(0);
+                #[allow(unreachable_code)]
                 let skin = make_skin();
                 let _res = run_app(skin, (&content).to_string());
                 return Ok(());

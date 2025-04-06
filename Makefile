@@ -12,6 +12,17 @@ all: 	bin### 	all
 bin: 	### 	bin
 	cargo b --manifest-path Cargo.toml
 
+.ONESHELL:
+readme-html:
+	@cargo b && ./target/debug/nips -s README > readme.html
+	if [ ! $(shell uname -s) = 'Darwin' ]; then \
+		if grep -q Microsoft /proc/version; then \
+			alias open='explorer.exe'; \
+		else \
+			alias open='xdg-open'; \
+		fi \
+	fi \
+	&& open readme.html
 ##
 ##===============================================================================
 ##make cargo-*
