@@ -1,0 +1,32 @@
+<h1>NIP-09</h1>
+<h2>Event Deletion Request</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>A special event with kind <code>5</code>, meaning "deletion request" is defined as having a list of one or more <code>e</code> or <code>a</code> tags, each referencing an event the author is requesting to be deleted. Deletion requests SHOULD include a <code>k</code> tag for the kind of each event being requested for deletion.</p>
+<p>The event's <code>content</code> field MAY contain a text note describing the reason for the deletion request.</p>
+<p>For example:</p>
+<pre><code class="language-jsonc">{
+  "kind": 5,
+  "pubkey": &lt;32-bytes hex-encoded public key of the event creator&gt;,
+  "tags": [
+    ["e", "dcd59..464a2"],
+    ["e", "968c5..ad7a4"],
+    ["a", "&lt;kind&gt;:&lt;pubkey&gt;:&lt;d-identifier&gt;"],
+    ["k", "1"],
+    ["k", "30023"]
+  ],
+  "content": "these posts were published by accident",
+  // other fields...
+}
+</code></pre>
+<p>Relays SHOULD delete or stop publishing any referenced events that have an identical <code>pubkey</code> as the deletion request.  Clients SHOULD hide or otherwise indicate a deletion request status for referenced events.</p>
+<p>Relays SHOULD continue to publish/share the deletion request events indefinitely, as clients may already have the event that's intended to be deleted. Additionally, clients SHOULD broadcast deletion request events to other relays which don't have it.</p>
+<p>When an <code>a</code> tag is used, relays SHOULD delete all versions of the replaceable event up to the <code>created_at</code> timestamp of the deletion request event.</p>
+<h2>Client Usage</h2>
+<p>Clients MAY choose to fully hide any events that are referenced by valid deletion request events.  This includes text notes, direct messages, or other yet-to-be defined event kinds.  Alternatively, they MAY show the event along with an icon or other indication that the author has "disowned" the event.  The <code>content</code> field MAY also be used to replace the deleted events' own content, although a user interface should clearly indicate that this is a deletion request reason, not the original content.</p>
+<p>A client MUST validate that each event <code>pubkey</code> referenced in the <code>e</code> tag of the deletion request is identical to the deletion request <code>pubkey</code>, before hiding or deleting any event.  Relays can not, in general, perform this validation and should not be treated as authoritative.</p>
+<p>Clients display the deletion request event itself in any way they choose, e.g., not at all, or with a prominent notice.</p>
+<p>Clients MAY choose to inform the user that their request for deletion does not guarantee deletion because it is impossible to delete events from all relays and clients.</p>
+<h2>Relay Usage</h2>
+<p>Relays MAY validate that a deletion request event only references events that have the same <code>pubkey</code> as the deletion request itself, however this is not required since relays may not have knowledge of all referenced events.</p>
+<h2>Deletion Request of a Deletion Request</h2>
+<p>Publishing a deletion request event against a deletion request has no effect.  Clients and relays are not obliged to support "unrequest deletion" functionality.</p>

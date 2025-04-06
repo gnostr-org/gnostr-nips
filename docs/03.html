@@ -1,0 +1,24 @@
+<h1>NIP-03</h1>
+<h2>OpenTimestamps Attestations for Events</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines an event with <code>kind:1040</code> that can contain an <a href="https://opentimestamps.org/">OpenTimestamps</a> proof for any other event:</p>
+<pre><code class="language-json">{
+  "kind": 1040
+  "tags": [
+    ["e", &lt;event-id&gt;, &lt;relay-url&gt;],
+    ["alt", "opentimestamps attestation"]
+  ],
+  "content": &lt;base64-encoded OTS file data&gt;
+}
+</code></pre>
+<ul>
+<li>The OpenTimestamps proof MUST prove the referenced <code>e</code> event id as its digest.</li>
+<li>The <code>content</code> MUST be the full content of an <code>.ots</code> file containing at least one Bitcoin attestation. This file SHOULD contain a <strong>single</strong> Bitcoin attestation (as not more than one valid attestation is necessary and less bytes is better than more) and no reference to "pending" attestations since they are useless in this context.</li>
+</ul>
+<h3>Example OpenTimestamps proof verification flow</h3>
+<p>Using <a href="https://github.com/fiatjaf/nak"><code>nak</code></a>, <a href="https://jqlang.github.io/jq/"><code>jq</code></a> and <a href="https://github.com/fiatjaf/ots"><code>ots</code></a>:</p>
+<pre><code class="language-bash">~&gt; nak req -i e71c6ea722987debdb60f81f9ea4f604b5ac0664120dd64fb9d23abc4ec7c323 wss://nostr-pub.wellorder.net | jq -r .content | ots verify
+&gt; using an esplora server at https://blockstream.info/api
+- sequence ending on block 810391 is valid
+timestamp validated at block [810391]
+</code></pre>

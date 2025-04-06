@@ -1,0 +1,65 @@
+<h1>Breaking Changes</h1>
+<p>This is a history of NIP changes that potentially break pre-existing implementations, in
+reverse chronological order.</p>
+<table><thead><tr><th>Date</th><th>Commit</th><th>NIP</th><th>Change</th></tr></thead><tbody>
+<tr><td>2025-02-14</td><td><a href="https://github.com/nostr-protocol/nips/commit/81908b6e">81908b6e</a></td><td><a href="07.md">07</a>, <a href="46.md">46</a>, <a href="55.md">55</a></td><td><code>getRelays</code> and <code>get_relays</code> were removed</td></tr>
+<tr><td>2025-02-07</td><td><a href="https://github.com/nostr-protocol/nips/commit/0023ca81">0023ca81</a></td><td><a href="10.md">10</a></td><td><code>"mention"</code> marker was removed</td></tr>
+<tr><td>2025-01-31</td><td><a href="https://github.com/nostr-protocol/nips/commit/6a4b125a">6a4b125a</a></td><td><a href="71.md">71</a></td><td>video events were changed to regular</td></tr>
+<tr><td>2024-12-05</td><td><a href="https://github.com/nostr-protocol/nips/commit/6d16019e">6d16019e</a></td><td><a href="46.md">46</a></td><td>message encryption was changed to NIP-44</td></tr>
+<tr><td>2024-11-12</td><td><a href="https://github.com/nostr-protocol/nips/commit/2838e3bd">2838e3bd</a></td><td><a href="29.md">29</a></td><td><code>kind: 12</code> and <code>kind: 10</code> were removed (use <code>kind: 1111</code> instead)</td></tr>
+<tr><td>2024-11-12</td><td><a href="https://github.com/nostr-protocol/nips/commit/926a51e7">926a51e7</a></td><td><a href="46.md">46</a></td><td>NIP-05 login was removed</td></tr>
+<tr><td>2024-11-12</td><td><a href="https://github.com/nostr-protocol/nips/commit/926a51e7">926a51e7</a></td><td><a href="46.md">46</a></td><td><code>create_account</code> method was removed</td></tr>
+<tr><td>2024-11-12</td><td><a href="https://github.com/nostr-protocol/nips/commit/926a51e7">926a51e7</a></td><td><a href="46.md">46</a></td><td><code>connect</code> params and result were changed</td></tr>
+<tr><td>2024-10-29</td><td><a href="https://github.com/nostr-protocol/nips/commit/f1e8d2c4">f1e8d2c4</a></td><td><a href="46.md">46</a></td><td>bunker URL should use <code>remote-signer-key</code></td></tr>
+<tr><td>2024-10-15</td><td><a href="https://github.com/nostr-protocol/nips/commit/1cda2dcc">1cda2dcc</a></td><td><a href="71.md">71</a></td><td>some tags were replaced with <code>imeta</code> tag</td></tr>
+<tr><td>2024-10-15</td><td><a href="https://github.com/nostr-protocol/nips/commit/1cda2dcc">1cda2dcc</a></td><td><a href="71.md">71</a></td><td><code>kind: 34237</code> was dropped</td></tr>
+<tr><td>2024-10-07</td><td><a href="https://github.com/nostr-protocol/nips/commit/7bb8997b">7bb8997b</a></td><td><a href="55.md">55</a></td><td>some fields and passing data were changed</td></tr>
+<tr><td>2024-08-18</td><td><a href="https://github.com/nostr-protocol/nips/commit/3aff37bd">3aff37bd</a></td><td><a href="54.md">54</a></td><td>content should be Asciidoc</td></tr>
+<tr><td>2024-07-31</td><td><a href="https://github.com/nostr-protocol/nips/commit/3ea2f1a4">3ea2f1a4</a></td><td><a href="45.md">45</a></td><td><a href="https://github.com/nostr-protocol/nips/commit/444ad28d">444ad28d</a> was reverted</td></tr>
+<tr><td>2024-07-30</td><td><a href="https://github.com/nostr-protocol/nips/commit/444ad28d">444ad28d</a></td><td><a href="45.md">45</a></td><td>NIP-45 was deprecated</td></tr>
+<tr><td>2024-07-26</td><td><a href="https://github.com/nostr-protocol/nips/commit/ecee40df">ecee40df</a></td><td><a href="19.md">19</a></td><td><code>nrelay</code> was deprecated</td></tr>
+<tr><td>2024-07-23</td><td><a href="https://github.com/nostr-protocol/nips/commit/0227a2cd">0227a2cd</a></td><td><a href="01.md">01</a></td><td>events should be sorted by id after created_at</td></tr>
+<tr><td>2024-06-06</td><td><a href="https://github.com/nostr-protocol/nips/commit/58e94b20">58e94b20</a></td><td><a href="25.md">25</a></td><td><a href="https://github.com/nostr-protocol/nips/commit/8073c848">8073c848</a> was reverted</td></tr>
+<tr><td>2024-06-06</td><td><a href="https://github.com/nostr-protocol/nips/commit/a6dfc7b5">a6dfc7b5</a></td><td><a href="55.md">55</a></td><td>NIP number was changed</td></tr>
+<tr><td>2024-05-25</td><td><a href="https://github.com/nostr-protocol/nips/commit/5d1d1c17">5d1d1c17</a></td><td><a href="71.md">71</a></td><td><code>aes-256-gcm</code> tag was removed</td></tr>
+<tr><td>2024-05-07</td><td><a href="https://github.com/nostr-protocol/nips/commit/8073c848">8073c848</a></td><td><a href="25.md">25</a></td><td>e-tags were changed to not include entire thread</td></tr>
+<tr><td>2024-04-30</td><td><a href="https://github.com/nostr-protocol/nips/commit/bad88262">bad88262</a></td><td><a href="34.md">34</a></td><td><code>earliest-unique-commit</code> tag was removed (use <code>r</code> tag instead)</td></tr>
+<tr><td>2024-02-25</td><td><a href="https://github.com/nostr-protocol/nips/commit/4a171cb0">4a171cb0</a></td><td><a href="18.md">18</a></td><td>quote repost should use <code>q</code> tag</td></tr>
+<tr><td>2024-02-21</td><td><a href="https://github.com/nostr-protocol/nips/commit/c6cd655c">c6cd655c</a></td><td><a href="46.md">46</a></td><td>Params were stringified</td></tr>
+<tr><td>2024-02-16</td><td><a href="https://github.com/nostr-protocol/nips/commit/cbec02ab">cbec02ab</a></td><td><a href="49.md">49</a></td><td>Password first normalized to NFKC</td></tr>
+<tr><td>2024-02-15</td><td><a href="https://github.com/nostr-protocol/nips/commit/afbb8dd0">afbb8dd0</a></td><td><a href="39.md">39</a></td><td>PGP identity was removed</td></tr>
+<tr><td>2024-02-07</td><td><a href="https://github.com/nostr-protocol/nips/commit/d3dad114">d3dad114</a></td><td><a href="46.md">46</a></td><td>Connection token format was changed</td></tr>
+<tr><td>2024-01-30</td><td><a href="https://github.com/nostr-protocol/nips/commit/1a2b21b6">1a2b21b6</a></td><td><a href="59.md">59</a></td><td><code>p</code> tag became optional</td></tr>
+<tr><td>2023-01-27</td><td><a href="https://github.com/nostr-protocol/nips/commit/c2f34817">c2f34817</a></td><td><a href="47.md">47</a></td><td>optional expiration tag should be honored</td></tr>
+<tr><td>2024-01-10</td><td><a href="https://github.com/nostr-protocol/nips/commit/3d8652ea">3d8652ea</a></td><td><a href="02.md">02</a>, <a href="51.md">51</a></td><td>list entries should be chronological</td></tr>
+<tr><td>2023-12-30</td><td><a href="https://github.com/nostr-protocol/nips/commit/29869821">29869821</a></td><td><a href="52.md">52</a></td><td><code>name</code> tag was removed (use <code>title</code> tag instead)</td></tr>
+<tr><td>2023-12-27</td><td><a href="https://github.com/nostr-protocol/nips/commit/17c67ef5">17c67ef5</a></td><td><a href="94.md">94</a></td><td><code>aes-256-gcm</code> tag was removed</td></tr>
+<tr><td>2023-12-03</td><td><a href="https://github.com/nostr-protocol/nips/commit/0ba45895">0ba45895</a></td><td><a href="01.md">01</a></td><td>WebSocket status code <code>4000</code> was replaced by <code>CLOSED</code> message</td></tr>
+<tr><td>2023-11-28</td><td><a href="https://github.com/nostr-protocol/nips/commit/6de35f9e">6de35f9e</a></td><td><a href="89.md">89</a></td><td><code>client</code> tag value was changed</td></tr>
+<tr><td>2023-11-20</td><td><a href="https://github.com/nostr-protocol/nips/commit/7822a8b1">7822a8b1</a></td><td><a href="51.md">51</a></td><td><code>kind: 30001</code> was deprecated</td></tr>
+<tr><td>2023-11-20</td><td><a href="https://github.com/nostr-protocol/nips/commit/7822a8b1">7822a8b1</a></td><td><a href="51.md">51</a></td><td>the meaning of <code>kind: 30000</code> was changed</td></tr>
+<tr><td>2023-11-11</td><td><a href="https://github.com/nostr-protocol/nips/commit/cbdca1e9">cbdca1e9</a></td><td><a href="84.md">84</a></td><td><code>range</code> tag was removed</td></tr>
+<tr><td>2023-11-10</td><td><a href="https://github.com/nostr-protocol/nips/commit/c945d8bd">c945d8bd</a></td><td><a href="32.md">32</a></td><td><code>l</code> tag annotations was removed</td></tr>
+<tr><td>2023-11-07</td><td><a href="https://github.com/nostr-protocol/nips/commit/108b7f16">108b7f16</a></td><td><a href="01.md">01</a></td><td><code>OK</code> message must have 4 items</td></tr>
+<tr><td>2023-10-17</td><td><a href="https://github.com/nostr-protocol/nips/commit/cf672b76">cf672b76</a></td><td><a href="03.md">03</a></td><td><code>block</code> tag was removed</td></tr>
+<tr><td>2023-09-29</td><td><a href="https://github.com/nostr-protocol/nips/commit/7dc6385f">7dc6385f</a></td><td><a href="57.md">57</a></td><td>optional <code>a</code> tag was included in <code>zap receipt</code></td></tr>
+<tr><td>2023-08-21</td><td><a href="https://github.com/nostr-protocol/nips/commit/89915e02">89915e02</a></td><td><a href="11.md">11</a></td><td><code>min_prefix</code> was removed</td></tr>
+<tr><td>2023-08-20</td><td><a href="https://github.com/nostr-protocol/nips/commit/37c4375e">37c4375e</a></td><td><a href="01.md">01</a></td><td>replaceable events with same timestamp should be retained event with lowest id</td></tr>
+<tr><td>2023-08-15</td><td><a href="https://github.com/nostr-protocol/nips/commit/88ee873c">88ee873c</a></td><td><a href="15.md">15</a></td><td><code>countries</code> tag was renamed to <code>regions</code></td></tr>
+<tr><td>2023-08-14</td><td><a href="https://github.com/nostr-protocol/nips/commit/72bb8a12">72bb8a12</a></td><td><a href="12.md">12</a>, <a href="16.md">16</a>, <a href="20.md">20</a>, <a href="33.md">33</a></td><td>NIP-12, 16, 20 and 33 were merged into NIP-01</td></tr>
+<tr><td>2023-08-11</td><td><a href="https://github.com/nostr-protocol/nips/commit/d87f8617">d87f8617</a></td><td><a href="25.md">25</a></td><td>empty <code>content</code> should be considered as "+"</td></tr>
+<tr><td>2023-08-01</td><td><a href="https://github.com/nostr-protocol/nips/commit/5d63b157">5d63b157</a></td><td><a href="57.md">57</a></td><td><code>zap</code> tag was changed</td></tr>
+<tr><td>2023-07-15</td><td><a href="https://github.com/nostr-protocol/nips/commit/d1814405">d1814405</a></td><td><a href="01.md">01</a></td><td><code>since</code> and <code>until</code> filters should be <code>since &lt;= created_at &lt;= until</code></td></tr>
+<tr><td>2023-07-12</td><td><a href="https://github.com/nostr-protocol/nips/commit/a1cd2bd8">a1cd2bd8</a></td><td><a href="25.md">25</a></td><td>custom emoji was supported</td></tr>
+<tr><td>2023-06-18</td><td><a href="https://github.com/nostr-protocol/nips/commit/83cbd3e1">83cbd3e1</a></td><td><a href="11.md">11</a></td><td><code>image</code> was renamed to <code>icon</code></td></tr>
+<tr><td>2023-04-13</td><td><a href="https://github.com/nostr-protocol/nips/commit/bf0a0da6">bf0a0da6</a></td><td><a href="15.md">15</a></td><td>different NIP was re-added as NIP-15</td></tr>
+<tr><td>2023-04-09</td><td><a href="https://github.com/nostr-protocol/nips/commit/fb5b7c73">fb5b7c73</a></td><td><a href="15.md">15</a></td><td>NIP-15 was merged into NIP-01</td></tr>
+<tr><td>2023-03-29</td><td><a href="https://github.com/nostr-protocol/nips/commit/599e1313">599e1313</a></td><td><a href="18.md">18</a></td><td>NIP-18 was bring back</td></tr>
+<tr><td>2023-03-15</td><td><a href="https://github.com/nostr-protocol/nips/commit/e1004d3d">e1004d3d</a></td><td><a href="19.md">19</a></td><td><code>1: relay</code> was changed to optionally</td></tr>
+</tbody></table>
+<p>Breaking changes prior to 2023-03-01 are not yet documented.</p>
+<h2>NOTES</h2>
+<ul>
+<li>If it isn't clear that a change is breaking or not, we list it.</li>
+<li>The date is the date it was merged, not necessarily the date of the commit.</li>
+</ul>

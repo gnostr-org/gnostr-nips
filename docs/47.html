@@ -1,0 +1,439 @@
+<h1>NIP-47</h1>
+<h2>Nostr Wallet Connect (NWC)</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2>Rationale</h2>
+<p>This NIP describes a way for clients to access a remote lightning wallet through a standardized protocol. Custodians may implement this, or the user may run a bridge that bridges their wallet/node and the Nostr Wallet Connect protocol.</p>
+<h2>Terms</h2>
+<ul>
+<li><strong>client</strong>: Nostr app on any platform that wants to interact with a lightning wallet.</li>
+<li><strong>user</strong>: The person using the <strong>client</strong>, and wants to connect their wallet to their <strong>client</strong>.</li>
+<li><strong>wallet service</strong>: Nostr app that typically runs on an always-on computer (eg. in the cloud or on a Raspberry Pi).  This app has access to the APIs of the wallets it serves.</li>
+</ul>
+<h2>Theory of Operation</h2>
+<p>Fundamentally NWC is communication between a <strong>client</strong> and <strong>wallet service</strong> by the means of E2E-encrypted direct messages over a nostr relay. The relay knows the kinds and tags of notes, but not the content of the encrypted payloads. The <strong>user</strong>'s identity key is not used to avoid linking payment activity to the user. Ideally unique keys are used for each individual connection.</p>
+<ol>
+<li>
+<p><strong>Users</strong> who wish to use this NIP to allow <strong>client(s)</strong> to interact with their wallet must first acquire a special "connection" URI from their NIP-47 compliant wallet application.  The wallet application may provide this URI using a QR screen, or a pasteable string, or some other means.</p>
+</li>
+<li>
+<p>The <strong>user</strong> should then copy this URI into their <strong>client(s)</strong> by pasting, or scanning the QR, etc.  The <strong>client(s)</strong> should save this URI and use it later whenever the <strong>user</strong> (or the <strong>client</strong> on the user's behalf) wants to interact with the wallet.  The <strong>client</strong> should then request an <code>info</code> (13194) event from the relay(s) specified in the URI.  The <strong>wallet service</strong> will have sent that event to those relays earlier, and the relays will hold it as a replaceable event.</p>
+</li>
+<li>
+<p>When the <strong>user</strong> initiates a payment their nostr <strong>client</strong> create a <code>pay_invoice</code> request, encrypts it using a token from the URI, and sends it (kind 23194) to the relay(s) specified in the connection URI.  The <strong>wallet service</strong> will be listening on those relays and will decrypt the request and then contact the <strong>user's</strong> wallet application to send the payment.  The <strong>wallet service</strong> will know how to talk to the wallet application because the connection URI specified relay(s) that have access to the wallet app API.</p>
+</li>
+<li>
+<p>Once the payment is complete the <strong>wallet service</strong> will send an encrypted <code>response</code> (kind 23195) to the <strong>user</strong> over the relay(s) in the URI.</p>
+</li>
+<li>
+<p>The <strong>wallet service</strong> may send encrypted notifications (kind 23196) of wallet events (such as a received payment) to the <strong>client</strong>.</p>
+</li>
+</ol>
+<h2>Events</h2>
+<p>There are four event kinds:</p>
+<ul>
+<li><code>NIP-47 info event</code>: 13194</li>
+<li><code>NIP-47 request</code>: 23194</li>
+<li><code>NIP-47 response</code>: 23195</li>
+<li><code>NIP-47 notification event</code>: 23196</li>
+</ul>
+<h3>Info Event</h3>
+<p>The info event should be a replaceable event that is published by the <strong>wallet service</strong> on the relay to indicate which capabilities it supports.</p>
+<p>The content should be a plaintext string with the supported capabilities space-separated, eg. <code>pay_invoice get_balance notifications</code>.</p>
+<p>If the <strong>wallet service</strong> supports notifications, the info event SHOULD contain a <code>notifications</code> tag with the supported notification types space-separated, eg. <code>payment_received payment_sent</code>.</p>
+<h3>Request and Response Events</h3>
+<p>Both the request and response events SHOULD contain one <code>p</code> tag, containing the public key of the <strong>wallet service</strong> if this is a request, and the public key of the <strong>client</strong> if this is a response. The response event SHOULD contain an <code>e</code> tag with the id of the request event it is responding to.
+Optionally, a request can have an <code>expiration</code> tag that has a unix timestamp in seconds. If the request is received after this timestamp, it should be ignored.</p>
+<p>The content of requests and responses is encrypted with <a href="04.md">NIP04</a>, and is a JSON-RPCish object with a semi-fixed structure:</p>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "pay_invoice", // method, string
+    "params": { // params, object
+        "invoice": "lnbc50n1..." // command-related data
+    }
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "pay_invoice", //indicates the structure of the result field
+    "error": { //object, non-null in case of error
+        "code": "UNAUTHORIZED", //string error code, see below
+        "message": "human readable error message"
+    },
+    "result": { // result, object. null in case of error.
+        "preimage": "0123456789abcdef..." // command-related data
+    }
+}
+</code></pre>
+<p>The <code>result_type</code> field MUST contain the name of the method that this event is responding to.
+The <code>error</code> field MUST contain a <code>message</code> field with a human readable error message and a <code>code</code> field with the error code if the command was not successful.
+If the command was successful, the <code>error</code> field must be null.</p>
+<h3>Notification Events</h3>
+<p>The notification event SHOULD contain one <code>p</code> tag, the public key of the <strong>client</strong>.</p>
+<p>The content of notifications is encrypted with <a href="04.md">NIP04</a>, and is a JSON-RPCish object with a semi-fixed structure:</p>
+<pre><code class="language-jsonc">{
+    "notification_type": "payment_received", //indicates the structure of the notification field
+    "notification": {
+        "payment_hash": "0123456789abcdef..." // notification-related data
+    }
+}
+</code></pre>
+<h3>Error codes</h3>
+<ul>
+<li><code>RATE_LIMITED</code>: The client is sending commands too fast. It should retry in a few seconds.</li>
+<li><code>NOT_IMPLEMENTED</code>: The command is not known or is intentionally not implemented.</li>
+<li><code>INSUFFICIENT_BALANCE</code>: The wallet does not have enough funds to cover a fee reserve or the payment amount.</li>
+<li><code>QUOTA_EXCEEDED</code>: The wallet has exceeded its spending quota.</li>
+<li><code>RESTRICTED</code>: This public key is not allowed to do this operation.</li>
+<li><code>UNAUTHORIZED</code>: This public key has no wallet connected.</li>
+<li><code>INTERNAL</code>: An internal error.</li>
+<li><code>OTHER</code>: Other error.</li>
+</ul>
+<h2>Nostr Wallet Connect URI</h2>
+<p>Communication between the <strong>client</strong> and <strong>wallet service</strong> requires two keys in order to encrypt and decrypt messages. The connection URI includes the secret key of the <strong>client</strong> and only the public key of the <strong>wallet service</strong>.</p>
+<p>The <strong>client</strong> discovers <strong>wallet service</strong> by scanning a QR code, handling a deeplink or pasting in a URI.</p>
+<p>The <strong>wallet service</strong> generates this connection URI with protocol <code>nostr+walletconnect://</code> and base path its 32-byte hex-encoded <code>pubkey</code>, which SHOULD be unique per client connection.</p>
+<p>The connection URI contains the following query string parameters:</p>
+<ul>
+<li><code>relay</code> Required. URL of the relay where the <strong>wallet service</strong> is connected and will be listening for events. May be more than one.</li>
+<li><code>secret</code> Required. 32-byte randomly generated hex encoded string. The <strong>client</strong> MUST use this to sign events and encrypt payloads when communicating with the <strong>wallet service</strong>. The <strong>wallet service</strong> MUST use the corresponding public key of this secret to communicate with the <strong>client</strong>.
+<ul>
+<li>Authorization does not require passing keys back and forth.</li>
+<li>The user can have different keys for different applications. Keys can be revoked and created at will and have arbitrary constraints (eg. budgets).</li>
+<li>The key is harder to leak since it is not shown to the user and backed up.</li>
+<li>It improves privacy because the user's main key would not be linked to their payments.</li>
+</ul>
+</li>
+<li><code>lud16</code> Recommended. A lightning address that clients can use to automatically setup the <code>lud16</code> field on the user's profile if they have none configured.</li>
+</ul>
+<p>The <strong>client</strong> should then store this connection and use it when the user wants to perform actions like paying an invoice. Due to this NIP using ephemeral events, it is recommended to pick relays that do not close connections on inactivity to not drop events, and ideally retain the events until they are either consumed or become stale.</p>
+<ul>
+<li>When the <strong>client</strong> sends or receives a message it will use the <code>secret</code> from the connection URI and <strong>wallet service</strong>'s <code>pubkey</code> to encrypt or decrypt.</li>
+<li>When the <strong>wallet service</strong> sends or receives a message it will use its own secret and the corresponding pubkey of the <strong>client's</strong> <code>secret</code> to encrypt or decrypt. The <strong>wallet service</strong> SHOULD NOT store the secret it generates for the client and MUST NOT rely on the knowing the <strong>client</strong> secret for general operation.</li>
+</ul>
+<h3>Example connection string</h3>
+<pre><code class="language-sh">nostr+walletconnect://b889ff5b1513b641e2a139f661a661364979c5beee91842f8f0ef42ab558e9d4?relay=wss%3A%2F%2Frelay.damus.io&amp;secret=71a8c14c1407c113601079c4302dab36460f0ccd0ad506f1f2dc73b5100e4f3c
+</code></pre>
+<h2>Commands</h2>
+<h3><code>pay_invoice</code></h3>
+<p>Description: Requests payment of an invoice.</p>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "pay_invoice",
+    "params": {
+        "invoice": "lnbc50n1...", // bolt11 invoice
+        "amount": 123, // invoice amount in msats, optional
+    }
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "pay_invoice",
+    "result": {
+        "preimage": "0123456789abcdef...", // preimage of the payment
+        "fees_paid": 123, // value in msats, optional
+    }
+}
+</code></pre>
+<p>Errors:</p>
+<ul>
+<li><code>PAYMENT_FAILED</code>: The payment failed. This may be due to a timeout, exhausting all routes, insufficient capacity or similar.</li>
+</ul>
+<h3><code>multi_pay_invoice</code></h3>
+<p>Description: Requests payment of multiple invoices.</p>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "multi_pay_invoice",
+    "params": {
+        "invoices": [
+          {"id":"4da52c32a1", "invoice": "lnbc1...", "amount": 123}, // bolt11 invoice and amount in msats, amount is optional
+          {"id":"3da52c32a1", "invoice": "lnbc50n1..."},
+        ],
+    }
+}
+</code></pre>
+<p>Response:</p>
+<p>For every invoice in the request, a separate response event is sent. To differentiate between the responses, each
+response event contains a <code>d</code> tag with the id of the invoice it is responding to; if no id was given, then the
+payment hash of the invoice should be used.</p>
+<pre><code class="language-jsonc">{
+    "result_type": "multi_pay_invoice",
+    "result": {
+        "preimage": "0123456789abcdef...", // preimage of the payment
+        "fees_paid": 123, // value in msats, optional
+    }
+}
+</code></pre>
+<p>Errors:</p>
+<ul>
+<li><code>PAYMENT_FAILED</code>: The payment failed. This may be due to a timeout, exhausting all routes, insufficient capacity or similar.</li>
+</ul>
+<h3><code>pay_keysend</code></h3>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "pay_keysend",
+    "params": {
+        "amount": 123, // invoice amount in msats, required
+        "pubkey": "03...", // payee pubkey, required
+        "preimage": "0123456789abcdef...", // preimage of the payment, optional
+        "tlv_records": [ // tlv records, optional
+            {
+                "type": 5482373484, // tlv type
+                "value": "0123456789abcdef" // hex encoded tlv value
+            }
+        ]
+    }
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "pay_keysend",
+    "result": {
+        "preimage": "0123456789abcdef...", // preimage of the payment
+        "fees_paid": 123, // value in msats, optional
+    }
+}
+</code></pre>
+<p>Errors:</p>
+<ul>
+<li><code>PAYMENT_FAILED</code>: The payment failed. This may be due to a timeout, exhausting all routes, insufficient capacity or similar.</li>
+</ul>
+<h3><code>multi_pay_keysend</code></h3>
+<p>Description: Requests multiple keysend payments.</p>
+<p>Has an array of keysends, these follow the same semantics as <code>pay_keysend</code>, just done in a batch</p>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "multi_pay_keysend",
+    "params": {
+        "keysends": [
+          {"id": "4c5b24a351", "pubkey": "03...", "amount": 123},
+          {"id": "3da52c32a1", "pubkey": "02...", "amount": 567, "preimage": "abc123..", "tlv_records": [{"type": 696969, "value": "77616c5f6872444873305242454d353736"}]},
+        ],
+    }
+}
+</code></pre>
+<p>Response:</p>
+<p>For every keysend in the request, a separate response event is sent. To differentiate between the responses, each
+response event contains a <code>d</code> tag with the id of the keysend it is responding to; if no id was given, then the
+pubkey should be used.</p>
+<pre><code class="language-jsonc">{
+    "result_type": "multi_pay_keysend",
+    "result": {
+        "preimage": "0123456789abcdef...", // preimage of the payment
+        "fees_paid": 123, // value in msats, optional
+    }
+}
+</code></pre>
+<p>Errors:</p>
+<ul>
+<li><code>PAYMENT_FAILED</code>: The payment failed. This may be due to a timeout, exhausting all routes, insufficient capacity or similar.</li>
+</ul>
+<h3><code>make_invoice</code></h3>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "make_invoice",
+    "params": {
+        "amount": 123, // value in msats
+        "description": "string", // invoice's description, optional
+        "description_hash": "string", // invoice's description hash, optional
+        "expiry": 213 // expiry in seconds from time invoice is created, optional
+    }
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "make_invoice",
+    "result": {
+        "type": "incoming", // "incoming" for invoices, "outgoing" for payments
+        "invoice": "string", // encoded invoice, optional
+        "description": "string", // invoice's description, optional
+        "description_hash": "string", // invoice's description hash, optional
+        "preimage": "string", // payment's preimage, optional if unpaid
+        "payment_hash": "string", // Payment hash for the payment
+        "amount": 123, // value in msats
+        "fees_paid": 123, // value in msats
+        "created_at": unixtimestamp, // invoice/payment creation time
+        "expires_at": unixtimestamp, // invoice expiration time, optional if not applicable
+        "metadata": {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+    }
+}
+</code></pre>
+<h3><code>lookup_invoice</code></h3>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "lookup_invoice",
+    "params": {
+        "payment_hash": "31afdf1..", // payment hash of the invoice, one of payment_hash or invoice is required
+        "invoice": "lnbc50n1..." // invoice to lookup
+    }
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "lookup_invoice",
+    "result": {
+        "type": "incoming", // "incoming" for invoices, "outgoing" for payments
+        "invoice": "string", // encoded invoice, optional
+        "description": "string", // invoice's description, optional
+        "description_hash": "string", // invoice's description hash, optional
+        "preimage": "string", // payment's preimage, optional if unpaid
+        "payment_hash": "string", // Payment hash for the payment
+        "amount": 123, // value in msats
+        "fees_paid": 123, // value in msats
+        "created_at": unixtimestamp, // invoice/payment creation time
+        "expires_at": unixtimestamp, // invoice expiration time, optional if not applicable
+        "settled_at": unixtimestamp, // invoice/payment settlement time, optional if unpaid
+        "metadata": {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+    }
+}
+</code></pre>
+<p>Errors:</p>
+<ul>
+<li><code>NOT_FOUND</code>: The invoice could not be found by the given parameters.</li>
+</ul>
+<h3><code>list_transactions</code></h3>
+<p>Lists invoices and payments. If <code>type</code> is not specified, both invoices and payments are returned.
+The <code>from</code> and <code>until</code> parameters are timestamps in seconds since epoch. If <code>from</code> is not specified, it defaults to 0.
+If <code>until</code> is not specified, it defaults to the current time. Transactions are returned in descending order of creation
+time.</p>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "list_transactions",
+    "params": {
+        "from": 1693876973, // starting timestamp in seconds since epoch (inclusive), optional
+        "until": 1703225078, // ending timestamp in seconds since epoch (inclusive), optional
+        "limit": 10, // maximum number of invoices to return, optional
+        "offset": 0, // offset of the first invoice to return, optional
+        "unpaid": true, // include unpaid invoices, optional, default false
+        "type": "incoming", // "incoming" for invoices, "outgoing" for payments, undefined for both
+    }
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "list_transactions",
+    "result": {
+        "transactions": [
+            {
+               "type": "incoming", // "incoming" for invoices, "outgoing" for payments
+               "invoice": "string", // encoded invoice, optional
+               "description": "string", // invoice's description, optional
+               "description_hash": "string", // invoice's description hash, optional
+               "preimage": "string", // payment's preimage, optional if unpaid
+               "payment_hash": "string", // Payment hash for the payment
+               "amount": 123, // value in msats
+               "fees_paid": 123, // value in msats
+               "created_at": unixtimestamp, // invoice/payment creation time
+               "expires_at": unixtimestamp, // invoice expiration time, optional if not applicable
+               "settled_at": unixtimestamp, // invoice/payment settlement time, optional if unpaid
+               "metadata": {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+           }
+        ],
+    },
+}
+</code></pre>
+<h3><code>get_balance</code></h3>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "get_balance",
+    "params": {}
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "get_balance",
+    "result": {
+        "balance": 10000, // user's balance in msats
+    }
+}
+</code></pre>
+<h3><code>get_info</code></h3>
+<p>Request:</p>
+<pre><code class="language-jsonc">{
+    "method": "get_info",
+    "params": {}
+}
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-jsonc">{
+    "result_type": "get_info",
+    "result": {
+            "alias": "string",
+            "color": "hex string",
+            "pubkey": "hex string",
+            "network": "string", // mainnet, testnet, signet, or regtest
+            "block_height": 1,
+            "block_hash": "hex string",
+            "methods": ["pay_invoice", "get_balance", "make_invoice", "lookup_invoice", "list_transactions", "get_info"], // list of supported methods for this connection
+            "notifications": ["payment_received", "payment_sent"], // list of supported notifications for this connection, optional.
+    }
+}
+</code></pre>
+<h2>Notifications</h2>
+<h3><code>payment_received</code></h3>
+<p>Description: A payment was successfully received by the wallet.</p>
+<p>Notification:</p>
+<pre><code class="language-jsonc">{
+    "notification_type": "payment_received",
+    "notification": {
+        "type": "incoming",
+        "invoice": "string", // encoded invoice
+        "description": "string", // invoice's description, optional
+        "description_hash": "string", // invoice's description hash, optional
+        "preimage": "string", // payment's preimage
+        "payment_hash": "string", // Payment hash for the payment
+        "amount": 123, // value in msats
+        "fees_paid": 123, // value in msats
+        "created_at": unixtimestamp, // invoice/payment creation time
+        "expires_at": unixtimestamp, // invoice expiration time, optional if not applicable
+        "settled_at": unixtimestamp, // invoice/payment settlement time
+        "metadata": {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+    }
+}
+</code></pre>
+<h3><code>payment_sent</code></h3>
+<p>Description: A payment was successfully sent by the wallet.</p>
+<p>Notification:</p>
+<pre><code class="language-jsonc">{
+    "notification_type": "payment_sent",
+    "notification": {
+        "type": "outgoing",
+        "invoice": "string", // encoded invoice
+        "description": "string", // invoice's description, optional
+        "description_hash": "string", // invoice's description hash, optional
+        "preimage": "string", // payment's preimage
+        "payment_hash": "string", // Payment hash for the payment
+        "amount": 123, // value in msats
+        "fees_paid": 123, // value in msats
+        "created_at": unixtimestamp, // invoice/payment creation time
+        "expires_at": unixtimestamp, // invoice expiration time, optional if not applicable
+        "settled_at": unixtimestamp, // invoice/payment settlement time
+        "metadata": {} // generic metadata that can be used to add things like zap/boostagram details for a payer name/comment/etc.
+    }
+}
+</code></pre>
+<h2>Example pay invoice flow</h2>
+<ol start="0">
+<li>The user scans the QR code generated by the <strong>wallet service</strong> with their <strong>client</strong> application, they follow a <code>nostr+walletconnect://</code> deeplink or configure the connection details manually.</li>
+<li><strong>client</strong> sends an event to the <strong>wallet service</strong> with kind <code>23194</code>. The content is a <code>pay_invoice</code> request. The private key is the secret from the connection string above.</li>
+<li><strong>wallet service</strong> verifies that the author's key is authorized to perform the payment, decrypts the payload and sends the payment.</li>
+<li><strong>wallet service</strong> responds to the event by sending an event with kind <code>23195</code> and content being a response either containing an error message or a preimage.</li>
+</ol>
+<h2>Using a dedicated relay</h2>
+<p>This NIP does not specify any requirements on the type of relays used. However, if the user is using a custodial service it might make sense to use a relay that is hosted by the custodial service. The relay may then enforce authentication to prevent metadata leaks. Not depending on a 3rd party relay would also improve reliability in this case.</p>
+<h2>Appendix</h2>
+<h3>Example NIP-47 info event</h3>
+<pre><code class="language-jsonc">{
+  "id": "df467db0a9f9ec77ffe6f561811714ccaa2e26051c20f58f33c3d66d6c2b4d1c",
+  "pubkey": "c04ccd5c82fc1ea3499b9c6a5c0a7ab627fbe00a0116110d4c750faeaecba1e2",
+  "created_at": 1713883677,
+  "kind": 13194,
+  "tags": [
+    [
+      "notifications",
+      "payment_received payment_sent"
+    ]
+  ],
+  "content": "pay_invoice pay_keysend get_balance get_info make_invoice lookup_invoice list_transactions multi_pay_invoice multi_pay_keysend sign_message notifications",
+  "sig": "31f57b369459b5306a5353aa9e03be7fbde169bc881c3233625605dd12f53548179def16b9fe1137e6465d7e4d5bb27ce81fd6e75908c46b06269f4233c845d8"
+}
+</code></pre>
