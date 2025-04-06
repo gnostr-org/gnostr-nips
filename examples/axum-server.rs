@@ -1,3 +1,5 @@
+use axum::Router;
+use axum::routing::get;
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
@@ -8,9 +10,15 @@ use std::fs::File;
 use std::io;
 use std::io::{stdout, Write};
 use std::os::unix::fs::PermissionsExt;
+//use std::os::unix::net::SocketAddr;
+use std::net::SocketAddr;
+//use std::net::TcpListener;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::process::Stdio;
+use std::sync::Arc;
+//use core::net::SocketAddr;
+//use tokio::net::unix::SocketAddr;
 use termimad::crossterm::{
     cursor::{Hide, Show},
     event::{self, Event, KeyCode::*, KeyEvent},
@@ -20,6 +28,7 @@ use termimad::crossterm::{
 };
 use termimad::*;
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
+use tokio::net::TcpListener;
 
 #[derive(Embed)]
 #[folder = "."]
@@ -233,7 +242,12 @@ fn markdown_to_html(markdown_input: &str) -> String {
     html_output
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn handler() -> &'static str {
+    "Hello, World from Axum on Tokio!"
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
     let level_filter = if args.debug {
@@ -258,7 +272,33 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-    if args.serve {}
+	if args.serve {
+
+
+		    // Define the routing for our application.
+    let app = Router::new().route("/", get(handler));
+
+    // Bind the server to a specific address and port.
+    let addr = "0.0.0.0:3000";
+    let listener = TcpListener::bind(addr).await?;
+    println!("Server listening on {}", addr);
+
+    // Start serving the application.
+    axum::serve(listener, app).await?;
+
+       //let state = Arc::new(AppState { args: args.clone() });
+       // let app = Router::new()
+       //     .route("/", get(list_files))
+       //     .route("/show/:filename", get(show_file))
+       //     .with_state(state);
+
+       // let addr = args.bind_address.parse::<SocketAddr>()?;
+       // tracing::info!("Serving on {}", addr);
+       // //axum::Server::bind(&addr)
+       // //    .serve(app.into_make_service())
+       // //    .await?;
+
+	}
     if args.export {
         tracing::info!("Exporting all embedded files to the current directory...");
         let current_dir = env::current_dir()?;
