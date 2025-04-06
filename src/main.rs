@@ -1,4 +1,5 @@
 use clap::Parser;
+use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
 use std::env;
@@ -149,10 +150,13 @@ fn view_area() -> Area {
     area
 }
 
+#[allow(unused_variables)]
 fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
-    //let res = markdown_to_html(&nip);
-    //tracing::debug!("{}", res);
+    let res = markdown_to_html(&nip);
+    tracing::debug!("{}", res);
+    print!("{}", res);
     //std::process::exit(0);
+    //#[allow(unreachable_code)]
     let mut w = stdout();
     queue!(w, EnterAlternateScreen)?;
     terminal::enable_raw_mode()?;
@@ -196,7 +200,9 @@ fn make_skin() -> MadSkin {
 }
 
 fn markdown_to_html(markdown_input: &str) -> String {
-    let parser = HTMLParser::new(markdown_input);
+    let mut options = Options::empty();
+    options.insert(Options::ENABLE_TABLES);
+    let parser = HTMLParser::new_ext(markdown_input, options);
     let mut html_output = String::new();
     html::push_html(&mut html_output, parser);
     html_output
@@ -278,6 +284,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         match Template::get(&filename) {
             Some(embedded_file) => {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
+				let res = markdown_to_html(&content);
+				tracing::debug!("{}", res);
+				print!("{}", res);
+				std::process::exit(0);
+				#[allow(unreachable_code)]
+
                 let skin = make_skin();
                 let _res = run_app(skin, (&content).to_string());
                 return Ok(());
