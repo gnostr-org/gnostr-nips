@@ -1,13 +1,15 @@
 [package]
-name = "make-just"
-version = "0.0.11"
+name = "nips"
+version = "0.0.37"
 edition = "2021"
 authors = ["randymcmillan <randymcmillan@protonmail.com>"]
-repository = "https://github.com/randymcmillan/make-just.git"
-homepage = "https://github.com/randymcmillan/make-just"
+repository = "https://github.com/gnostr-org/gnostr-nips.git"
+homepage = "https://github.com/gnostr-org/gnostr-nips"
 
 [dependencies]
+clap = { version = "4.4", features = ["derive"] }
 rust-embed = { version = "8.6.0", features = ["debug-embed", "include-exclude"] }
+termimad = "0.31.2"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 

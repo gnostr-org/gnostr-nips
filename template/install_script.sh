@@ -1,22 +1,18 @@
 #!/bin/bash
 
+#export PATH="$HOME/.cargo/bin:$PATH"
+
 # Install cargo-binstall
-curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash && cargo binstall just
+curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash 2>/dev/null && cargo binstall just
 
 # Example: Install a configuration file.
-INSTALL_DIR="$HOME/.my_app"
-CONFIG_FILE="my_config.conf"
+INSTALL_DIR="$HOME/.nips"
+CONFIG_FILE="default_config.conf"
 
 mkdir -p "$INSTALL_DIR"
-cp "$1" "$INSTALL_DIR/$CONFIG_FILE" # $1 is the first argument passed to the script, likely the config file itself.
+cp "$CONFIG_FILE" "$INSTALL_DIR/$CONFIG_FILE" # $1 is the first argument passed to the script, likely the config file itself.
 
 echo "Installed configuration to $INSTALL_DIR/$CONFIG_FILE"
-
-# Example: add a directory to the PATH.
-if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-  echo 'export PATH="$PATH:$INSTALL_DIR"' >> "$HOME/.bashrc"
-  echo "Added $INSTALL_DIR to PATH. Reload your shell."
-fi
 
 #!/usr/bin/env bash
 
@@ -96,7 +92,7 @@ cargo-report: 	### 	cargo-report
 	cargo report future-incompatibilities --id 1
 cargo-run: 	### 	cargo-run
 	@. \$(HOME)/.cargo/env
-	cargo run --bin make-just
+	cargo run --bin nips
 
 ##===============================================================================
 cargo-dist: 	### 	cargo-dist -h
@@ -123,7 +119,7 @@ if [ ! -f "$MAKEFILE" ]; then
 fi
 
 # Clear the Justfile content
-> "$JUSTFILE"
+true > "$JUSTFILE"
 
 # Add in the default recipe to Justfile
 echo "default:" >> "$JUSTFILE"

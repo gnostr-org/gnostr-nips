@@ -108,7 +108,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
 | `1`           | Short Text Note                 | [10](10.md)                            |
-| `2`           | Recommend Relay                 | 01 (deprecated)                        |
+| `2`           | Recommend Relay                 |  01 (deprecated)                       |
 | `3`           | Follows                         | [02](02.md)                            |
 | `4`           | Encrypted Direct Messages       | [04](04.md)                            |
 | `5`           | Event Deletion Request          | [09](09.md)                            |
@@ -116,9 +116,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
 | `9`           | Chat Message                    | [C7](C7.md)                            |
-| `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
+| `10`          | Group Chat Threaded Reply       |  29 (deprecated)                       |
 | `11`          | Thread                          | [7D](7D.md)                            |
-| `12`          | Group Thread Reply              | 29 (deprecated)                        |
+| `12`          | Group Thread Reply              |  29 (deprecated)                       |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
 | `15`          | File Message                    | [17](17.md)                            |
@@ -128,9 +128,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -202,7 +202,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
-| `30001`       | Generic lists                   | 51 (deprecated)                        |
+| `30001`       | Generic lists                   |  51 (deprecated)                       |
 | `30002`       | Relay sets                      | [51](51.md)                            |
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
@@ -240,8 +240,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32267`       | Software Application            |                                        |                        |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
@@ -321,20 +321,20 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
 | `content-warning` | reason                               | --                              | [36](36.md)                                        |
 | `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
-| `dep`             | Required dependency                  | --                              | [C0][C0.md]                                        |
-| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0][C0.md] |
+| `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
+| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
-| `extension`       | File extension                       | --                              | [C0][C0.md]                                        |
+| `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
-| `license`         | License of the shared content        | --                              | [C0][C0.md]                                        |
+| `license`         | License of the shared content        | --                              | [C0](C0.md)                                        |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
-| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md), [C0][C0.md] |
+| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md), [C0](C0.md) |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
 | `price`           | price                                | currency, frequency             | [99](99.md)                                        |
@@ -343,7 +343,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
-| `runtime`         | Runtime or environment specification | --                              | [C0][C0.md]                                        |
+| `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
