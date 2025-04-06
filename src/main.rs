@@ -1,4 +1,5 @@
 use clap::Parser;
+use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
 use std::env;
 use std::fs;
@@ -149,6 +150,9 @@ fn view_area() -> Area {
 }
 
 fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
+    //let res = markdown_to_html(&nip);
+    //tracing::debug!("{}", res);
+    //std::process::exit(0);
     let mut w = stdout();
     queue!(w, EnterAlternateScreen)?;
     terminal::enable_raw_mode()?;
@@ -189,6 +193,13 @@ fn make_skin() -> MadSkin {
     skin.scrollbar.thumb.set_fg(AnsiValue(178));
     skin.code_block.align = Alignment::Center;
     skin
+}
+
+fn markdown_to_html(markdown_input: &str) -> String {
+    let parser = HTMLParser::new(markdown_input);
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+    html_output
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
