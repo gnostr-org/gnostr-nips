@@ -39,7 +39,7 @@ async fn main() {
 
 fn using_serve_dir() -> Router {
     // serve the file in the "assets" directory under `/assets`
-    Router::new().nest_service("/assets", ServeDir::new("assets"))
+    Router::new().nest_service("/docs", ServeDir::new("docs"))
 }
 
 fn using_serve_dir_with_assets_fallback() -> Router {
