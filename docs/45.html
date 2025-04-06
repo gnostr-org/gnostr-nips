@@ -1,0 +1,32 @@
+<h1>NIP-45</h1>
+<h2>Event Counts</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Relays may support the verb <code>COUNT</code>, which provides a mechanism for obtaining event counts.</p>
+<h2>Motivation</h2>
+<p>Some queries a client may want to execute against connected relays are prohibitively expensive, for example, in order to retrieve follower counts for a given pubkey, a client must query all kind-3 events referring to a given pubkey only to count them. The result may be cached, either by a client or by a separate indexing server as an alternative, but both options erode the decentralization of the network by creating a second-layer protocol on top of Nostr.</p>
+<h2>Filters and return values</h2>
+<p>This NIP defines the verb <code>COUNT</code>, which accepts a subscription id and filters as specified in <a href="01.md">NIP 01</a> for the verb <code>REQ</code>. Multiple filters are OR'd together and aggregated into a single count result.</p>
+<pre><code>["COUNT", &lt;subscription_id&gt;, &lt;filters JSON&gt;...]
+</code></pre>
+<p>Counts are returned using a <code>COUNT</code> response in the form <code>{"count": &lt;integer&gt;}</code>. Relays may use probabilistic counts to reduce compute requirements.
+In case a relay uses probabilistic counts, it MAY indicate it in the response with <code>approximate</code> key i.e. <code>{"count": &lt;integer&gt;, "approximate": &lt;true|false&gt;}</code>.</p>
+<pre><code>["COUNT", &lt;subscription_id&gt;, {"count": &lt;integer&gt;}]
+</code></pre>
+<p>Whenever the relay decides to refuse to fulfill the <code>COUNT</code> request, it MUST return a <code>CLOSED</code> message.</p>
+<h2>Examples</h2>
+<h3>Followers count</h3>
+<pre><code>["COUNT", &lt;subscription_id&gt;, {"kinds": [3], "#p": [&lt;pubkey&gt;]}]
+["COUNT", &lt;subscription_id&gt;, {"count": 238}]
+</code></pre>
+<h3>Count posts and reactions</h3>
+<pre><code>["COUNT", &lt;subscription_id&gt;, {"kinds": [1, 7], "authors": [&lt;pubkey&gt;]}]
+["COUNT", &lt;subscription_id&gt;, {"count": 5}]
+</code></pre>
+<h3>Count posts approximately</h3>
+<pre><code>["COUNT", &lt;subscription_id&gt;, {"kinds": [1]}]
+["COUNT", &lt;subscription_id&gt;, {"count": 93412452, "approximate": true}]
+</code></pre>
+<h3>Relay refuses to count</h3>
+<pre><code>["COUNT", &lt;subscription_id&gt;, {"kinds": [4], "authors": [&lt;pubkey&gt;], "#p": [&lt;pubkey&gt;]}]
+["CLOSED", &lt;subscription_id&gt;, "auth-required: cannot count other people's DMs"]
+</code></pre>
