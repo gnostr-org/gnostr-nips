@@ -171,7 +171,7 @@ fn remove_md_extension(filename: &str) -> &str {
 fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
     match Template::get(filename) {
         Some(embedded_file) => {
-			let output_path = output_dir.join(remove_md_extension(filename).to_owned()+".html");
+			let output_path = output_dir.join("docs").join(remove_md_extension(filename).to_owned()+".html");
             if let Some(parent) = output_path.parent() {
                 fs::create_dir_all(parent)?;
             }
