@@ -465,27 +465,47 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 // }
 
 fn using_serve_dir_with_assets_fallback() -> Router {
-    // `ServeDir` allows setting a fallback if an asset is not found
-    // so with this `GET /assets/doesnt-exist.jpg` will return `readme.html`
-    // rather than a 404
     let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
-    //http://localhost:3000/readme
-    tracing::debug!("/docs/readme:3000");
-    //http://localhost:3000/01.md
-    tracing::debug!("/docs/01.md:3000");
-    tracing::debug!("/docs/..md:3000");
-    tracing::debug!("/docs/?.md:3000");
+    let mut router = Router::new();
 
-    Router::new()
-        .route("/readme", get(|| async { "Hi from /readme.html" })) //TODO route each nip
-        .route("/01.md", get(|| async { "Hi from /01.html" })) //TODO route each nip
-        .route("/02.md", get(|| async { "Hi from /02.html" })) //TODO route each nip
-        .route("/03.md", get(|| async { "Hi from /03.html" })) //TODO route each nip
-        .route("/04.md", get(|| async { "Hi from /04.html" })) //TODO route each nip
-        .route("/05.md", get(|| async { "Hi from /05.html" })) //TODO route each nip
+    for file in Template::iter() {
+        let filename = file.as_ref();
+        if filename.ends_with(".md") {
+            router = router.route(
+                &format!("/{}", remove_md_extension(filename)),
+                get(|| async { "TODO: Serve embedded file content here" }), // Replace with actual content serving logic
+            );
+            tracing::debug!("Route added for /{}", remove_md_extension(filename));
+        }
+    }
+
+    router
         .nest_service("/docs", serve_dir.clone())
         .fallback_service(serve_dir)
 }
+
+//fn using_serve_dir_with_assets_fallback() -> Router {
+//    // `ServeDir` allows setting a fallback if an asset is not found
+//    // so with this `GET /assets/doesnt-exist.jpg` will return `readme.html`
+//    // rather than a 404
+//    let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
+//    //http://localhost:3000/readme
+//    tracing::debug!("/docs/readme:3000");
+//    //http://localhost:3000/01.md
+//    tracing::debug!("/docs/01.md:3000");
+//    tracing::debug!("/docs/..md:3000");
+//    tracing::debug!("/docs/?.md:3000");
+//
+//    Router::new()
+//        .route("/readme", get(|| async { "Hi from /readme.html" })) //TODO route each nip
+//        .route("/01.md", get(|| async { "Hi from /01.html" })) //TODO route each nip
+//        .route("/02.md", get(|| async { "Hi from /02.html" })) //TODO route each nip
+//        .route("/03.md", get(|| async { "Hi from /03.html" })) //TODO route each nip
+//        .route("/04.md", get(|| async { "Hi from /04.html" })) //TODO route each nip
+//        .route("/05.md", get(|| async { "Hi from /05.html" })) //TODO route each nip
+//        .nest_service("/docs", serve_dir.clone())
+//        .fallback_service(serve_dir)
+//}
 
 fn using_serve_dir_only_from_root_via_fallback() -> Router {
     // you can also serve the assets directly from the root (not nested under `/docs`)
