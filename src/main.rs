@@ -1,3 +1,6 @@
+use axum::{
+    extract::Request, handler::HandlerWithoutStateExt, http::StatusCode, routing::get, Router,
+};
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
@@ -8,6 +11,7 @@ use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::{stdout, Write};
+use std::net::SocketAddr;
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -20,6 +24,11 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
+use tower::ServiceExt;
+use tower_http::{
+    services::{ServeDir, ServeFile},
+    trace::TraceLayer,
+};
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 #[derive(Embed)]
@@ -231,7 +240,8 @@ fn calculate_sha256(data: &[u8]) -> String {
     format!("{:x}", hasher.finalize())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
     let level_filter = if args.debug {
