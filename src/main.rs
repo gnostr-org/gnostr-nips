@@ -73,8 +73,14 @@ struct Args {
     list_embedded: bool,
 
     /// Show the contents of an embedded file using a pager.
-    #[clap(short, long, value_name = "NIP", default_value = "README.md")]
+    //#[clap(short, long, value_name = "NIP", default_value = "README.md")]
+    #[clap(short, long, value_name = "NIP")]
     show: Option<String>,
+
+    /// Axum Serve.
+    //#[clap(long, default_value = "false")]
+    #[clap(long, default_value = "false")]
+    serve: bool,
 
     /// Export all embedded files to the current directory.
     #[clap(short, long)]
@@ -275,7 +281,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("{}", file.as_ref());
             };
         }
-        return Ok(());
+        if !args.serve && args.list_embedded {
+            return Ok(());
+        }
     }
 
     if args.export {
@@ -293,7 +301,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         tracing::info!("Successfully exported {} embedded files.", export_count);
-        return Ok(());
+        if !args.serve && args.export {
+            return Ok(());
+        }
     }
     if let Some(export_path) = &args.export_path {
         tracing::info!(
@@ -316,7 +326,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             export_count,
             export_path.display()
         );
-        return Ok(());
+        if !args.serve && args.export_path.is_some() {
+            return Ok(());
+        }
     }
 
     if let Some(nip_arg) = &args.show {
@@ -336,7 +348,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 #[allow(unreachable_code)]
                 let skin = make_skin();
                 let _res = run_app(skin, (&content).to_string());
-                return Ok(());
+                if !args.serve && args.show.is_some() {
+                    return Ok(());
+                }
             }
             None => {
                 eprintln!("Error: Embedded NIP file '{}' not found!", filename);
@@ -365,11 +379,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         canonicalize_path(Path::new(absolute_path_str))?.display()
     );
 
+    tokio::join!(
+        serve(using_serve_dir(), 3001),
+        serve(using_serve_dir_with_assets_fallback(), 3002),
+        serve(using_serve_dir_only_from_root_via_fallback(), 3003),
+        serve(using_serve_dir_with_handler_as_service(), 3004),
+        serve(two_serve_dirs(), 3005),
+        serve(calling_serve_dir_from_a_handler(), 3006),
+        serve(using_serve_file_from_a_route(), 3307),
+    );
+
     Ok(())
 }
 
 //multi server impl
 fn using_serve_dir() -> Router {
+    tracing::debug!("/docs:3000");
     // serve the file in the "docs" directory under `/docs`
     Router::new().nest_service("/docs", ServeDir::new("docs"))
 }
@@ -379,6 +404,9 @@ fn using_serve_dir_with_assets_fallback() -> Router {
     // so with this `GET /assets/doesnt-exist.jpg` will return `readme.html`
     // rather than a 404
     let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
+    tracing::debug!("/docs/readme:3002");
+    tracing::debug!("/docs/01.md:3002");
+    tracing::debug!("/docs/...md:3002");
 
     Router::new()
         .route("/readme", get(|| async { "Hi from /readme.html" })) //TODO route each nip
@@ -393,6 +421,7 @@ fn using_serve_dir_with_assets_fallback() -> Router {
 fn using_serve_dir_only_from_root_via_fallback() -> Router {
     // you can also serve the assets directly from the root (not nested under `/assets`)
     // by only setting a `ServeDir` as the fallback
+    tracing::debug!("/assets/index.html:3003");
     let serve_dir = ServeDir::new("assets").not_found_service(ServeFile::new("assets/index.html"));
 
     Router::new()
@@ -401,6 +430,7 @@ fn using_serve_dir_only_from_root_via_fallback() -> Router {
 }
 
 fn using_serve_dir_with_handler_as_service() -> Router {
+    tracing::debug!("/assets/index.html:3004");
     async fn handle_404() -> (StatusCode, &'static str) {
         (StatusCode::NOT_FOUND, "Not found")
     }
@@ -416,6 +446,7 @@ fn using_serve_dir_with_handler_as_service() -> Router {
 }
 
 fn two_serve_dirs() -> Router {
+    tracing::debug!("/assets/index.html:3005");
     // you can also have two `ServeDir`s nested at different paths
     let serve_dir_from_assets = ServeDir::new("assets");
     let serve_dir_from_dist = ServeDir::new("dist");
@@ -427,6 +458,8 @@ fn two_serve_dirs() -> Router {
 
 #[allow(clippy::let_and_return)]
 fn calling_serve_dir_from_a_handler() -> Router {
+    tracing::debug!("/foo:3006");
+    tracing::debug!("/assets:3006");
     // via `tower::Service::call`, or more conveniently `tower::ServiceExt::oneshot` you can
     // call `ServeDir` yourself from a handler
     Router::new().nest_service(
@@ -440,6 +473,7 @@ fn calling_serve_dir_from_a_handler() -> Router {
 }
 
 fn using_serve_file_from_a_route() -> Router {
+    tracing::debug!("/foo:3307");
     Router::new().route_service("/foo", ServeFile::new("assets/index.html"))
 }
 
