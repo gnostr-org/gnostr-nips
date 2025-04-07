@@ -86,6 +86,10 @@ struct Args {
     #[clap(short, long)]
     export: bool,
 
+    /// Export all embedded files to the current directory.
+    #[clap(long)]
+    export_html: bool,
+
     /// Export all embedded files to the specified path.
     #[clap(long, value_name = "PATH")]
     export_path: Option<PathBuf>,
@@ -146,6 +150,33 @@ fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
             }
             let mut outfile = File::create(&output_path)?;
             outfile.write_all(embedded_file.data.as_ref())?;
+            tracing::debug!(
+                "Successfully exported '{}' to '{}'",
+                filename,
+                output_path.display()
+            );
+            Ok(())
+        }
+        None => Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("Embedded file '{}' not found!", filename),
+        )),
+    }
+}
+
+fn remove_md_extension(filename: &str) -> &str {
+    filename.strip_suffix(".md").unwrap_or(filename)
+}
+
+fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
+    match Template::get(filename) {
+        Some(embedded_file) => {
+			let output_path = output_dir.join(remove_md_extension(filename).to_owned()+".html");
+            if let Some(parent) = output_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            let mut outfile = File::create(&output_path)?;
+            //outfile.write_all(markdown_to_html(embedded_file.data.as_ref()))?;
             tracing::debug!(
                 "Successfully exported '{}' to '{}'",
                 filename,
@@ -302,6 +333,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         tracing::info!("Successfully exported {} embedded files.", export_count);
         if !args.serve && args.export {
+            return Ok(());
+        }
+    }
+    if args.export_html && !args.serve {
+        tracing::info!("Exporting all embedded files to the current directory...");
+        let current_dir = env::current_dir()?;
+        let mut export_count = 0;
+        for file in Template::iter() {
+            match extract_html(file.as_ref(), &current_dir) {
+                Ok(_) => {
+                    export_count += 1;
+                }
+                Err(e) => {
+                    eprintln!("Error exporting '{}': {}", file.as_ref(), e);
+                }
+            }
+        }
+        tracing::info!("Successfully exported {} embedded files.", export_count);
+        if !args.serve && args.export_html {
             return Ok(());
         }
     }
