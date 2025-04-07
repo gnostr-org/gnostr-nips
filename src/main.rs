@@ -171,12 +171,23 @@ fn remove_md_extension(filename: &str) -> &str {
 fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
     match Template::get(filename) {
         Some(embedded_file) => {
-			let output_path = output_dir.join("docs").join(remove_md_extension(filename).to_owned()+".html");
+            let output_path = output_dir
+                .join("docs")
+                .join(remove_md_extension(filename).to_owned() + ".html");
             if let Some(parent) = output_path.parent() {
                 fs::create_dir_all(parent)?;
             }
             let mut outfile = File::create(&output_path)?;
-            //outfile.write_all(markdown_to_html(embedded_file.data.as_ref()))?;
+            //            let embedded_file_data: &'static [u8] = embedded_file.data.as_ref();
+            let embedded_file_data: Vec<u8> = embedded_file.data.as_ref().to_vec(); // Create an owned Vec
+
+            //std::str::from_utf8(embedded_file_data)
+            //outfile.write_all(markdown_to_html(&std::str::from_utf8(embedded_file_data).expect("")).as_bytes())?;
+            outfile.write_all(
+                markdown_to_html(&std::str::from_utf8(&embedded_file_data).expect("")).as_bytes(),
+            )?;
+
+            //outfile.write_all(markdown_to_html(embedded_file_data[0..5]));
             tracing::debug!(
                 "Successfully exported '{}' to '{}'",
                 filename,
