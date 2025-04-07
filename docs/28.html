@@ -1,0 +1,103 @@
+<h1>NIP-28</h1>
+<h2>Public Chat</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines new event kinds for public chat channels, channel messages, and basic client-side moderation.</p>
+<p>It reserves five event kinds (40-44) for immediate use:</p>
+<ul>
+<li><code>40 - channel create</code></li>
+<li><code>41 - channel metadata</code></li>
+<li><code>42 - channel message</code></li>
+<li><code>43 - hide message</code></li>
+<li><code>44 - mute user</code></li>
+</ul>
+<p>Client-centric moderation gives client developers discretion over what types of content they want included in their apps, while imposing no additional requirements on relays.</p>
+<h2>Kind 40: Create channel</h2>
+<p>Create a public chat channel.</p>
+<p>In the channel creation <code>content</code> field, Client SHOULD include basic channel metadata (<code>name</code>, <code>about</code>, <code>picture</code> and <code>relays</code> as specified in kind 41).</p>
+<pre><code class="language-jsonc">{
+  "content": "{\"name\": \"Demo Channel\", \"about\": \"A test channel.\", \"picture\": \"https://placekitten.com/200/200\", \"relays\": [\"wss://nos.lol\", \"wss://nostr.mom\"]}",
+ // other fields...
+}
+</code></pre>
+<h2>Kind 41: Set channel metadata</h2>
+<p>Update a channel's public metadata.</p>
+<p>Kind 41 is used to update the metadata without modifying the event id for the channel. Only the most recent kind 41 per <code>e</code> tag value MAY be available.</p>
+<p>Clients SHOULD ignore kind 41s from pubkeys other than the kind 40 pubkey.</p>
+<p>Clients SHOULD support basic metadata fields:</p>
+<ul>
+<li><code>name</code> - string - Channel name</li>
+<li><code>about</code> - string - Channel description</li>
+<li><code>picture</code> - string - URL of channel picture</li>
+<li><code>relays</code> - array - List of relays to download and broadcast events to</li>
+</ul>
+<p>Clients MAY add additional metadata fields.</p>
+<p>Clients SHOULD use <a href="10.md">NIP-10</a> marked "e" tags to recommend a relay.</p>
+<p>It is also possible to set the category name using the "t" tag. This category name can be searched and filtered.</p>
+<pre><code class="language-jsonc">{
+  "content": "{\"name\": \"Updated Demo Channel\", \"about\": \"Updating a test channel.\", \"picture\": \"https://placekitten.com/201/201\", \"relays\": [\"wss://nos.lol\", \"wss://nostr.mom\"]}",
+  "tags": [
+    ["e", &lt;channel_create_event_id&gt;, &lt;relay-url&gt;, "root"],
+    ["t", &lt;category_name-1&gt;],
+    ["t", &lt;category_name-2&gt;],
+    ["t", &lt;category_name-3&gt;],
+  ],
+  // other fields...
+}
+</code></pre>
+<h2>Kind 42: Create channel message</h2>
+<p>Send a text message to a channel.</p>
+<p>Clients SHOULD use <a href="10.md">NIP-10</a> marked "e" tags to recommend a relay and specify whether it is a reply or root message.</p>
+<p>Clients SHOULD append <a href="10.md">NIP-10</a> "p" tags to replies.</p>
+<p>Root message:</p>
+<pre><code class="language-jsonc">{
+  "content": &lt;string&gt;,
+  "tags": [["e", &lt;kind_40_event_id&gt;, &lt;relay-url&gt;, "root"]],
+  // other fields...
+}
+</code></pre>
+<p>Reply to another message:</p>
+<pre><code class="language-jsonc">{
+  "content": &lt;string&gt;,
+  "tags": [
+      ["e", &lt;kind_40_event_id&gt;, &lt;relay-url&gt;, "root"],
+      ["e", &lt;kind_42_event_id&gt;, &lt;relay-url&gt;, "reply"],
+      ["p", &lt;pubkey&gt;, &lt;relay-url&gt;],
+      // rest of tags...
+  ],
+  // other fields...
+}
+</code></pre>
+<h2>Kind 43: Hide message</h2>
+<p>User no longer wants to see a certain message.</p>
+<p>The <code>content</code> may optionally include metadata such as a <code>reason</code>.</p>
+<p>Clients SHOULD hide event 42s shown to a given user, if there is an event 43 from that user matching the event 42 <code>id</code>.</p>
+<p>Clients MAY hide event 42s for other users other than the user who sent the event 43.</p>
+<p>(For example, if three users 'hide' an event giving a reason that includes the word 'pornography', a Nostr client that is an iOS app may choose to hide that message for all iOS clients.)</p>
+<pre><code class="language-jsonc">{
+  "content": "{\"reason\": \"Dick pic\"}",
+  "tags": [["e", &lt;kind_42_event_id&gt;]],
+  // other fields...
+}
+</code></pre>
+<h2>Kind 44: Mute user</h2>
+<p>User no longer wants to see messages from another user.</p>
+<p>The <code>content</code> may optionally include metadata such as a <code>reason</code>.</p>
+<p>Clients SHOULD hide event 42s shown to a given user, if there is an event 44 from that user matching the event 42 <code>pubkey</code>.</p>
+<p>Clients MAY hide event 42s for users other than the user who sent the event 44.</p>
+<pre><code class="language-jsonc">{
+  "content": "{\"reason\": \"Posting dick pics\"}",
+  "tags": [["p", &lt;pubkey&gt;]],
+  // other fields...
+}
+</code></pre>
+<h2>Relay recommendations</h2>
+<p>Clients SHOULD use the relay URLs of the metadata events.</p>
+<p>Clients MAY use any relay URL. For example, if a relay hosting the original kind 40 event for a channel goes offline, clients could instead fetch channel data from a backup relay, or a relay that clients trust more than the original relay.</p>
+<h2>Motivation</h2>
+<p>If we're solving censorship-resistant communication for social media, we may as well solve it also for Telegram-style messaging.</p>
+<p>We can bring the global conversation out from walled gardens into a true public square open to all.</p>
+<h2>Additional info</h2>
+<ul>
+<li><a href="https://github.com/ArcadeCity/arcade/pull/28">Chat demo PR with fiatjaf+jb55 comments</a></li>
+<li><a href="https://t.me/nostr_protocol/29566">Conversation about NIP16</a></li>
+</ul>

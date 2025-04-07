@@ -1,0 +1,29 @@
+<h1>NIP-36</h1>
+<h2>Sensitive Content / Content Warning</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>The <code>content-warning</code> tag enables users to specify if the event's content needs to be approved by readers to be shown.
+Clients can hide the content until the user acts on it.</p>
+<p><code>l</code> and <code>L</code> tags MAY be also be used as defined in <a href="32.md">NIP-32</a> with the <code>content-warning</code> or other namespace to support
+further qualification and querying.</p>
+<h4>Spec</h4>
+<pre><code>tag: content-warning
+options:
+ - [reason]: optional
+</code></pre>
+<h4>Example</h4>
+<pre><code class="language-json">{
+  "pubkey": "&lt;pub-key&gt;",
+  "created_at": 1000000000,
+  "kind": 1,
+  "tags": [
+    ["t", "hastag"],
+    ["L", "content-warning"],
+    ["l", "reason", "content-warning"],
+    ["L", "social.nos.ontology"],
+    ["l", "NS-nud", "social.nos.ontology"],
+    ["content-warning", "&lt;optional reason&gt;"]
+  ],
+  "content": "sensitive content with #hastag\n",
+  "id": "&lt;event-id&gt;"
+}
+</code></pre>

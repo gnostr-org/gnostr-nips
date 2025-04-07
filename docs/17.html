@@ -1,0 +1,157 @@
+<h1>NIP-17</h1>
+<h2>Private Direct Messages</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines an encrypted direct messaging scheme using <a href="44.md">NIP-44</a> encryption and <a href="59.md">NIP-59</a> seals and gift wraps.</p>
+<h2>Direct Message Kind</h2>
+<p>Kind <code>14</code> is a chat message. <code>p</code> tags identify one or more receivers of the message.</p>
+<pre><code class="language-jsonc">{
+  "id": "&lt;usual hash&gt;",
+  "pubkey": "&lt;sender-pubkey&gt;",
+  "created_at": "&lt;current-time&gt;",
+  "kind": 14,
+  "tags": [
+    ["p", "&lt;receiver-1-pubkey&gt;", "&lt;relay-url&gt;"],
+    ["p", "&lt;receiver-2-pubkey&gt;", "&lt;relay-url&gt;"],
+    ["e", "&lt;kind-14-id&gt;", "&lt;relay-url&gt;"] // if this is a reply
+    ["subject", "&lt;conversation-title&gt;"],
+    // rest of tags...
+  ],
+  "content": "&lt;message-in-plain-text&gt;",
+}
+</code></pre>
+<p><code>.content</code> MUST be plain text. Fields <code>id</code> and <code>created_at</code> are required.</p>
+<p>An <code>e</code> tag denotes the direct parent message this post is replying to.</p>
+<p><code>q</code> tags MAY be used when citing events in the <code>.content</code> with <a href="21.md">NIP-21</a>.</p>
+<pre><code class="language-json">["q", "&lt;event-id&gt; or &lt;event-address&gt;", "&lt;relay-url&gt;", "&lt;pubkey-if-a-regular-event&gt;"]
+</code></pre>
+<p>Kind <code>14</code>s MUST never be signed. If it is signed, the message might leak to relays and become <strong>fully public</strong>.</p>
+<h2>File Message Kind</h2>
+<pre><code class="language-jsonc">{
+  "id": "&lt;usual hash&gt;",
+  "pubkey": "&lt;sender-pubkey&gt;",
+  "created_at": "&lt;current-time&gt;",
+  "kind": 15,
+  "tags": [
+    ["p", "&lt;receiver-1-pubkey&gt;", "&lt;relay-url&gt;"],
+    ["p", "&lt;receiver-2-pubkey&gt;", "&lt;relay-url&gt;"],
+    ["e", "&lt;kind-14-id&gt;", "&lt;relay-url&gt;", "reply"], // if this is a reply
+    ["subject", "&lt;conversation-title&gt;"],
+    ["file-type", "&lt;file-mime-type&gt;"],
+    ["encryption-algorithm", "&lt;encryption-algorithm&gt;"],
+    ["decryption-key", "&lt;decryption-key&gt;"],
+    ["decryption-nonce", "&lt;decryption-nonce&gt;"],
+    ["x", "&lt;the SHA-256 hexencoded string of the file&gt;"],
+    // rest of tags...
+  ],
+  "content": "&lt;file-url&gt;"
+}
+</code></pre>
+<p>Kind 15 is used for sending encrypted file event messages:</p>
+<ul>
+<li><code>file-type</code>: Specifies the MIME type of the attached file (e.g., <code>image/jpeg</code>, <code>audio/mpeg</code>, etc.).</li>
+<li><code>encryption-algorithm</code>: Indicates the encryption algorithm used for encrypting the file. Supported algorithms may include <code>aes-gcm</code>, <code>chacha20-poly1305</code>,<code>aes-cbc</code> etc.</li>
+<li><code>decryption-key</code>: The decryption key that will be used by the recipient to decrypt the file.</li>
+<li><code>decryption-nonce</code>: The decryption nonce that will be used by the recipient to decrypt the file.</li>
+<li><code>content</code>: The URL of the file (<code>&lt;file-url&gt;</code>).</li>
+<li><code>x</code> containing the SHA-256 hexencoded string of the file.</li>
+<li><code>size</code> (optional) size of file in bytes</li>
+<li><code>dim</code> (optional) size of the file in pixels in the form <code>&lt;width&gt;x&lt;height&gt;</code></li>
+<li><code>blurhash</code>(optional) the <a href="https://github.com/woltapp/blurhash">blurhash</a> to show while the client is loading the file</li>
+<li><code>thumb</code> (optional) URL of thumbnail with same aspect ratio (encrypted with the same key, nonce)</li>
+<li><code>fallback</code> (optional) zero or more fallback file sources in case <code>url</code> fails</li>
+</ul>
+<p>Just like kind 14, kind <code>15</code>s MUST never be signed.</p>
+<h2>Chat Rooms</h2>
+<p>The set of <code>pubkey</code> + <code>p</code> tags defines a chat room. If a new <code>p</code> tag is added or a current one is removed, a new room is created with a clean message history.</p>
+<p>Clients SHOULD render messages of the same room in a continuous thread.</p>
+<p>An optional <code>subject</code> tag defines the current name/topic of the conversation. Any member can change the topic by simply submitting a new <code>subject</code> to an existing <code>pubkey</code> + <code>p</code>-tags room. There is no need to send <code>subject</code> in every message. The newest <code>subject</code> in the thread is the subject of the conversation.</p>
+<h2>Encrypting</h2>
+<p>Following <a href="59.md">NIP-59</a>, the <strong>unsigned</strong> <code>kind:14</code> &amp; <code>kind:15</code> chat messages must be sealed (<code>kind:13</code>) and then gift-wrapped (<code>kind:1059</code>) to each receiver and the sender individually.</p>
+<pre><code class="language-jsonc">{
+  "id": "&lt;usual hash&gt;",
+  "pubkey": randomPublicKey,
+  "created_at": randomTimeUpTo2DaysInThePast(),
+  "kind": 1059, // gift wrap
+  "tags": [
+    ["p", receiverPublicKey, "&lt;relay-url&gt;"] // receiver
+  ],
+  "content": nip44Encrypt(
+    {
+      "id": "&lt;usual hash&gt;",
+      "pubkey": senderPublicKey,
+      "created_at": randomTimeUpTo2DaysInThePast(),
+      "kind": 13, // seal
+      "tags": [], // no tags
+      "content": nip44Encrypt(unsignedKind14, senderPrivateKey, receiverPublicKey),
+      "sig": "&lt;signed by senderPrivateKey&gt;"
+    },
+    randomPrivateKey, receiverPublicKey
+  ),
+  "sig": "&lt;signed by randomPrivateKey&gt;"
+}
+</code></pre>
+<p>The encryption algorithm MUST use the latest version of <a href="44.md">NIP-44</a>.</p>
+<p>Clients MUST verify if pubkey of the <code>kind:13</code> is the same pubkey on the <code>kind:14</code>, otherwise any sender can impersonate others by simply changing the pubkey on <code>kind:14</code>.</p>
+<p>Clients SHOULD randomize <code>created_at</code> in up to two days in the past in both the seal and the gift wrap to make sure grouping by <code>created_at</code> doesn't reveal any metadata.</p>
+<p>The gift wrap's <code>p</code>-tag can be the receiver's main pubkey or an alias key created to receive DMs without exposing the receiver's identity.</p>
+<p>Clients CAN offer disappearing messages by setting an <code>expiration</code> tag in the gift wrap of each receiver or by not generating a gift wrap to the sender's public key</p>
+<h2>Publishing</h2>
+<p>Kind <code>10050</code> indicates the user's preferred relays to receive DMs. The event MUST include a list of <code>relay</code> tags with relay URIs.</p>
+<pre><code class="language-jsonc">{
+  "kind": 10050,
+  "tags": [
+    ["relay", "wss://inbox.nostr.wine"],
+    ["relay", "wss://myrelay.nostr1.com"],
+  ],
+  "content": "",
+  // other fields...
+}
+</code></pre>
+<p>Clients SHOULD publish kind <code>14</code> events to the <code>10050</code>-listed relays. If that is not found that indicates the user is not ready to receive messages under this NIP and clients shouldn't try.</p>
+<h2>Relays</h2>
+<p>It's advisable that relays do not serve <code>kind:1059</code> to clients other than the ones tagged in them.</p>
+<p>It's advisable that users choose relays that conform to these practices.</p>
+<p>Clients SHOULD guide users to keep <code>kind:10050</code> lists small (1-3 relays) and SHOULD spread it to as many relays as viable.</p>
+<h2>Benefits &amp; Limitations</h2>
+<p>This NIP offers the following privacy and security features:</p>
+<ol>
+<li><strong>No Metadata Leak</strong>: Participant identities, each message's real date and time, event kinds, and other event tags are all hidden from the public. Senders and receivers cannot be linked with public information alone.</li>
+<li><strong>No Public Group Identifiers</strong>: There is no public central queue, channel or otherwise converging identifier to correlate or count all messages in the same group.</li>
+<li><strong>No Moderation</strong>: There are no group admins: no invitations or bans.</li>
+<li><strong>No Shared Secrets</strong>: No secret must be known to all members that can leak or be mistakenly shared</li>
+<li><strong>Fully Recoverable</strong>: Messages can be fully recoverable by any client with the user's private key</li>
+<li><strong>Optional Forward Secrecy</strong>: Users and clients can opt-in for "disappearing messages".</li>
+<li><strong>Uses Public Relays</strong>: Messages can flow through public relays without loss of privacy. Private relays can increase privacy further, but they are not required.</li>
+<li><strong>Cold Storage</strong>: Users can unilaterally opt-in to sharing their messages with a separate key that is exclusive for DM backup and recovery.</li>
+</ol>
+<p>The main limitation of this approach is having to send a separate encrypted event to each receiver. Group chats with more than 100 participants should find a more suitable messaging scheme.</p>
+<h2>Implementation</h2>
+<p>Clients implementing this NIP should by default only connect to the set of relays found in their <code>kind:10050</code> list. From that they should be able to load all messages both sent and received as well as get new live updates, making it for a very simple and lightweight implementation that should be fast.</p>
+<p>When sending a message to anyone, clients must then connect to the relays in the receiver's <code>kind:10050</code> and send the events there but can disconnect right after unless more messages are expected to be sent (e.g. the chat tab is still selected). Clients should also send a copy of their outgoing messages to their own <code>kind:10050</code> relay set.</p>
+<h2>Examples</h2>
+<p>This example sends the message <code>Hola, que tal?</code> from <code>nsec1w8udu59ydjvedgs3yv5qccshcj8k05fh3l60k9x57asjrqdpa00qkmr89m</code> to <code>nsec12ywtkplvyq5t6twdqwwygavp5lm4fhuang89c943nf2z92eez43szvn4dt</code>.</p>
+<p>The two final GiftWraps, one to the receiver and the other to the sender, respectively, are:</p>
+<pre><code class="language-json">{
+   "id":"2886780f7349afc1344047524540ee716f7bdc1b64191699855662330bf235d8",
+   "pubkey":"8f8a7ec43b77d25799281207e1a47f7a654755055788f7482653f9c9661c6d51",
+   "created_at":1703128320,
+   "kind":1059,
+   "tags":[
+      [ "p", "918e2da906df4ccd12c8ac672d8335add131a4cf9d27ce42b3bb3625755f0788"]
+   ],
+   "content":"AsqzdlMsG304G8h08bE67dhAR1gFTzTckUUyuvndZ8LrGCvwI4pgC3d6hyAK0Wo9gtkLqSr2rT2RyHlE5wRqbCOlQ8WvJEKwqwIJwT5PO3l2RxvGCHDbd1b1o40ZgIVwwLCfOWJ86I5upXe8K5AgpxYTOM1BD+SbgI5jOMA8tgpRoitJedVSvBZsmwAxXM7o7sbOON4MXHzOqOZpALpS2zgBDXSAaYAsTdEM4qqFeik+zTk3+L6NYuftGidqVluicwSGS2viYWr5OiJ1zrj1ERhYSGLpQnPKrqDaDi7R1KrHGFGyLgkJveY/45y0rv9aVIw9IWF11u53cf2CP7akACel2WvZdl1htEwFu/v9cFXD06fNVZjfx3OssKM/uHPE9XvZttQboAvP5UoK6lv9o3d+0GM4/3zP+yO3C0NExz1ZgFmbGFz703YJzM+zpKCOXaZyzPjADXp8qBBeVc5lmJqiCL4solZpxA1865yPigPAZcc9acSUlg23J1dptFK4n3Tl5HfSHP+oZ/QS/SHWbVFCtq7ZMQSRxLgEitfglTNz9P1CnpMwmW/Y4Gm5zdkv0JrdUVrn2UO9ARdHlPsW5ARgDmzaxnJypkfoHXNfxGGXWRk0sKLbz/ipnaQP/eFJv/ibNuSfqL6E4BnN/tHJSHYEaTQ/PdrA2i9laG3vJti3kAl5Ih87ct0w/tzYfp4SRPhEF1zzue9G/16eJEMzwmhQ5Ec7jJVcVGa4RltqnuF8unUu3iSRTQ+/MNNUkK6Mk+YuaJJs6Fjw6tRHuWi57SdKKv7GGkr0zlBUU2Dyo1MwpAqzsCcCTeQSv+8qt4wLf4uhU9Br7F/L0ZY9bFgh6iLDCdB+4iABXyZwT7Ufn762195hrSHcU4Okt0Zns9EeiBOFxnmpXEslYkYBpXw70GmymQfJlFOfoEp93QKCMS2DAEVeI51dJV1e+6t3pCSsQN69Vg6jUCsm1TMxSs2VX4BRbq562+VffchvW2BB4gMjsvHVUSRl8i5/ZSDlfzSPXcSGALLHBRzy+gn0oXXJ/447VHYZJDL3Ig8+QW5oFMgnWYhuwI5QSLEyflUrfSz+Pdwn/5eyjybXKJftePBD9Q+8NQ8zulU5sqvsMeIx/bBUx0fmOXsS3vjqCXW5IjkmSUV7q54GewZqTQBlcx+90xh/LSUxXex7UwZwRnifvyCbZ+zwNTHNb12chYeNjMV7kAIr3cGQv8vlOMM8ajyaZ5KVy7HpSXQjz4PGT2/nXbL5jKt8Lx0erGXsSsazkdoYDG3U",
+   "sig":"a3c6ce632b145c0869423c1afaff4a6d764a9b64dedaf15f170b944ead67227518a72e455567ca1c2a0d187832cecbde7ed478395ec4c95dd3e71749ed66c480"
+}
+</code></pre>
+<pre><code class="language-json">{
+   "id":"162b0611a1911cfcb30f8a5502792b346e535a45658b3a31ae5c178465509721",
+   "pubkey":"626be2af274b29ea4816ad672ee452b7cf96bbb4836815a55699ae402183f512",
+   "created_at":1702711587,
+   "kind":1059,
+   "tags":[
+      [ "p", "44900586091b284416a0c001f677f9c49f7639a55c3f1e2ec130a8e1a7998e1b"]
+   ],
+   "content":"AsTClTzr0gzXXji7uye5UB6LYrx3HDjWGdkNaBS6BAX9CpHa+Vvtt5oI2xJrmWLen+Fo2NBOFazvl285Gb3HSM82gVycrzx1HUAaQDUG6HI7XBEGqBhQMUNwNMiN2dnilBMFC3Yc8ehCJT/gkbiNKOpwd2rFibMFRMDKai2mq2lBtPJF18oszKOjA+XlOJV8JRbmcAanTbEK5nA/GnG3eGUiUzhiYBoHomj3vztYYxc0QYHOx0WxiHY8dsC6jPsXC7f6k4P+Hv5ZiyTfzvjkSJOckel1lZuE5SfeZ0nduqTlxREGeBJ8amOykgEIKdH2VZBZB+qtOMc7ez9dz4wffGwBDA7912NFS2dPBr6txHNxBUkDZKFbuD5wijvonZDvfWq43tZspO4NutSokZB99uEiRH8NAUdGTiNb25m9JcDhVfdmABqTg5fIwwTwlem5aXIy8b66lmqqz2LBzJtnJDu36bDwkILph3kmvaKPD8qJXmPQ4yGpxIbYSTCohgt2/I0TKJNmqNvSN+IVoUuC7ZOfUV9lOV8Ri0AMfSr2YsdZ9ofV5o82ClZWlWiSWZwy6ypa7CuT1PEGHzywB4CZ5ucpO60Z7hnBQxHLiAQIO/QhiBp1rmrdQZFN6PUEjFDloykoeHe345Yqy9Ke95HIKUCS9yJurD+nZjjgOxZjoFCsB1hQAwINTIS3FbYOibZnQwv8PXvcSOqVZxC9U0+WuagK7IwxzhGZY3vLRrX01oujiRrevB4xbW7Oxi/Agp7CQGlJXCgmRE8Rhm+Vj2s+wc/4VLNZRHDcwtfejogjrjdi8p6nfUyqoQRRPARzRGUnnCbh+LqhigT6gQf3sVilnydMRScEc0/YYNLWnaw9nbyBa7wFBAiGbJwO40k39wj+xT6HTSbSUgFZzopxroO3f/o4+ubx2+IL3fkev22mEN38+dFmYF3zE+hpE7jVxrJpC3EP9PLoFgFPKCuctMnjXmeHoiGs756N5r1Mm1ffZu4H19MSuALJlxQR7VXE/LzxRXDuaB2u9days/6muP6gbGX1ASxbJd/ou8+viHmSC/ioHzNjItVCPaJjDyc6bv+gs1NPCt0qZ69G+JmgHW/PsMMeL4n5bh74g0fJSHqiI9ewEmOG/8bedSREv2XXtKV39STxPweceIOh0k23s3N6+wvuSUAJE7u1LkDo14cobtZ/MCw/QhimYPd1u5HnEJvRhPxz0nVPz0QqL/YQeOkAYk7uzgeb2yPzJ6DBtnTnGDkglekhVzQBFRJdk740LEj6swkJ",
+   "sig":"c94e74533b482aa8eeeb54ae72a5303e0b21f62909ca43c8ef06b0357412d6f8a92f96e1a205102753777fd25321a58fba3fb384eee114bd53ce6c06a1c22bab"
+}
+</code></pre>

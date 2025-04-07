@@ -1,0 +1,47 @@
+<h1>NIP-98</h1>
+<h2>HTTP Auth</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines an ephemeral event used to authorize requests to HTTP servers using nostr events.</p>
+<p>This is useful for HTTP services which are built for Nostr and deal with Nostr user accounts.</p>
+<h2>Nostr event</h2>
+<p>A <code>kind 27235</code> (In reference to <a href="https://www.rfc-editor.org/rfc/rfc7235">RFC 7235</a>) event is used.</p>
+<p>The <code>content</code> SHOULD be empty.</p>
+<p>The following tags MUST be included.</p>
+<ul>
+<li><code>u</code> - absolute URL</li>
+<li><code>method</code> - HTTP Request Method</li>
+</ul>
+<p>Example event:</p>
+<pre><code class="language-json">{
+  "id": "fe964e758903360f28d8424d092da8494ed207cba823110be3a57dfe4b578734",
+  "pubkey": "63fe6318dc58583cfe16810f86dd09e18bfd76aabc24a0081ce2856f330504ed",
+  "content": "",
+  "kind": 27235,
+  "created_at": 1682327852,
+  "tags": [
+    ["u", "https://api.snort.social/api/v1/n5sp/list"],
+    ["method", "GET"]
+  ],
+  "sig": "5ed9d8ec958bc854f997bdc24ac337d005af372324747efe4a00e24f4c30437ff4dd8308684bed467d9d6be3e5a517bb43b1732cc7d33949a3aaf86705c22184"
+}
+</code></pre>
+<p>Servers MUST perform the following checks in order to validate the event:</p>
+<ol>
+<li>The <code>kind</code> MUST be <code>27235</code>.</li>
+<li>The <code>created_at</code> timestamp MUST be within a reasonable time window (suggestion 60 seconds).</li>
+<li>The <code>u</code> tag MUST be exactly the same as the absolute request URL (including query parameters).</li>
+<li>The <code>method</code> tag MUST be the same HTTP method used for the requested resource.</li>
+</ol>
+<p>When the request contains a body (as in POST/PUT/PATCH methods) clients SHOULD include a SHA256 hash of the request body in a <code>payload</code> tag as hex (<code>["payload", "&lt;sha256-hex&gt;"]</code>), servers MAY check this to validate that the requested payload is authorized.</p>
+<p>If one of the checks was to fail the server SHOULD respond with a 401 Unauthorized response code.</p>
+<p>Servers MAY perform additional implementation-specific validation checks.</p>
+<h2>Request Flow</h2>
+<p>Using the <code>Authorization</code> HTTP header, the <code>kind 27235</code> event MUST be <code>base64</code> encoded and use the Authorization scheme <code>Nostr</code></p>
+<p>Example HTTP Authorization header:</p>
+<pre><code>Authorization: Nostr 
+eyJpZCI6ImZlOTY0ZTc1ODkwMzM2MGYyOGQ4NDI0ZDA5MmRhODQ5NGVkMjA3Y2JhODIzMTEwYmUzYTU3ZGZlNGI1Nzg3MzQiLCJwdWJrZXkiOiI2M2ZlNjMxOGRjNTg1ODNjZmUxNjgxMGY4NmRkMDllMThiZmQ3NmFhYmMyNGEwMDgxY2UyODU2ZjMzMDUwNGVkIiwiY29udGVudCI6IiIsImtpbmQiOjI3MjM1LCJjcmVhdGVkX2F0IjoxNjgyMzI3ODUyLCJ0YWdzIjpbWyJ1IiwiaHR0cHM6Ly9hcGkuc25vcnQuc29jaWFsL2FwaS92MS9uNXNwL2xpc3QiXSxbIm1ldGhvZCIsIkdFVCJdXSwic2lnIjoiNWVkOWQ4ZWM5NThiYzg1NGY5OTdiZGMyNGFjMzM3ZDAwNWFmMzcyMzI0NzQ3ZWZlNGEwMGUyNGY0YzMwNDM3ZmY0ZGQ4MzA4Njg0YmVkNDY3ZDlkNmJlM2U1YTUxN2JiNDNiMTczMmNjN2QzMzk0OWEzYWFmODY3MDVjMjIxODQifQ
+</code></pre>
+<h2>Reference Implementations</h2>
+<ul>
+<li>C# ASP.NET <code>AuthenticationHandler</code> <a href="https://gist.github.com/v0l/74346ae530896115bfe2504c8cd018d3">NostrAuth.cs</a></li>
+</ul>
