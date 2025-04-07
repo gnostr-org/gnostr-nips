@@ -264,7 +264,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::debug!("Parsed arguments: {:?}", args);
 
-    if args.list_embedded {
+    if args.list_embedded && !args.serve {
         tracing::debug!("Embedded files:");
         for file in Template::iter() {
             let _level_filter = if args.debug {
@@ -286,7 +286,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    if args.export {
+    if args.export && !args.serve {
         tracing::info!("Exporting all embedded files to the current directory...");
         let current_dir = env::current_dir()?;
         let mut export_count = 0;
@@ -379,15 +379,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         canonicalize_path(Path::new(absolute_path_str))?.display()
     );
 
-    tokio::join!(
-        serve(using_serve_dir(), 3001),
-        serve(using_serve_dir_with_assets_fallback(), 3002),
-        serve(using_serve_dir_only_from_root_via_fallback(), 3003),
-        serve(using_serve_dir_with_handler_as_service(), 3004),
-        serve(two_serve_dirs(), 3005),
-        serve(calling_serve_dir_from_a_handler(), 3006),
-        serve(using_serve_file_from_a_route(), 3307),
-    );
+    if args.serve {
+        //MUST be true
+        tokio::join!(
+            serve(using_serve_dir(), 3000),
+            serve(using_serve_dir(), 3001),
+            serve(using_serve_dir_with_assets_fallback(), 3002),
+            serve(using_serve_dir_only_from_root_via_fallback(), 3003),
+            serve(using_serve_dir_with_handler_as_service(), 3004),
+            serve(two_serve_dirs(), 3005),
+            serve(calling_serve_dir_from_a_handler(), 3006),
+            serve(using_serve_file_from_a_route(), 3307),
+        );
+    }
 
     Ok(())
 }
@@ -480,7 +484,7 @@ fn using_serve_file_from_a_route() -> Router {
 async fn serve(app: Router, port: u16) {
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    tracing::debug!("listening on {}", listener.local_addr().unwrap());
+    tracing::debug!("listening on\n{}", listener.local_addr().unwrap());
     axum::serve(listener, app.layer(TraceLayer::new_for_http()))
         .await
         .unwrap();
