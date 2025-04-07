@@ -382,9 +382,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if args.serve {
         //MUST be true
         tokio::join!(
-            serve(using_serve_dir(), 3000),
-            serve(using_serve_dir(), 3001),
-            serve(using_serve_dir_with_assets_fallback(), 3002),
+            // serve(using_serve_dir(), 3000),
+            // serve(using_serve_dir(), 3001),
+            serve(using_serve_dir_with_assets_fallback(), 3000),
             serve(using_serve_dir_only_from_root_via_fallback(), 3003),
             serve(using_serve_dir_with_handler_as_service(), 3004),
             serve(two_serve_dirs(), 3005),
@@ -396,21 +396,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-//multi server impl
-fn using_serve_dir() -> Router {
-    tracing::debug!("/docs:3000");
-    // serve the file in the "docs" directory under `/docs`
-    Router::new().nest_service("/docs", ServeDir::new("docs"))
-}
+// //multi server impl
+// fn using_serve_dir() -> Router {
+//     tracing::debug!("/docs:3000");
+//     // serve the file in the "docs" directory under `/docs`
+//     Router::new().nest_service("/docs", ServeDir::new("docs"))
+// }
 
 fn using_serve_dir_with_assets_fallback() -> Router {
     // `ServeDir` allows setting a fallback if an asset is not found
     // so with this `GET /assets/doesnt-exist.jpg` will return `readme.html`
     // rather than a 404
     let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
-    tracing::debug!("/docs/readme:3002");
-    tracing::debug!("/docs/01.md:3002");
-    tracing::debug!("/docs/...md:3002");
+    //http://localhost:3000/readme
+    tracing::debug!("/docs/readme:3000");
+    //http://localhost:3000/01.md
+    tracing::debug!("/docs/01.md:3000");
+    tracing::debug!("/docs/..md:3000");
+    tracing::debug!("/docs/?.md:3000");
 
     Router::new()
         .route("/readme", get(|| async { "Hi from /readme.html" })) //TODO route each nip
@@ -418,15 +421,16 @@ fn using_serve_dir_with_assets_fallback() -> Router {
         .route("/02.md", get(|| async { "Hi from /02.html" })) //TODO route each nip
         .route("/03.md", get(|| async { "Hi from /03.html" })) //TODO route each nip
         .route("/04.md", get(|| async { "Hi from /04.html" })) //TODO route each nip
+        .route("/05.md", get(|| async { "Hi from /05.html" })) //TODO route each nip
         .nest_service("/docs", serve_dir.clone())
         .fallback_service(serve_dir)
 }
 
 fn using_serve_dir_only_from_root_via_fallback() -> Router {
-    // you can also serve the assets directly from the root (not nested under `/assets`)
+    // you can also serve the assets directly from the root (not nested under `/docs`)
     // by only setting a `ServeDir` as the fallback
-    tracing::debug!("/assets/index.html:3003");
-    let serve_dir = ServeDir::new("assets").not_found_service(ServeFile::new("assets/index.html"));
+    tracing::debug!("/docs/index.html:3003");
+    let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/index.html"));
 
     Router::new()
         .route("/foo", get(|| async { "Hi from /foo" }))
@@ -434,7 +438,7 @@ fn using_serve_dir_only_from_root_via_fallback() -> Router {
 }
 
 fn using_serve_dir_with_handler_as_service() -> Router {
-    tracing::debug!("/assets/index.html:3004");
+    tracing::debug!("/docs/index.html:3004");
     async fn handle_404() -> (StatusCode, &'static str) {
         (StatusCode::NOT_FOUND, "Not found")
     }
@@ -445,31 +449,31 @@ fn using_serve_dir_with_handler_as_service() -> Router {
     let serve_dir = ServeDir::new("assets").not_found_service(service);
 
     Router::new()
-        .route("/foo", get(|| async { "Hi from /foo" }))
+        .route("/docs", get(|| async { "Hi from /docs" }))
         .fallback_service(serve_dir)
 }
 
 fn two_serve_dirs() -> Router {
     tracing::debug!("/assets/index.html:3005");
     // you can also have two `ServeDir`s nested at different paths
-    let serve_dir_from_assets = ServeDir::new("assets");
+    let serve_dir_from_docs = ServeDir::new("docs");
     let serve_dir_from_dist = ServeDir::new("dist");
 
     Router::new()
-        .nest_service("/assets", serve_dir_from_assets)
+        .nest_service("/docs", serve_dir_from_docs)
         .nest_service("/dist", serve_dir_from_dist)
 }
 
 #[allow(clippy::let_and_return)]
 fn calling_serve_dir_from_a_handler() -> Router {
     tracing::debug!("/foo:3006");
-    tracing::debug!("/assets:3006");
+    tracing::debug!("/docs:3006");
     // via `tower::Service::call`, or more conveniently `tower::ServiceExt::oneshot` you can
     // call `ServeDir` yourself from a handler
     Router::new().nest_service(
         "/foo",
         get(|request: Request| async {
-            let service = ServeDir::new("assets");
+            let service = ServeDir::new("docs");
             let result = service.oneshot(request).await;
             result
         }),
@@ -477,8 +481,8 @@ fn calling_serve_dir_from_a_handler() -> Router {
 }
 
 fn using_serve_file_from_a_route() -> Router {
-    tracing::debug!("/foo:3307");
-    Router::new().route_service("/foo", ServeFile::new("assets/index.html"))
+    tracing::debug!("/index:3307");
+    Router::new().route_service("/index", ServeFile::new("assets/index.html"))
 }
 
 async fn serve(app: Router, port: u16) {
