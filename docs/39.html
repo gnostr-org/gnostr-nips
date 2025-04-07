@@ -1,0 +1,44 @@
+<h1>NIP-39</h1>
+<h2>External Identities in Profiles</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2>Abstract</h2>
+<p>Nostr protocol users may have other online identities such as usernames, profile pages, keypairs etc. they control and they may want to include this data in their profile metadata so clients can parse, validate and display this information.</p>
+<h2><code>i</code> tag on a metadata event</h2>
+<p>A new optional <code>i</code> tag is introduced for <code>kind 0</code> metadata event defined in <a href="01.md">NIP-01</a>:</p>
+<pre><code class="language-jsonc">{
+  "id": &lt;id&gt;,
+  "pubkey": &lt;pubkey&gt;,
+  "tags": [
+    ["i", "github:semisol", "9721ce4ee4fceb91c9711ca2a6c9a5ab"],
+    ["i", "twitter:semisol_public", "1619358434134196225"],
+    ["i", "mastodon:bitcoinhackers.org/@semisol", "109775066355589974"]
+    ["i", "telegram:1087295469", "nostrdirectory/770"]
+  ],
+  // other fields...
+}
+</code></pre>
+<p>An <code>i</code> tag will have two parameters, which are defined as the following:</p>
+<ol>
+<li><code>platform:identity</code>: This is the platform name (for example <code>github</code>) and the identity on that platform (for example <code>semisol</code>) joined together with <code>:</code>.</li>
+<li><code>proof</code>: String or object that points to the proof of owning this identity.</li>
+</ol>
+<p>Clients SHOULD process any <code>i</code> tags with more than 2 values for future extensibility.
+Identity provider names SHOULD only include <code>a-z</code>, <code>0-9</code> and the characters <code>._-/</code> and MUST NOT include <code>:</code>.
+Identity names SHOULD be normalized if possible by replacing uppercase letters with lowercase letters, and if there are multiple aliases for an entity the primary one should be used.</p>
+<h2>Claim types</h2>
+<h3><code>github</code></h3>
+<p>Identity: A GitHub username.</p>
+<p>Proof: A GitHub Gist ID. This Gist should be created by <code>&lt;identity&gt;</code> with a single file that has the text <code>Verifying that I control the following Nostr public key: &lt;npub encoded public key&gt;</code>.
+This can be located at <code>https://gist.github.com/&lt;identity&gt;/&lt;proof&gt;</code>.</p>
+<h3><code>twitter</code></h3>
+<p>Identity: A Twitter username.</p>
+<p>Proof: A Tweet ID. The tweet should be posted by <code>&lt;identity&gt;</code> and have the text <code>Verifying my account on nostr My Public Key: "&lt;npub encoded public key&gt;"</code>.
+This can be located at <code>https://twitter.com/&lt;identity&gt;/status/&lt;proof&gt;</code>.</p>
+<h3><code>mastodon</code></h3>
+<p>Identity: A Mastodon instance and username in the format <code>&lt;instance&gt;/@&lt;username&gt;</code>.</p>
+<p>Proof: A Mastodon post ID. This post should be published by <code>&lt;username&gt;@&lt;instance&gt;</code> and have the text <code>Verifying that I control the following Nostr public key: "&lt;npub encoded public key&gt;"</code>.
+This can be located at <code>https://&lt;identity&gt;/&lt;proof&gt;</code>.</p>
+<h3><code>telegram</code></h3>
+<p>Identity: A Telegram user ID.</p>
+<p>Proof: A string in the format <code>&lt;ref&gt;/&lt;id&gt;</code> which points to a message published in the public channel or group with name <code>&lt;ref&gt;</code> and message ID <code>&lt;id&gt;</code>. This message should be sent by user ID <code>&lt;identity&gt;</code> and have the text <code>Verifying that I control the following Nostr public key: "&lt;npub encoded public key&gt;"</code>.
+This can be located at <code>https://t.me/&lt;proof&gt;</code>.</p>

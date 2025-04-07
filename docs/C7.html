@@ -1,0 +1,19 @@
+<h1>NIP-C7</h1>
+<h2>Chats</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>A chat message is a <code>kind 9</code> event.</p>
+<pre><code class="language-json">{
+  "kind": 9,
+  "content": "GM",
+  "tags": []
+}
+</code></pre>
+<p>A reply to a <code>kind 9</code> is an additional <code>kind 9</code> which quotes the parent using a <code>q</code> tag.</p>
+<pre><code class="language-json">{
+  "kind": 9,
+  "content": "nostr:nevent1...\nyes",
+  "tags": [
+    ["q", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;pubkey&gt;]
+  ]
+}
+</code></pre>
