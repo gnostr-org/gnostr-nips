@@ -2,6 +2,7 @@ use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
+use sha2::{Digest, Sha256};
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -224,6 +225,12 @@ fn markdown_to_html(markdown_input: &str) -> String {
     html_output
 }
 
+fn calculate_sha256(data: &[u8]) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(data);
+    format!("{:x}", hasher.finalize())
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
@@ -244,7 +251,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if args.list_embedded {
         tracing::debug!("Embedded files:");
         for file in Template::iter() {
-            println!("{}", file.as_ref());
+            let _level_filter = if args.debug {
+                let this_file = Template::get(&file).unwrap();
+                //match output of shasum -a 256
+                //$ shasum -a 256 README.md
+                //b238c63f0e937a2b3a3982ecd8328ee03be26584d10723575802e9c6f098f361  README.md
+                println!(
+                    "{}  {}",
+                    calculate_sha256(this_file.data.as_ref()),
+                    file.as_ref()
+                );
+            } else {
+                println!("{}", file.as_ref());
+            };
         }
         return Ok(());
     }
