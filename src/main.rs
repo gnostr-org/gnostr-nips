@@ -1,5 +1,5 @@
 use axum::response::Redirect;
-use nips::Args;
+use nips::{Args, Template};
 //use tower_http::services::Redirect;
 
 use axum::{
@@ -36,36 +36,6 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
-
-#[derive(Embed)]
-#[folder = "."]
-#[include = "*.md"]
-#[exclude = "*.DS_Store"]
-#[exclude = "target/*"]
-#[exclude = "src"]
-#[exclude = "src/*"]
-#[exclude = ".git"]
-#[exclude = ".git/*"]
-#[exclude = ".github/*"]
-#[exclude = ".gitignore"]
-#[exclude = ".justfile"]
-#[exclude = ".nojekyll"]
-#[exclude = "build.rs"]
-#[exclude = "dist-workspace.toml"]
-#[exclude = "error.log"]
-#[exclude = "output.log"]
-#[exclude = "post-commit-history"]
-#[exclude = "script.sh"]
-#[exclude = "template/Makefile"]
-#[exclude = "template/default_config.conf"]
-#[exclude = "template/install_script.sh"]
-#[exclude = "test_files/tabbed.txtbuild.rs"]
-#[exclude = "Cargo.lock"]
-#[exclude = "Cargo.toml"]
-#[exclude = "LICENSE"]
-#[exclude = "Makefile"]
-struct Template;
-
 
 fn _make_executable(script_path: &Path) -> io::Result<()> {
     let mut permissions = fs::metadata(script_path)?.permissions();

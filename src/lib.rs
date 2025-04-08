@@ -2,6 +2,7 @@
 //!   cargo run --example scrollable
 //!
 use clap::Parser;
+use rust_embed::Embed;
 
 use std::io::{stdout, Write};
 use std::path::{Path, PathBuf};
@@ -14,6 +15,35 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
+
+#[derive(Embed)]
+#[folder = "."]
+#[include = "*.md"]
+#[exclude = "*.DS_Store"]
+#[exclude = "target/*"]
+#[exclude = "src"]
+#[exclude = "src/*"]
+#[exclude = ".git"]
+#[exclude = ".git/*"]
+#[exclude = ".github/*"]
+#[exclude = ".gitignore"]
+#[exclude = ".justfile"]
+#[exclude = ".nojekyll"]
+#[exclude = "build.rs"]
+#[exclude = "dist-workspace.toml"]
+#[exclude = "error.log"]
+#[exclude = "output.log"]
+#[exclude = "post-commit-history"]
+#[exclude = "script.sh"]
+#[exclude = "template/Makefile"]
+#[exclude = "template/default_config.conf"]
+#[exclude = "template/install_script.sh"]
+#[exclude = "test_files/tabbed.txtbuild.rs"]
+#[exclude = "Cargo.lock"]
+#[exclude = "Cargo.toml"]
+#[exclude = "LICENSE"]
+#[exclude = "Makefile"]
+pub struct Template;
 
 /// a simple nostr-protocol/nips server
 #[derive(Parser, Debug)]
@@ -53,8 +83,6 @@ pub struct Args {
     #[clap(long, value_name = "PATH")]
     pub export_path: Option<PathBuf>,
 }
-
-
 
 fn view_area() -> Area {
     let mut area = Area::full_screen();
