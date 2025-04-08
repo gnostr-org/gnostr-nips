@@ -1,9 +1,10 @@
 use axum::response::Redirect;
-
+use nips::Args;
 //use tower_http::services::Redirect;
 
 use axum::{
-    extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */routing::get, Router,
+    extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */ routing::get,
+    Router,
 };
 use clap::Parser;
 use pulldown_cmark::Options;
@@ -65,44 +66,6 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 #[exclude = "Makefile"]
 struct Template;
 
-/// a simple nostr-protocol/nips server
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Args {
-    /// Enable debug logging.
-    #[clap(short, long)]
-    debug: bool,
-
-    /// List all embedded files.
-    #[clap(short, long)]
-    list_embedded: bool,
-
-    /// Show the contents of an embedded file using a pager.
-    //#[clap(short, long, value_name = "NIP", default_value = "README.md")]
-    #[clap(short, long, value_name = "NIP")]
-    show: Option<String>,
-
-    /// Axum Serve.
-    //#[clap(long, default_value = "false")]
-    #[clap(long, default_value = "false")]
-    serve: bool,
-
-    /// Sets the port number to listen on
-    #[arg(short, long, value_parser = clap::value_parser!(u16), default_value_t = 8080)]
-    port: u16,
-
-    /// Export all embedded files to the current directory.
-    #[clap(short, long)]
-    export: bool,
-
-    /// Export all embedded files to the current directory.
-    #[clap(long)]
-    export_html: bool,
-
-    /// Export all embedded files to the specified path.
-    #[clap(long, value_name = "PATH")]
-    export_path: Option<PathBuf>,
-}
 
 fn _make_executable(script_path: &Path) -> io::Result<()> {
     let mut permissions = fs::metadata(script_path)?.permissions();
