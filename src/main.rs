@@ -3,12 +3,13 @@ use axum::response::Redirect;
 //use tower_http::services::Redirect;
 
 use axum::{
-    extract::Request, handler::HandlerWithoutStateExt, http::StatusCode, routing::get, Router,
+    extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */routing::get, Router,
 };
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
+//use rust_embed::RustEmbed;
 use sha2::{Digest, Sha256};
 use std::env;
 use std::fs;
@@ -64,7 +65,7 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 #[exclude = "Makefile"]
 struct Template;
 
-/// A simple tool to view embedded Markdown files.
+/// a simple nostr-protocol/nips server
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
@@ -85,6 +86,10 @@ struct Args {
     //#[clap(long, default_value = "false")]
     #[clap(long, default_value = "false")]
     serve: bool,
+
+    /// Sets the port number to listen on
+    #[arg(short, long, value_parser = clap::value_parser!(u16), default_value_t = 8080)]
+    port: u16,
 
     /// Export all embedded files to the current directory.
     #[clap(short, long)]
@@ -446,28 +451,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     if args.serve {
         //MUST be true
-        tokio::join!(
-            // serve(using_serve_dir(), 3000),
-            // serve(using_serve_dir(), 3001),
-            serve(using_serve_dir_with_assets_fallback(), 3000),
-            serve(using_serve_dir_only_from_root_via_fallback(), 3003),
-            serve(using_serve_dir_with_handler_as_service(), 3004),
-            serve(two_serve_dirs(), 3005),
-            serve(calling_serve_dir_from_a_handler(), 3006),
-            serve(using_serve_file_from_a_route(), 3307),
-        );
+        tokio::join!(serve(using_serve_dir_with_assets_fallback(), args.port),);
     }
 
     Ok(())
 }
 
 // //multi server impl
-// fn using_serve_dir() -> Router {
-//     tracing::debug!("/docs:3000");
-//     // serve the file in the "docs" directory under `/docs`
-//     Router::new().nest_service("/docs", ServeDir::new("docs"))
-// }
-
 fn using_serve_dir_with_assets_fallback() -> Router {
     let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
     let mut router = Router::new();
@@ -476,6 +466,19 @@ fn using_serve_dir_with_assets_fallback() -> Router {
         let filename = file.as_ref();
         if filename.ends_with(".md") {
             let route_path = format!("/{}.md", remove_md_extension(filename));
+            let redirect_path = format!("/{}.html", remove_md_extension(filename));
+            tracing::debug!(
+                "Route added for {} (redirecting to {})",
+                route_path,
+                &redirect_path.clone()
+            );
+            router = router.route(
+                &route_path,
+                get(move || async move { Redirect::permanent(&redirect_path) }),
+            );
+            //we handle if localhost:port/01 requested for example
+            //curl http://localhost/01
+            let route_path = format!("/{}", remove_md_extension(filename));
             let redirect_path = format!("/{}.html", remove_md_extension(filename)); // Construct the redirect path
             tracing::debug!(
                 "Route added for {} (redirecting to {})",
@@ -484,12 +487,9 @@ fn using_serve_dir_with_assets_fallback() -> Router {
             );
             router = router.route(
                 &route_path,
-                get(move || async move {
-                    //Redirect::permanent(&redirect_path.clone()) // Perform the redirect
-                    Redirect::permanent(&redirect_path) // Perform the redirect
-                }),
+                get(move || async move { Redirect::permanent(&redirect_path) }),
             );
-        }
+        } //
     }
 
     router
@@ -497,48 +497,10 @@ fn using_serve_dir_with_assets_fallback() -> Router {
         .fallback_service(serve_dir)
 }
 
-fn using_serve_dir_only_from_root_via_fallback() -> Router {
-    // you can also serve the assets directly from the root (not nested under `/docs`)
-    // by only setting a `ServeDir` as the fallback
-    tracing::debug!("/docs/index.html:3003");
-    let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/index.html"));
-
-    Router::new()
-        .route("/foo", get(|| async { "Hi from /foo" }))
-        .fallback_service(serve_dir)
-}
-
-fn using_serve_dir_with_handler_as_service() -> Router {
-    tracing::debug!("/docs/index.html:3004");
-    async fn handle_404() -> (StatusCode, &'static str) {
-        (StatusCode::NOT_FOUND, "Not found")
-    }
-
-    // you can convert handler function to service
-    let service = handle_404.into_service();
-
-    let serve_dir = ServeDir::new("assets").not_found_service(service);
-
-    Router::new()
-        .route("/docs", get(|| async { "Hi from /docs" }))
-        .fallback_service(serve_dir)
-}
-
-fn two_serve_dirs() -> Router {
-    tracing::debug!("/assets/index.html:3005");
-    // you can also have two `ServeDir`s nested at different paths
-    let serve_dir_from_docs = ServeDir::new("docs");
-    let serve_dir_from_dist = ServeDir::new("dist");
-
-    Router::new()
-        .nest_service("/docs", serve_dir_from_docs)
-        .nest_service("/dist", serve_dir_from_dist)
-}
-
 #[allow(clippy::let_and_return)]
-fn calling_serve_dir_from_a_handler() -> Router {
-    tracing::debug!("/foo:3006");
-    tracing::debug!("/docs:3006");
+fn _calling_serve_dir_from_a_handler() -> Router {
+    tracing::debug!("/foo:port");
+    tracing::debug!("/docs:port");
     // via `tower::Service::call`, or more conveniently `tower::ServiceExt::oneshot` you can
     // call `ServeDir` yourself from a handler
     Router::new().nest_service(
@@ -551,15 +513,15 @@ fn calling_serve_dir_from_a_handler() -> Router {
     )
 }
 
-fn using_serve_file_from_a_route() -> Router {
-    tracing::debug!("/index:3307");
-    Router::new().route_service("/index", ServeFile::new("assets/index.html"))
+fn _using_serve_file_from_a_route() -> Router {
+    tracing::debug!("/index:port");
+    Router::new().route_service("/index", ServeFile::new("docs/index.html"))
 }
 
 async fn serve(app: Router, port: u16) {
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    tracing::debug!("listening on\n{}", listener.local_addr().unwrap());
+    println!("{}", listener.local_addr().unwrap());
     axum::serve(listener, app.layer(TraceLayer::new_for_http()))
         .await
         .unwrap();
@@ -568,7 +530,8 @@ async fn serve(app: Router, port: u16) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rust_embed::RustEmbed;
+    //use rust_embed::RustEmbed;
+    use rust_embed::Embed;
     use std::fs;
     use std::path::PathBuf;
     use std::thread;
@@ -582,6 +545,7 @@ mod tests {
 
     #[test]
     fn test_make_test_file() -> io::Result<()> {
+        use rust_embed::Embed;
         let test_file_content = "Line with\ttab.\nAnother\t\ttabbed line.\n\tLeading tab.\n\\tThis line starts with a literal backslash-t.\nThis line has a tab in the middle:	like this.";
         let script_path = Path::new("tabbed.txt");
         let test_files = Path::new("test_files");
@@ -594,10 +558,11 @@ mod tests {
 
     #[test]
     fn test_preserve_tabs() -> io::Result<()> {
+        use rust_embed::Embed;
         test_make_test_file()?;
         let test_file_content = "Line with\ttab.\nAnother\t\ttabbed line.\n\tLeading tab.\n\\tThis line starts with a literal backslash-t.\nThis line has a tab in the middle:	like this.";
 
-        #[derive(RustEmbed)]
+        #[derive(Embed)]
         #[folder = "./test_files"]
         #[exclude = "*.DS_Store"]
         struct EmbeddedAssets;
@@ -650,19 +615,20 @@ mod tests {
         Ok(())
     }
 
-    #[test]
-    fn remove_dir_all_custom() -> io::Result<()> {
-        let path = Path::new("test_files");
-        if path.is_dir() {
-            fs::remove_dir_all(path)?;
-            fs::create_dir_all(path)?;
-        } else if path.is_file() {
-            fs::remove_file(path)?;
-            fs::create_dir_all(path)?;
-        } else {
-            fs::create_dir_all(path)?;
-        }
-        test_make_test_file()?;
-        Ok(())
-    }
+    //#[test]
+    //fn remove_dir_all_custom() -> io::Result<()> {
+    //    use rust_embed::Embed;
+    //    let path = Path::new("test_files");
+    //    if path.is_dir() {
+    //        fs::remove_dir_all(path)?;
+    //        fs::create_dir_all(path)?;
+    //    } else if path.is_file() {
+    //        fs::remove_file(path)?;
+    //        fs::create_dir_all(path)?;
+    //    } else {
+    //        fs::create_dir_all(path)?;
+    //    }
+    //    test_make_test_file()?;
+    //    Ok(())
+    //}
 }
