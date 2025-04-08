@@ -1,3 +1,7 @@
+use axum::response::Redirect;
+
+//use tower_http::services::Redirect;
+
 use axum::{
     extract::Request, handler::HandlerWithoutStateExt, http::StatusCode, routing::get, Router,
 };
@@ -471,19 +475,20 @@ fn using_serve_dir_with_assets_fallback() -> Router {
     for file in Template::iter() {
         let filename = file.as_ref();
         if filename.ends_with(".md") {
+            let route_path = format!("/{}.md", remove_md_extension(filename));
+            let redirect_path = format!("/{}.html", remove_md_extension(filename)); // Construct the redirect path
+            tracing::debug!(
+                "Route added for {} (redirecting to {})",
+                route_path,
+                &redirect_path.clone()
+            );
             router = router.route(
-                &format!("/{}", remove_md_extension(filename)),
-                get(|| async {
-                    "TODO: Serve embedded file content here\n".to_owned()
-                        + "TODO: Serve embedded file content here\n"
-                        + "TODO: Serve embedded file content here\n"
-                        + "TODO: Serve embedded file content here\n"
-                        + "TODO: Serve embedded file content here\n"
-                        + "TODO: Serve embedded file content here\n"
-                        + "TODO: Serve embedded file content here"
+                &route_path,
+                get(move || async move {
+                    //Redirect::permanent(&redirect_path.clone()) // Perform the redirect
+                    Redirect::permanent(&redirect_path) // Perform the redirect
                 }),
             );
-            tracing::debug!("Route added for /{}", remove_md_extension(filename));
         }
     }
 
@@ -491,6 +496,34 @@ fn using_serve_dir_with_assets_fallback() -> Router {
         .nest_service("/docs", serve_dir.clone())
         .fallback_service(serve_dir)
 }
+
+//fn using_serve_dir_with_assets_fallback() -> Router {
+//    let serve_dir = ServeDir::new("docs").not_found_service(ServeFile::new("docs/readme.html"));
+//    let mut router = Router::new();
+//
+//    for file in Template::iter() {
+//        let filename = file.as_ref();
+//        if filename.ends_with(".md") {
+//            router = router.route(
+//                &format!("/{}", remove_md_extension(filename)),
+//                get(|| async {
+//                    "TODO: Serve embedded file content here\n".to_owned()
+//                        + "TODO: Serve embedded file content here\n"
+//                        + "TODO: Serve embedded file content here\n"
+//                        + "TODO: Serve embedded file content here\n"
+//                        + "TODO: Serve embedded file content here\n"
+//                        + "TODO: Serve embedded file content here\n"
+//                        + "TODO: Serve embedded file content here"
+//                }),
+//            );
+//            tracing::debug!("Route added for /{}", remove_md_extension(filename));
+//        }
+//    }
+//
+//    router
+//        .nest_service("/docs", serve_dir.clone())
+//        .fallback_service(serve_dir)
+//}
 
 //fn using_serve_dir_with_assets_fallback() -> Router {
 //    // `ServeDir` allows setting a fallback if an asset is not found
