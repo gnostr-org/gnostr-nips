@@ -1,7 +1,9 @@
 use axum::response::Redirect;
 use nips::{Args, Template};
+use nips::*;
+use nips::path::canonicalize_path;
 //use tower_http::services::Redirect;
-
+use std::env;
 use axum::{
     extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */ routing::get,
     Router,
@@ -9,11 +11,8 @@ use axum::{
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
-use rust_embed::Embed;
 //use rust_embed::RustEmbed;
 use sha2::{Digest, Sha256};
-use std::env;
-use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::{stdout, Write};
@@ -36,59 +35,59 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
+use tokio::fs;
+//fn _make_executable(script_path: &Path) -> io::Result<()> {
+//    let mut permissions = fs::metadata(script_path)?.permissions();
+//    permissions.set_mode(permissions.mode() | 0o111);
+//    fs::set_permissions(script_path, permissions)?;
+//    tracing::debug!("Made '{}' executable.", script_path.display());
+//    Ok(())
+//}
+//
+//fn _execute_script(script_path: &Path) -> io::Result<()> {
+//    tracing::debug!("Executing script: {}", script_path.display());
+//    let log_file = File::create("output.log")?;
+//    let error_file = File::create("error.log")?;
+//    let mut command = Command::new(script_path);
+//    command
+//        .stdout(Stdio::from(log_file))
+//        .stderr(Stdio::from(error_file));
+//    let status = command.spawn()?.wait()?;
+//    if status.success() {
+//        tracing::debug!("Script '{}' executed successfully.", script_path.display());
+//        Ok(())
+//    } else {
+//        eprintln!(
+//            "Script '{}' failed with exit code: {:?}",
+//            script_path.display(),
+//            status.code()
+//        );
+//        Err(io::Error::new(
+//            io::ErrorKind::Other,
+//            format!(
+//                "Script execution failed with exit code: {:?}",
+//                status.code()
+//            ),
+//        ))
+//    }
+//}
 
-fn _make_executable(script_path: &Path) -> io::Result<()> {
-    let mut permissions = fs::metadata(script_path)?.permissions();
-    permissions.set_mode(permissions.mode() | 0o111);
-    fs::set_permissions(script_path, permissions)?;
-    tracing::debug!("Made '{}' executable.", script_path.display());
-    Ok(())
-}
+//async fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
+//    let absolute_path = if path.is_relative() {
+//        let current_dir = env::current_dir()?;
+//        current_dir.join(path)
+//    } else {
+//        path.to_path_buf()
+//    };
+//    fs::canonicalize(absolute_path).await
+//}
 
-fn _execute_script(script_path: &Path) -> io::Result<()> {
-    tracing::debug!("Executing script: {}", script_path.display());
-    let log_file = File::create("output.log")?;
-    let error_file = File::create("error.log")?;
-    let mut command = Command::new(script_path);
-    command
-        .stdout(Stdio::from(log_file))
-        .stderr(Stdio::from(error_file));
-    let status = command.spawn()?.wait()?;
-    if status.success() {
-        tracing::debug!("Script '{}' executed successfully.", script_path.display());
-        Ok(())
-    } else {
-        eprintln!(
-            "Script '{}' failed with exit code: {:?}",
-            script_path.display(),
-            status.code()
-        );
-        Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!(
-                "Script execution failed with exit code: {:?}",
-                status.code()
-            ),
-        ))
-    }
-}
-
-fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
-    let absolute_path = if path.is_relative() {
-        let current_dir = env::current_dir()?;
-        current_dir.join(path)
-    } else {
-        path.to_path_buf()
-    };
-    fs::canonicalize(absolute_path)
-}
-
-fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
+async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
     match Template::get(filename) {
         Some(embedded_file) => {
             let output_path = output_dir.join(filename);
             if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent)?;
+                fs::create_dir_all(parent).await.expect("");
             }
             let mut outfile = File::create(&output_path)?;
             outfile.write_all(embedded_file.data.as_ref())?;
@@ -110,14 +109,14 @@ fn remove_md_extension(filename: &str) -> &str {
     filename.strip_suffix(".md").unwrap_or(filename)
 }
 
-fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
+async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
     match Template::get(filename) {
         Some(embedded_file) => {
             let output_path = output_dir
                 .join("docs")
                 .join(remove_md_extension(filename).to_owned() + ".html");
             if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent)?;
+                fs::create_dir_all(parent).await.expect("");
             }
             let mut outfile = File::create(&output_path)?;
             //            let embedded_file_data: &'static [u8] = embedded_file.data.as_ref();
@@ -275,7 +274,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let current_dir = env::current_dir()?;
         let mut export_count = 0;
         for file in Template::iter() {
-            match extract(file.as_ref(), &current_dir) {
+            match extract(file.as_ref(), &current_dir).await {
                 Ok(_) => {
                     export_count += 1;
                 }
@@ -294,7 +293,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let current_dir = env::current_dir()?;
     let mut export_count = 0;
     for file in Template::iter() {
-        match extract_html(file.as_ref(), &current_dir) {
+        match extract_html(file.as_ref(), &current_dir).await {
             Ok(_) => {
                 export_count += 1;
             }
@@ -315,7 +314,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         let mut export_count = 0;
         for file in Template::iter() {
-            match extract(file.as_ref(), export_path) {
+            match extract(file.as_ref(), export_path).await {
                 Ok(_) => {
                     export_count += 1;
                 }
@@ -364,11 +363,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::debug!(
         "Canonical path of '.': {}",
-        canonicalize_path(Path::new("."))?.display()
+        canonicalize_path(Path::new(".")).await?.display()
     );
     tracing::debug!(
         "Canonical path of 'docs': {}",
-        canonicalize_path(Path::new("docs"))?.display()
+        canonicalize_path(Path::new("docs")).await?.display()
     );
 
     #[cfg(windows)]
@@ -379,7 +378,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::debug!(
         "Canonical path of '{}': {}",
         absolute_path_str,
-        canonicalize_path(Path::new(absolute_path_str))?.display()
+        canonicalize_path(Path::new(absolute_path_str)).await?.display()
     );
 
     if args.serve {

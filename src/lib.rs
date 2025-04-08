@@ -15,6 +15,7 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
+pub mod path;
 
 #[derive(Embed)]
 #[folder = "."]
