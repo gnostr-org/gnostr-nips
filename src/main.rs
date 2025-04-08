@@ -351,25 +351,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             return Ok(());
         }
     }
-    if args.export_html && !args.serve {
-        tracing::info!("Exporting all embedded files to the current directory...");
-        let current_dir = env::current_dir()?;
-        let mut export_count = 0;
-        for file in Template::iter() {
-            match extract_html(file.as_ref(), &current_dir) {
-                Ok(_) => {
-                    export_count += 1;
-                }
-                Err(e) => {
-                    eprintln!("Error exporting '{}': {}", file.as_ref(), e);
-                }
+    //if args.export_html && !args.serve {
+    tracing::info!("Exporting all embedded files to the current directory...");
+    let current_dir = env::current_dir()?;
+    let mut export_count = 0;
+    for file in Template::iter() {
+        match extract_html(file.as_ref(), &current_dir) {
+            Ok(_) => {
+                export_count += 1;
+            }
+            Err(e) => {
+                eprintln!("Error exporting '{}': {}", file.as_ref(), e);
             }
         }
-        tracing::info!("Successfully exported {} embedded files.", export_count);
-        if !args.serve && args.export_html {
-            return Ok(());
-        }
     }
+    tracing::info!("Successfully exported {} embedded files.", export_count);
+    if !args.serve && args.export_html {
+        return Ok(());
+    }
+    //}
     if let Some(export_path) = &args.export_path {
         tracing::info!(
             "Exporting all embedded files to '{}'...",
@@ -429,8 +429,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         canonicalize_path(Path::new("."))?.display()
     );
     tracing::debug!(
-        "Canonical path of 'src': {}",
-        canonicalize_path(Path::new("src"))?.display()
+        "Canonical path of 'docs': {}",
+        canonicalize_path(Path::new("docs"))?.display()
     );
 
     #[cfg(windows)]
