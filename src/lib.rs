@@ -4,6 +4,7 @@
 use clap::Parser;
 use rust_embed::Embed;
 
+use std::io;
 use std::io::{stdout, Write};
 use std::path::{Path, PathBuf};
 
@@ -15,6 +16,12 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
+use tokio::fs;
+use tokio::fs::File;
+use tokio::io::AsyncWriteExt;
+
+
+
 pub mod path;
 
 #[derive(Embed)]
@@ -83,6 +90,30 @@ pub struct Args {
     /// Export all embedded files to the specified path.
     #[clap(long, value_name = "PATH")]
     pub export_path: Option<PathBuf>,
+}
+
+
+pub async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
+    match Template::get(filename) {
+        Some(embedded_file) => {
+            let output_path = output_dir.join(filename);
+            if let Some(parent) = output_path.parent() {
+                fs::create_dir_all(parent).await.expect("");
+            }
+            let mut outfile = File::create(&output_path).await?;
+            outfile.write_all(embedded_file.data.as_ref()).await?;
+            tracing::debug!(
+                "Successfully exported '{}' to '{}'",
+                filename,
+                output_path.display()
+            );
+            Ok(())
+        }
+        None => Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("Embedded file '{}' not found!", filename),
+        )),
+    }
 }
 
 fn view_area() -> Area {

@@ -2,6 +2,7 @@ use axum::response::Redirect;
 use nips::{Args, Template};
 use nips::*;
 use nips::path::canonicalize_path;
+use nips::extract;
 //use tower_http::services::Redirect;
 use std::env;
 use axum::{
@@ -72,29 +73,6 @@ use tokio::fs;
 //    }
 //}
 
-
-async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
-    match Template::get(filename) {
-        Some(embedded_file) => {
-            let output_path = output_dir.join(filename);
-            if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent).await.expect("");
-            }
-            let mut outfile = File::create(&output_path)?;
-            outfile.write_all(embedded_file.data.as_ref())?;
-            tracing::debug!(
-                "Successfully exported '{}' to '{}'",
-                filename,
-                output_path.display()
-            );
-            Ok(())
-        }
-        None => Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("Embedded file '{}' not found!", filename),
-        )),
-    }
-}
 
 fn remove_md_extension(filename: &str) -> &str {
     filename.strip_suffix(".md").unwrap_or(filename)
