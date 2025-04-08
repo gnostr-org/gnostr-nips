@@ -473,7 +473,15 @@ fn using_serve_dir_with_assets_fallback() -> Router {
         if filename.ends_with(".md") {
             router = router.route(
                 &format!("/{}", remove_md_extension(filename)),
-                get(|| async { "TODO: Serve embedded file content here" }), // Replace with actual content serving logic
+                get(|| async {
+                    "TODO: Serve embedded file content here\n".to_owned()
+                        + "TODO: Serve embedded file content here\n"
+                        + "TODO: Serve embedded file content here\n"
+                        + "TODO: Serve embedded file content here\n"
+                        + "TODO: Serve embedded file content here\n"
+                        + "TODO: Serve embedded file content here\n"
+                        + "TODO: Serve embedded file content here"
+                }),
             );
             tracing::debug!("Route added for /{}", remove_md_extension(filename));
         }
