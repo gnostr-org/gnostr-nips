@@ -92,6 +92,9 @@ pub struct Args {
     /// Export all embedded files to the specified path.
     #[clap(long, value_name = "PATH")]
     pub export_path: Option<PathBuf>,
+
+    #[arg(short, long, help = "Show USAGE.md")]
+    pub usage: bool,
 }
 
 pub fn calculate_sha256(data: &[u8]) -> String {
