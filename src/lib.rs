@@ -109,7 +109,7 @@ pub async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
             }
             let mut outfile = File::create(&output_path).await?;
             outfile.write_all(embedded_file.data.as_ref()).await?;
-            tracing::debug!(
+            tracing::trace!(
                 "Successfully exported '{}' to '{}'",
                 filename,
                 output_path.display()
@@ -146,7 +146,7 @@ pub async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
                 .await?;
 
             //outfile.write_all(markdown_to_html(embedded_file_data[0..5]));
-            tracing::debug!(
+            tracing::trace!(
                 "Successfully exported '{}' to '{}'",
                 filename,
                 output_path.display()
@@ -172,7 +172,7 @@ pub async fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     terminal::enable_raw_mode()?;
     queue!(w, Hide)?; // hiding the cursor
                       // get nip here
-    let mut view = MadView::from(MD.to_owned(), view_area(), skin);
+    let mut view = MadView::from(nip.to_owned(), view_area(), skin);
     loop {
         view.write_on(&mut w)?;
         w.flush()?;

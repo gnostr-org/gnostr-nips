@@ -76,6 +76,31 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 //    }
 //}
 
+async fn print_list() -> Result<(), Box<dyn std::error::Error>> {
+    let args = Args::parse();
+    tracing::trace!("Embedded files:");
+    for file in Template::iter() {
+        let _level_filter = if args.debug {
+            let this_file = Template::get(&file).unwrap();
+            //match output of shasum -a 256
+            //$ shasum -a 256 README.md
+            //b238c63f0e937a2b3a3982ecd8328ee03be26584d10723575802e9c6f098f361  README.md
+            println!(
+                "{}  {}",
+                calculate_sha256(this_file.data.as_ref()),
+                file.as_ref()
+            );
+        } else {
+            println!("{}", file.as_ref());
+        };
+    }
+    if !args.serve && args.list_embedded {
+        return Ok(());
+    } else {
+        Ok(())
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
@@ -92,32 +117,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::subscriber::set_global_default(subscriber)
         .expect("Failed to set global default subscriber");
 
-    tracing::debug!("Parsed arguments: {:?}", args);
+    tracing::trace!("Parsed arguments: {:?}", args);
+
+    if args.show.is_none() {
+        print_list().await;
+    } else {
+        tracing::trace!("{:?}", args.show);
+    }
 
     if args.list_embedded && !args.serve {
-        tracing::debug!("Embedded files:");
-        for file in Template::iter() {
-            let _level_filter = if args.debug {
-                let this_file = Template::get(&file).unwrap();
-                //match output of shasum -a 256
-                //$ shasum -a 256 README.md
-                //b238c63f0e937a2b3a3982ecd8328ee03be26584d10723575802e9c6f098f361  README.md
-                println!(
-                    "{}  {}",
-                    calculate_sha256(this_file.data.as_ref()),
-                    file.as_ref()
-                );
-            } else {
-                println!("{}", file.as_ref());
-            };
-        }
-        if !args.serve && args.list_embedded {
-            return Ok(());
-        }
+        print_list().await;
     }
 
     if args.export && !args.serve {
-        tracing::info!("Exporting all embedded files to the current directory...");
+        tracing::trace!("Exporting all embedded files to the current directory...");
         let current_dir = env::current_dir()?;
         let mut export_count = 0;
         for file in Template::iter() {
@@ -130,13 +143,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        tracing::info!("Successfully exported {} embedded files.", export_count);
+        tracing::trace!("Successfully exported {} embedded files.", export_count);
         if !args.serve && args.export {
             return Ok(());
         }
     }
     //if args.export_html && !args.serve {
-    tracing::info!("Exporting all embedded files to the current directory...");
+    tracing::trace!("Exporting all embedded files to the current directory...");
     let current_dir = env::current_dir()?;
     let mut export_count = 0;
     for file in Template::iter() {
@@ -149,13 +162,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
-    tracing::info!("Successfully exported {} embedded files.", export_count);
+    tracing::trace!("Successfully exported {} embedded files.", export_count);
     if !args.serve && args.export_html {
         return Ok(());
     }
     //}
     if let Some(export_path) = &args.export_path {
-        tracing::info!(
+        tracing::trace!(
             "Exporting all embedded files to '{}'...",
             export_path.display()
         );
@@ -170,7 +183,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        tracing::info!(
+        tracing::trace!(
             "Successfully exported {} embedded files to '{}'.",
             export_count,
             export_path.display()
@@ -192,27 +205,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
                 let res = markdown_to_html(&content);
                 tracing::debug!("{}", res);
-                print!("{}", res);
+                //print!("{}", res);
                 //std::process::exit(0);
                 //#[allow(unreachable_code)]
                 let skin = make_skin();
                 let _res = run_app(skin, (&content).to_string()).await;
                 if !args.serve && args.show.is_some() {
-                //    return Ok(());
+                    return Ok(());
                 }
             }
             None => {
-                eprintln!("Error: Embedded NIP file '{}' not found!", filename);
-                std::process::exit(1);
+                tracing::trace!("Error: Embedded NIP file '{}' not found!", filename);
+                print_list().await;
             }
         }
     }
 
-    tracing::debug!(
+    tracing::trace!(
         "Canonical path of '.': {}",
         canonicalize_path(Path::new(".")).await?.display()
     );
-    tracing::debug!(
+    tracing::trace!(
         "Canonical path of 'docs': {}",
         canonicalize_path(Path::new("docs")).await?.display()
     );
@@ -222,7 +235,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(not(windows))]
     let absolute_path_str = "/bin/ls";
 
-    tracing::debug!(
+    tracing::trace!(
         "Canonical path of '{}': {}",
         absolute_path_str,
         canonicalize_path(Path::new(absolute_path_str))
