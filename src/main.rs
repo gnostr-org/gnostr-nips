@@ -1,18 +1,22 @@
 use axum::response::Redirect;
-
+use nips::extract;
+use nips::extract_html;
+use nips::markdown_to_html;
+use nips::path::canonicalize_path;
+use nips::run_app;
+use nips::*;
+use nips::{Args, Template};
 //use tower_http::services::Redirect;
-
 use axum::{
-    extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */routing::get, Router,
+    extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */ routing::get,
+    Router,
 };
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
-use rust_embed::Embed;
+use std::env;
 //use rust_embed::RustEmbed;
 use sha2::{Digest, Sha256};
-use std::env;
-use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::{stdout, Write};
@@ -29,277 +33,93 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
+use tokio::fs;
 use tower::ServiceExt;
 use tower_http::{
     services::{ServeDir, ServeFile},
     trace::TraceLayer,
 };
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
+//fn _make_executable(script_path: &Path) -> io::Result<()> {
+//    let mut permissions = fs::metadata(script_path)?.permissions();
+//    permissions.set_mode(permissions.mode() | 0o111);
+//    fs::set_permissions(script_path, permissions)?;
+//    tracing::debug!("Made '{}' executable.", script_path.display());
+//    Ok(())
+//}
+//
+//fn _execute_script(script_path: &Path) -> io::Result<()> {
+//    tracing::debug!("Executing script: {}", script_path.display());
+//    let log_file = File::create("output.log")?;
+//    let error_file = File::create("error.log")?;
+//    let mut command = Command::new(script_path);
+//    command
+//        .stdout(Stdio::from(log_file))
+//        .stderr(Stdio::from(error_file));
+//    let status = command.spawn()?.wait()?;
+//    if status.success() {
+//        tracing::debug!("Script '{}' executed successfully.", script_path.display());
+//        Ok(())
+//    } else {
+//        eprintln!(
+//            "Script '{}' failed with exit code: {:?}",
+//            script_path.display(),
+//            status.code()
+//        );
+//        Err(io::Error::new(
+//            io::ErrorKind::Other,
+//            format!(
+//                "Script execution failed with exit code: {:?}",
+//                status.code()
+//            ),
+//        ))
+//    }
+//}
 
-#[derive(Embed)]
-#[folder = "."]
-#[include = "*.md"]
-#[exclude = "*.DS_Store"]
-#[exclude = "target/*"]
-#[exclude = "src"]
-#[exclude = "src/*"]
-#[exclude = ".git"]
-#[exclude = ".git/*"]
-#[exclude = ".github/*"]
-#[exclude = ".gitignore"]
-#[exclude = ".justfile"]
-#[exclude = ".nojekyll"]
-#[exclude = "build.rs"]
-#[exclude = "dist-workspace.toml"]
-#[exclude = "error.log"]
-#[exclude = "output.log"]
-#[exclude = "post-commit-history"]
-#[exclude = "script.sh"]
-#[exclude = "template/Makefile"]
-#[exclude = "template/default_config.conf"]
-#[exclude = "template/install_script.sh"]
-#[exclude = "test_files/tabbed.txtbuild.rs"]
-#[exclude = "Cargo.lock"]
-#[exclude = "Cargo.toml"]
-#[exclude = "LICENSE"]
-#[exclude = "Makefile"]
-struct Template;
-
-/// a simple nostr-protocol/nips server
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Args {
-    /// Enable debug logging.
-    #[clap(short, long)]
-    debug: bool,
-
-    /// List all embedded files.
-    #[clap(short, long)]
-    list_embedded: bool,
-
-    /// Show the contents of an embedded file using a pager.
-    //#[clap(short, long, value_name = "NIP", default_value = "README.md")]
-    #[clap(short, long, value_name = "NIP")]
-    show: Option<String>,
-
-    /// Axum Serve.
-    //#[clap(long, default_value = "false")]
-    #[clap(long, default_value = "false")]
-    serve: bool,
-
-    /// Sets the port number to listen on
-    #[arg(short, long, value_parser = clap::value_parser!(u16), default_value_t = 8080)]
-    port: u16,
-
-    /// Export all embedded files to the current directory.
-    #[clap(short, long)]
-    export: bool,
-
-    /// Export all embedded files to the current directory.
-    #[clap(long)]
-    export_html: bool,
-
-    /// Export all embedded files to the specified path.
-    #[clap(long, value_name = "PATH")]
-    export_path: Option<PathBuf>,
-}
-
-fn _make_executable(script_path: &Path) -> io::Result<()> {
-    let mut permissions = fs::metadata(script_path)?.permissions();
-    permissions.set_mode(permissions.mode() | 0o111);
-    fs::set_permissions(script_path, permissions)?;
-    tracing::debug!("Made '{}' executable.", script_path.display());
-    Ok(())
-}
-
-fn _execute_script(script_path: &Path) -> io::Result<()> {
-    tracing::debug!("Executing script: {}", script_path.display());
-    let log_file = File::create("output.log")?;
-    let error_file = File::create("error.log")?;
-    let mut command = Command::new(script_path);
-    command
-        .stdout(Stdio::from(log_file))
-        .stderr(Stdio::from(error_file));
-    let status = command.spawn()?.wait()?;
-    if status.success() {
-        tracing::debug!("Script '{}' executed successfully.", script_path.display());
-        Ok(())
-    } else {
-        eprintln!(
-            "Script '{}' failed with exit code: {:?}",
-            script_path.display(),
-            status.code()
-        );
-        Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!(
-                "Script execution failed with exit code: {:?}",
-                status.code()
-            ),
-        ))
-    }
-}
-
-fn canonicalize_path(path: &Path) -> io::Result<PathBuf> {
-    let absolute_path = if path.is_relative() {
-        let current_dir = env::current_dir()?;
-        current_dir.join(path)
-    } else {
-        path.to_path_buf()
-    };
-    fs::canonicalize(absolute_path)
-}
-
-fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
-    match Template::get(filename) {
-        Some(embedded_file) => {
-            let output_path = output_dir.join(filename);
-            if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            let mut outfile = File::create(&output_path)?;
-            outfile.write_all(embedded_file.data.as_ref())?;
-            tracing::debug!(
-                "Successfully exported '{}' to '{}'",
-                filename,
-                output_path.display()
+//async fn print_list() -> Result<(), Box<dyn std::error::Error>> {
+async fn print_list() -> i32 {
+    let args = Args::parse();
+    tracing::trace!("Embedded files:");
+    for file in Template::iter() {
+        let _level_filter = if args.debug {
+            let this_file = Template::get(&file).unwrap();
+            //match output of shasum -a 256
+            //$ shasum -a 256 README.md
+            //b238c63f0e937a2b3a3982ecd8328ee03be26584d10723575802e9c6f098f361  README.md
+            println!(
+                "{}  {}",
+                calculate_sha256(this_file.data.as_ref()),
+                file.as_ref()
             );
-            Ok(())
-        }
-        None => Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("Embedded file '{}' not found!", filename),
-        )),
+        } else {
+            println!("{}", file.as_ref());
+        };
     }
+    0 as i32
 }
-
-fn remove_md_extension(filename: &str) -> &str {
-    filename.strip_suffix(".md").unwrap_or(filename)
-}
-
-fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
-    match Template::get(filename) {
+async fn usage() -> i32 {
+    match Template::get(&"USAGE.md") {
         Some(embedded_file) => {
-            let output_path = output_dir
-                .join("docs")
-                .join(remove_md_extension(filename).to_owned() + ".html");
-            if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            let mut outfile = File::create(&output_path)?;
-            //            let embedded_file_data: &'static [u8] = embedded_file.data.as_ref();
-            let embedded_file_data: Vec<u8> = embedded_file.data.as_ref().to_vec(); // Create an owned Vec
-
-            //std::str::from_utf8(embedded_file_data)
-            //outfile.write_all(markdown_to_html(&std::str::from_utf8(embedded_file_data).expect("")).as_bytes())?;
-            outfile.write_all(
-                markdown_to_html(&std::str::from_utf8(&embedded_file_data).expect("")).as_bytes(),
-            )?;
-
-            //outfile.write_all(markdown_to_html(embedded_file_data[0..5]));
-            tracing::debug!(
-                "Successfully exported '{}' to '{}'",
-                filename,
-                output_path.display()
-            );
-            Ok(())
+            let content = String::from_utf8_lossy(embedded_file.data.as_ref());
+            let res = markdown_to_html(&content);
+            tracing::debug!("{}", res);
+            //print!("{}", res);
+            //std::process::exit(0);
+            //#[allow(unreachable_code)]
+            let skin = make_skin();
+            let _res = run_app(skin, (&content).to_string()).await;
         }
-        None => Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("Embedded file '{}' not found!", filename),
-        )),
-    }
-}
-
-fn view_area() -> Area {
-    let mut area = Area::full_screen();
-    area.pad_for_max_width(120);
-    area
-}
-
-#[allow(unused_variables)]
-fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
-    let res = markdown_to_html(&nip);
-    tracing::debug!("{}", res);
-    print!("{}", res);
-    //std::process::exit(0);
-    //#[allow(unreachable_code)]
-    let mut w = stdout();
-    queue!(w, EnterAlternateScreen)?;
-    terminal::enable_raw_mode()?;
-    queue!(w, Hide)?;
-    let mut view = MadView::from(nip.to_owned(), view_area(), skin);
-    loop {
-        view.write_on(&mut w)?;
-        w.flush()?;
-        match event::read() {
-            Ok(Event::Key(KeyEvent { code, .. })) => match code {
-                Up => view.try_scroll_lines(-1),
-                Down => view.try_scroll_lines(1),
-                PageUp => view.try_scroll_pages(-1),
-                PageDown => view.try_scroll_pages(1),
-                Char('q') | Esc => break,
-                _ => {}
-            },
-            Ok(Event::Resize(..)) => {
-                queue!(w, Clear(ClearType::All))?;
-                view.resize(&view_area());
-            }
-            _ => {}
+        None => {
+            tracing::trace!("Error: {}' not found!", &"USAGE.md");
+            print_list().await;
         }
     }
-    terminal::disable_raw_mode()?;
-    queue!(w, Show)?;
-    queue!(w, LeaveAlternateScreen)?;
-    w.flush()?;
-    Ok(())
-}
-
-fn make_skin() -> MadSkin {
-    let mut skin = MadSkin::default();
-    skin.table.align = Alignment::Center;
-    skin.set_headers_fg(AnsiValue(178));
-    skin.bold.set_fg(Yellow);
-    skin.italic.set_fg(Magenta);
-    skin.scrollbar.thumb.set_fg(AnsiValue(178));
-    skin.code_block.align = Alignment::Center;
-    skin
-}
-
-fn markdown_to_html(markdown_input: &str) -> String {
-    let mut options = Options::empty();
-    //options.insert(Options::all());
-    options.insert(Options::ENABLE_TABLES);
-    options.insert(Options::ENABLE_FOOTNOTES);
-    options.insert(Options::ENABLE_STRIKETHROUGH);
-    options.insert(Options::ENABLE_TASKLISTS);
-    //options.insert(Options::ENABLE_SMART_PUNCTUATION);
-    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
-    options.insert(Options::ENABLE_YAML_STYLE_METADATA_BLOCKS);
-    options.insert(Options::ENABLE_PLUSES_DELIMITED_METADATA_BLOCKS);
-    options.insert(Options::ENABLE_OLD_FOOTNOTES);
-    options.insert(Options::ENABLE_MATH);
-    options.insert(Options::ENABLE_GFM);
-    options.insert(Options::ENABLE_DEFINITION_LIST);
-    options.insert(Options::ENABLE_SUPERSCRIPT);
-    options.insert(Options::ENABLE_SUBSCRIPT);
-    options.insert(Options::ENABLE_WIKILINKS);
-
-    let parser = HTMLParser::new_ext(markdown_input, options);
-    let mut html_output = String::new();
-    html::push_html(&mut html_output, parser);
-    html_output
-}
-
-fn calculate_sha256(data: &[u8]) -> String {
-    let mut hasher = Sha256::new();
-    hasher.update(data);
-    format!("{:x}", hasher.finalize())
+    0 as i32
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = Args::parse();
+    let mut args = Args::parse();
 
     let level_filter = if args.debug {
         EnvFilter::new("debug")
@@ -313,36 +133,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::subscriber::set_global_default(subscriber)
         .expect("Failed to set global default subscriber");
 
-    tracing::debug!("Parsed arguments: {:?}", args);
+    tracing::trace!("Parsed arguments: {:?}", args);
+
+    if args.usage {
+        std::process::exit(usage().await)
+    } else {
+        0
+    };
+    //both cases we assume the server may already
+    //be running
+    //nips -s --serve
+    if args.show.is_none() && args.serve.clone() {
+        args.serve = false;
+        //std::process::exit(print_list().await);
+        std::process::exit(usage().await);
+    } else if args.show.is_none() {
+        args.serve = false;
+    }
 
     if args.list_embedded && !args.serve {
-        tracing::debug!("Embedded files:");
-        for file in Template::iter() {
-            let _level_filter = if args.debug {
-                let this_file = Template::get(&file).unwrap();
-                //match output of shasum -a 256
-                //$ shasum -a 256 README.md
-                //b238c63f0e937a2b3a3982ecd8328ee03be26584d10723575802e9c6f098f361  README.md
-                println!(
-                    "{}  {}",
-                    calculate_sha256(this_file.data.as_ref()),
-                    file.as_ref()
-                );
-            } else {
-                println!("{}", file.as_ref());
-            };
-        }
-        if !args.serve && args.list_embedded {
-            return Ok(());
-        }
+        let _ = print_list().await;
     }
 
     if args.export && !args.serve {
-        tracing::info!("Exporting all embedded files to the current directory...");
+        tracing::trace!("Exporting all embedded files to the current directory...");
         let current_dir = env::current_dir()?;
         let mut export_count = 0;
         for file in Template::iter() {
-            match extract(file.as_ref(), &current_dir) {
+            match extract(file.as_ref(), &current_dir).await {
                 Ok(_) => {
                     export_count += 1;
                 }
@@ -351,17 +169,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        tracing::info!("Successfully exported {} embedded files.", export_count);
+        tracing::trace!("Successfully exported {} embedded files.", export_count);
         if !args.serve && args.export {
             return Ok(());
         }
     }
     //if args.export_html && !args.serve {
-    tracing::info!("Exporting all embedded files to the current directory...");
+    tracing::trace!("Exporting all embedded files to the current directory...");
     let current_dir = env::current_dir()?;
     let mut export_count = 0;
     for file in Template::iter() {
-        match extract_html(file.as_ref(), &current_dir) {
+        match extract_html(file.as_ref(), &current_dir).await {
             Ok(_) => {
                 export_count += 1;
             }
@@ -370,19 +188,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
-    tracing::info!("Successfully exported {} embedded files.", export_count);
+    tracing::trace!("Successfully exported {} embedded files.", export_count);
     if !args.serve && args.export_html {
         return Ok(());
     }
     //}
     if let Some(export_path) = &args.export_path {
-        tracing::info!(
+        tracing::trace!(
             "Exporting all embedded files to '{}'...",
             export_path.display()
         );
         let mut export_count = 0;
         for file in Template::iter() {
-            match extract(file.as_ref(), export_path) {
+            match extract(file.as_ref(), export_path).await {
                 Ok(_) => {
                     export_count += 1;
                 }
@@ -391,7 +209,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        tracing::info!(
+        tracing::trace!(
             "Successfully exported {} embedded files to '{}'.",
             export_count,
             export_path.display()
@@ -413,29 +231,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let content = String::from_utf8_lossy(embedded_file.data.as_ref());
                 let res = markdown_to_html(&content);
                 tracing::debug!("{}", res);
-                print!("{}", res);
-                std::process::exit(0);
-                #[allow(unreachable_code)]
+                //print!("{}", res);
+                //std::process::exit(0);
+                //#[allow(unreachable_code)]
                 let skin = make_skin();
-                let _res = run_app(skin, (&content).to_string());
+                let _res = run_app(skin, (&content).to_string()).await;
                 if !args.serve && args.show.is_some() {
                     return Ok(());
                 }
             }
             None => {
-                eprintln!("Error: Embedded NIP file '{}' not found!", filename);
-                std::process::exit(1);
+                tracing::trace!("Error: Embedded NIP file '{}' not found!", filename);
+                print_list().await;
             }
         }
     }
 
-    tracing::debug!(
+    tracing::trace!(
         "Canonical path of '.': {}",
-        canonicalize_path(Path::new("."))?.display()
+        canonicalize_path(Path::new(".")).await?.display()
     );
-    tracing::debug!(
+    tracing::trace!(
         "Canonical path of 'docs': {}",
-        canonicalize_path(Path::new("docs"))?.display()
+        canonicalize_path(Path::new("docs")).await?.display()
     );
 
     #[cfg(windows)]
@@ -443,14 +261,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(not(windows))]
     let absolute_path_str = "/bin/ls";
 
-    tracing::debug!(
+    tracing::trace!(
         "Canonical path of '{}': {}",
         absolute_path_str,
-        canonicalize_path(Path::new(absolute_path_str))?.display()
+        canonicalize_path(Path::new(absolute_path_str))
+            .await?
+            .display()
     );
 
     if args.serve {
         //MUST be true
+        tokio::join!(run_app(make_skin(), String::from("01")));
         tokio::join!(serve(using_serve_dir_with_assets_fallback(), args.port),);
     }
 
