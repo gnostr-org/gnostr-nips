@@ -193,12 +193,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let res = markdown_to_html(&content);
                 tracing::debug!("{}", res);
                 print!("{}", res);
-                std::process::exit(0);
-                #[allow(unreachable_code)]
+                //std::process::exit(0);
+                //#[allow(unreachable_code)]
                 let skin = make_skin();
-                let _res = run_app(skin, (&content).to_string());
+                let _res = run_app(skin, (&content).to_string()).await;
                 if !args.serve && args.show.is_some() {
-                    return Ok(());
+                //    return Ok(());
                 }
             }
             None => {
