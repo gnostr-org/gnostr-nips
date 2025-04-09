@@ -122,23 +122,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::trace!("Parsed arguments: {:?}", args);
 
+    //both cases we assume the server may already
+    //be running
+    //nips -s --serve
     if args.show.is_none() && args.serve.clone() {
-
-
-		args.serve = false;
-        //print_list().await.expect("");
-		std::process::exit(print_list().await);
-
-
-    } else {
-
-
-		args.serve = false;
-        //tracing::trace!("{:?}", args.show);
-		//	std::process::exit(0);
-        //print_list().await.expect("")
-
-
+        args.serve = false;
+        //std::process::exit(print_list().await);
+        std::process::exit(usage().await);
+    } else if args.show.is_none() {
+        args.serve = false;
     }
 
     if args.list_embedded && !args.serve {
