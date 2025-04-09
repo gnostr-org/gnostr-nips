@@ -76,7 +76,8 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 //    }
 //}
 
-async fn print_list() -> Result<(), Box<dyn std::error::Error>> {
+//async fn print_list() -> Result<(), Box<dyn std::error::Error>> {
+async fn print_list() -> i32 {
     let args = Args::parse();
     tracing::trace!("Embedded files:");
     for file in Template::iter() {
@@ -94,16 +95,18 @@ async fn print_list() -> Result<(), Box<dyn std::error::Error>> {
             println!("{}", file.as_ref());
         };
     }
-    if !args.serve && args.list_embedded {
-        return Ok(());
-    } else {
-        Ok(())
-    }
+	std::process::exit(0);
+    //if !args.serve && args.list_embedded {
+        //return Ok(());
+    //} else {
+      //  Ok(())
+    //}
+	0 as i32
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = Args::parse();
+    let mut args = Args::parse();
 
     let level_filter = if args.debug {
         EnvFilter::new("debug")
@@ -119,14 +122,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::trace!("Parsed arguments: {:?}", args);
 
-    if args.show.is_none() {
-        print_list().await;
+    if args.show.is_none() && args.serve.clone() {
+
+
+		args.serve = false;
+        //print_list().await.expect("");
+		std::process::exit(print_list().await);
+
+
     } else {
-        tracing::trace!("{:?}", args.show);
+
+
+		args.serve = false;
+        //tracing::trace!("{:?}", args.show);
+		//	std::process::exit(0);
+        //print_list().await.expect("")
+
+
     }
 
     if args.list_embedded && !args.serve {
-        print_list().await;
+        let _ = print_list().await;
     }
 
     if args.export && !args.serve {
