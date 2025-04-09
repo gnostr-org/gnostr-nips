@@ -6,8 +6,8 @@ use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
 
-use sha2::Sha256;
 use sha2::Digest;
+use sha2::Sha256;
 use std::io;
 use std::io::{stdout, Write};
 use std::path::{Path, PathBuf};
