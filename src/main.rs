@@ -95,13 +95,26 @@ async fn print_list() -> i32 {
             println!("{}", file.as_ref());
         };
     }
-	std::process::exit(0);
-    //if !args.serve && args.list_embedded {
-        //return Ok(());
-    //} else {
-      //  Ok(())
-    //}
-	0 as i32
+    0 as i32
+}
+async fn usage() -> i32 {
+    match Template::get(&"USAGE.md") {
+        Some(embedded_file) => {
+            let content = String::from_utf8_lossy(embedded_file.data.as_ref());
+            let res = markdown_to_html(&content);
+            tracing::debug!("{}", res);
+            //print!("{}", res);
+            //std::process::exit(0);
+            //#[allow(unreachable_code)]
+            let skin = make_skin();
+            let _res = run_app(skin, (&content).to_string()).await;
+        }
+        None => {
+            tracing::trace!("Error: {}' not found!", &"USAGE.md");
+            print_list().await;
+        }
+    }
+    0 as i32
 }
 
 #[tokio::main]
@@ -122,6 +135,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::trace!("Parsed arguments: {:?}", args);
 
+    if args.usage {
+        std::process::exit(usage().await)
+    } else {
+        0
+    };
     //both cases we assume the server may already
     //be running
     //nips -s --serve
