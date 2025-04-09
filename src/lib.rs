@@ -2,6 +2,8 @@
 //!   cargo run --example scrollable
 //!
 use clap::Parser;
+use pulldown_cmark::{html, Parser as HTMLParser};
+use pulldown_cmark::Options;
 use rust_embed::Embed;
 
 use std::io;
@@ -116,6 +118,40 @@ pub async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
     }
 }
 
+async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
+    match Template::get(filename) {
+        Some(embedded_file) => {
+            let output_path = output_dir
+                .join("docs")
+                .join(remove_md_extension(filename).to_owned() + ".html");
+            if let Some(parent) = output_path.parent() {
+                fs::create_dir_all(parent).await.expect("");
+            }
+            let mut outfile = File::create(&output_path).await?;
+            //            let embedded_file_data: &'static [u8] = embedded_file.data.as_ref();
+            let embedded_file_data: Vec<u8> = embedded_file.data.as_ref().to_vec(); // Create an owned Vec
+
+            //std::str::from_utf8(embedded_file_data)
+            //outfile.write_all(markdown_to_html(&std::str::from_utf8(embedded_file_data).expect("")).as_bytes())?;
+            outfile.write_all(
+                markdown_to_html(&std::str::from_utf8(&embedded_file_data).expect("")).as_bytes(),
+            ).await?;
+
+            //outfile.write_all(markdown_to_html(embedded_file_data[0..5]));
+            tracing::debug!(
+                "Successfully exported '{}' to '{}'",
+                filename,
+                output_path.display()
+            );
+            Ok(())
+        }
+        None => Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("Embedded file '{}' not found!", filename),
+        )),
+    }
+}
+
 fn view_area() -> Area {
     let mut area = Area::full_screen();
     area.pad_for_max_width(120); // we don't want a too wide text column
@@ -153,7 +189,7 @@ fn run_app(skin: MadSkin) -> Result<(), Error> {
     Ok(())
 }
 
-fn make_skin() -> MadSkin {
+pub fn make_skin() -> MadSkin {
     let mut skin = MadSkin::default();
     skin.table.align = Alignment::Center;
     skin.set_headers_fg(AnsiValue(178));
@@ -164,9 +200,38 @@ fn make_skin() -> MadSkin {
     skin
 }
 
-fn scrollable() -> Result<(), Error> {
+pub fn markdown_to_html(markdown_input: &str) -> String {
+    let mut options = Options::empty();
+    //options.insert(Options::all());
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_FOOTNOTES);
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TASKLISTS);
+    //options.insert(Options::ENABLE_SMART_PUNCTUATION);
+    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
+    options.insert(Options::ENABLE_YAML_STYLE_METADATA_BLOCKS);
+    options.insert(Options::ENABLE_PLUSES_DELIMITED_METADATA_BLOCKS);
+    options.insert(Options::ENABLE_OLD_FOOTNOTES);
+    options.insert(Options::ENABLE_MATH);
+    options.insert(Options::ENABLE_GFM);
+    options.insert(Options::ENABLE_DEFINITION_LIST);
+    options.insert(Options::ENABLE_SUPERSCRIPT);
+    options.insert(Options::ENABLE_SUBSCRIPT);
+    options.insert(Options::ENABLE_WIKILINKS);
+
+    let parser = HTMLParser::new_ext(markdown_input, options);
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+    html_output
+}
+
+pub fn scrollable() -> Result<(), Error> {
     let skin = make_skin();
     run_app(skin)
+}
+
+pub fn remove_md_extension(filename: &str) -> &str {
+    filename.strip_suffix(".md").unwrap_or(filename)
 }
 
 static MD: &str = r#"# Scrollable Markdown in Termimad

@@ -3,6 +3,7 @@ use nips::{Args, Template};
 use nips::*;
 use nips::path::canonicalize_path;
 use nips::extract;
+use nips::markdown_to_html;
 //use tower_http::services::Redirect;
 use std::env;
 use axum::{
@@ -156,41 +157,6 @@ fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     Ok(())
 }
 
-fn make_skin() -> MadSkin {
-    let mut skin = MadSkin::default();
-    skin.table.align = Alignment::Center;
-    skin.set_headers_fg(AnsiValue(178));
-    skin.bold.set_fg(Yellow);
-    skin.italic.set_fg(Magenta);
-    skin.scrollbar.thumb.set_fg(AnsiValue(178));
-    skin.code_block.align = Alignment::Center;
-    skin
-}
-
-fn markdown_to_html(markdown_input: &str) -> String {
-    let mut options = Options::empty();
-    //options.insert(Options::all());
-    options.insert(Options::ENABLE_TABLES);
-    options.insert(Options::ENABLE_FOOTNOTES);
-    options.insert(Options::ENABLE_STRIKETHROUGH);
-    options.insert(Options::ENABLE_TASKLISTS);
-    //options.insert(Options::ENABLE_SMART_PUNCTUATION);
-    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
-    options.insert(Options::ENABLE_YAML_STYLE_METADATA_BLOCKS);
-    options.insert(Options::ENABLE_PLUSES_DELIMITED_METADATA_BLOCKS);
-    options.insert(Options::ENABLE_OLD_FOOTNOTES);
-    options.insert(Options::ENABLE_MATH);
-    options.insert(Options::ENABLE_GFM);
-    options.insert(Options::ENABLE_DEFINITION_LIST);
-    options.insert(Options::ENABLE_SUPERSCRIPT);
-    options.insert(Options::ENABLE_SUBSCRIPT);
-    options.insert(Options::ENABLE_WIKILINKS);
-
-    let parser = HTMLParser::new_ext(markdown_input, options);
-    let mut html_output = String::new();
-    html::push_html(&mut html_output, parser);
-    html_output
-}
 
 fn calculate_sha256(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
