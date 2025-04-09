@@ -2,8 +2,8 @@
 //!   cargo run --example scrollable
 //!
 use clap::Parser;
-use pulldown_cmark::{html, Parser as HTMLParser};
 use pulldown_cmark::Options;
+use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
 
 use std::io;
@@ -21,8 +21,6 @@ use termimad::*;
 use tokio::fs;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
-
-
 
 pub mod path;
 
@@ -94,7 +92,6 @@ pub struct Args {
     pub export_path: Option<PathBuf>,
 }
 
-
 pub async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
     match Template::get(filename) {
         Some(embedded_file) => {
@@ -118,7 +115,7 @@ pub async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
     }
 }
 
-async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
+pub async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
     match Template::get(filename) {
         Some(embedded_file) => {
             let output_path = output_dir
@@ -133,9 +130,12 @@ async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
 
             //std::str::from_utf8(embedded_file_data)
             //outfile.write_all(markdown_to_html(&std::str::from_utf8(embedded_file_data).expect("")).as_bytes())?;
-            outfile.write_all(
-                markdown_to_html(&std::str::from_utf8(&embedded_file_data).expect("")).as_bytes(),
-            ).await?;
+            outfile
+                .write_all(
+                    markdown_to_html(&std::str::from_utf8(&embedded_file_data).expect(""))
+                        .as_bytes(),
+                )
+                .await?;
 
             //outfile.write_all(markdown_to_html(embedded_file_data[0..5]));
             tracing::debug!(
@@ -152,7 +152,7 @@ async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
     }
 }
 
-fn view_area() -> Area {
+pub fn view_area() -> Area {
     let mut area = Area::full_screen();
     area.pad_for_max_width(120); // we don't want a too wide text column
     area

@@ -1,11 +1,11 @@
 use axum::response::Redirect;
-use nips::{Args, Template};
-use nips::*;
-use nips::path::canonicalize_path;
 use nips::extract;
+use nips::extract_html;
 use nips::markdown_to_html;
+use nips::path::canonicalize_path;
+use nips::*;
+use nips::{Args, Template};
 //use tower_http::services::Redirect;
-use std::env;
 use axum::{
     extract::Request, /*handler::HandlerWithoutStateExt, http::StatusCode, */ routing::get,
     Router,
@@ -13,6 +13,7 @@ use axum::{
 use clap::Parser;
 use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
+use std::env;
 //use rust_embed::RustEmbed;
 use sha2::{Digest, Sha256};
 use std::fs::File;
@@ -31,13 +32,13 @@ use termimad::crossterm::{
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use termimad::*;
+use tokio::fs;
 use tower::ServiceExt;
 use tower_http::{
     services::{ServeDir, ServeFile},
     trace::TraceLayer,
 };
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
-use tokio::fs;
 //fn _make_executable(script_path: &Path) -> io::Result<()> {
 //    let mut permissions = fs::metadata(script_path)?.permissions();
 //    permissions.set_mode(permissions.mode() | 0o111);
@@ -73,51 +74,6 @@ use tokio::fs;
 //        ))
 //    }
 //}
-
-
-fn remove_md_extension(filename: &str) -> &str {
-    filename.strip_suffix(".md").unwrap_or(filename)
-}
-
-async fn extract_html(filename: &str, output_dir: &Path) -> io::Result<()> {
-    match Template::get(filename) {
-        Some(embedded_file) => {
-            let output_path = output_dir
-                .join("docs")
-                .join(remove_md_extension(filename).to_owned() + ".html");
-            if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent).await.expect("");
-            }
-            let mut outfile = File::create(&output_path)?;
-            //            let embedded_file_data: &'static [u8] = embedded_file.data.as_ref();
-            let embedded_file_data: Vec<u8> = embedded_file.data.as_ref().to_vec(); // Create an owned Vec
-
-            //std::str::from_utf8(embedded_file_data)
-            //outfile.write_all(markdown_to_html(&std::str::from_utf8(embedded_file_data).expect("")).as_bytes())?;
-            outfile.write_all(
-                markdown_to_html(&std::str::from_utf8(&embedded_file_data).expect("")).as_bytes(),
-            )?;
-
-            //outfile.write_all(markdown_to_html(embedded_file_data[0..5]));
-            tracing::debug!(
-                "Successfully exported '{}' to '{}'",
-                filename,
-                output_path.display()
-            );
-            Ok(())
-        }
-        None => Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("Embedded file '{}' not found!", filename),
-        )),
-    }
-}
-
-fn view_area() -> Area {
-    let mut area = Area::full_screen();
-    area.pad_for_max_width(120);
-    area
-}
 
 #[allow(unused_variables)]
 fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
@@ -156,7 +112,6 @@ fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     w.flush()?;
     Ok(())
 }
-
 
 fn calculate_sha256(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
@@ -313,7 +268,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::debug!(
         "Canonical path of '{}': {}",
         absolute_path_str,
-        canonicalize_path(Path::new(absolute_path_str)).await?.display()
+        canonicalize_path(Path::new(absolute_path_str))
+            .await?
+            .display()
     );
 
     if args.serve {
