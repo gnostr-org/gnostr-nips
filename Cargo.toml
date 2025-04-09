@@ -1,6 +1,6 @@
 [package]
 name = "nips"
-version = "0.0.38"
+version = "0.0.39"
 edition = "2021"
 authors = ["randymcmillan <randymcmillan@protonmail.com>", "The nostr-protocol/nips Contributors"]
 repository = "https://github.com/gnostr-org/gnostr-nips.git"
