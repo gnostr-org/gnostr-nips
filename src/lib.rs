@@ -6,6 +6,8 @@ use pulldown_cmark::Options;
 use pulldown_cmark::{html, Parser as HTMLParser};
 use rust_embed::Embed;
 
+use sha2::Sha256;
+use sha2::Digest;
 use std::io;
 use std::io::{stdout, Write};
 use std::path::{Path, PathBuf};
@@ -90,6 +92,12 @@ pub struct Args {
     /// Export all embedded files to the specified path.
     #[clap(long, value_name = "PATH")]
     pub export_path: Option<PathBuf>,
+}
+
+pub fn calculate_sha256(data: &[u8]) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(data);
+    format!("{:x}", hasher.finalize())
 }
 
 pub async fn extract(filename: &str, output_dir: &Path) -> io::Result<()> {
