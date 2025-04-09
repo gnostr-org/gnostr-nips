@@ -3,6 +3,7 @@ use nips::extract;
 use nips::extract_html;
 use nips::markdown_to_html;
 use nips::path::canonicalize_path;
+use nips::run_app;
 use nips::*;
 use nips::{Args, Template};
 //use tower_http::services::Redirect;
@@ -74,44 +75,6 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 //        ))
 //    }
 //}
-
-#[allow(unused_variables)]
-fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
-    let res = markdown_to_html(&nip);
-    tracing::debug!("{}", res);
-    print!("{}", res);
-    //std::process::exit(0);
-    //#[allow(unreachable_code)]
-    let mut w = stdout();
-    queue!(w, EnterAlternateScreen)?;
-    terminal::enable_raw_mode()?;
-    queue!(w, Hide)?;
-    let mut view = MadView::from(nip.to_owned(), view_area(), skin);
-    loop {
-        view.write_on(&mut w)?;
-        w.flush()?;
-        match event::read() {
-            Ok(Event::Key(KeyEvent { code, .. })) => match code {
-                Up => view.try_scroll_lines(-1),
-                Down => view.try_scroll_lines(1),
-                PageUp => view.try_scroll_pages(-1),
-                PageDown => view.try_scroll_pages(1),
-                Char('q') | Esc => break,
-                _ => {}
-            },
-            Ok(Event::Resize(..)) => {
-                queue!(w, Clear(ClearType::All))?;
-                view.resize(&view_area());
-            }
-            _ => {}
-        }
-    }
-    terminal::disable_raw_mode()?;
-    queue!(w, Show)?;
-    queue!(w, LeaveAlternateScreen)?;
-    w.flush()?;
-    Ok(())
-}
 
 fn calculate_sha256(data: &[u8]) -> String {
     let mut hasher = Sha256::new();

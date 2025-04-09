@@ -158,7 +158,7 @@ pub fn view_area() -> Area {
     area
 }
 
-fn run_app(skin: MadSkin) -> Result<(), Error> {
+pub fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     let mut w = stdout(); // we could also have used stderr
     queue!(w, EnterAlternateScreen)?;
     terminal::enable_raw_mode()?;
@@ -225,10 +225,10 @@ pub fn markdown_to_html(markdown_input: &str) -> String {
     html_output
 }
 
-pub fn scrollable() -> Result<(), Error> {
-    let skin = make_skin();
-    run_app(skin)
-}
+//pub fn scrollable() -> Result<(), Error> {
+//    let skin = make_skin();
+//    run_app(skin, /* std::string::String */)
+//}
 
 pub fn remove_md_extension(filename: &str) -> &str {
     filename.strip_suffix(".md").unwrap_or(filename)
