@@ -232,6 +232,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     if args.serve {
         //MUST be true
+        tokio::join!(run_app(make_skin(), String::from("01")));
         tokio::join!(serve(using_serve_dir_with_assets_fallback(), args.port),);
     }
 

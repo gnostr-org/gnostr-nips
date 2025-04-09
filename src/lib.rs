@@ -166,11 +166,12 @@ pub fn view_area() -> Area {
     area
 }
 
-pub fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
+pub async fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     let mut w = stdout(); // we could also have used stderr
     queue!(w, EnterAlternateScreen)?;
     terminal::enable_raw_mode()?;
     queue!(w, Hide)?; // hiding the cursor
+                      // get nip here
     let mut view = MadView::from(MD.to_owned(), view_area(), skin);
     loop {
         view.write_on(&mut w)?;
