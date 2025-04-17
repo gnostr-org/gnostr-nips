@@ -1,0 +1,109 @@
+<h1>NIP-71</h1>
+<h2>Video Events</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This specification defines <em>video</em> events representing a dedicated post of externally hosted content.</p>
+<p>Unlike a <code>kind:1</code> event with a video attached, video events are meant to contain all additional metadata concerning the subject media and to be surfaced in video-specific clients rather than general micro-blogging clients. The thought is for events of this kind to be referenced in a Netflix, YouTube, or TikTok like nostr client where the video itself is at the center of the experience.</p>
+<h2>Video Events</h2>
+<p>There are two types of video events represented by different kinds: <em>normal</em> and <em>short</em> video events. This is meant to allow clients to cater to each as the viewing experience for longer, mostly horizontal (landscape) videos is often different than that of short-form, mostly vertical (portrait), videos ("stories", "reels", "shorts" etc).</p>
+<p>Nothing except cavaliership and common sense prevents a <em>short</em> video from being long, or a <em>normal</em> video from being vertical, and that may or may not be justified, it's mostly a stylistic qualitative difference, not a question of actual raw size.</p>
+<h4>Format</h4>
+<p>The format uses a <em>regular event</em> kind <code>21</code> for <em>normal</em> videos and <code>22</code> for <em>short</em> videos.</p>
+<p>The <code>.content</code> of these events is a summary or description on the video content.</p>
+<p>The primary source of video information is the <code>imeta</code> tags which is defined in <a href="92.md">NIP-92</a></p>
+<p>Each <code>imeta</code> tag can be used to specify a variant of the video by the <code>dim</code> &amp; <code>m</code> properties.</p>
+<p>Example:</p>
+<pre><code class="language-json">[
+  ["imeta",
+    "dim 1920x1080",
+    "url https://myvideo.com/1080/12345.mp4",
+    "x 3093509d1e0bc604ff60cb9286f4cd7c781553bc8991937befaacfdc28ec5cdc",
+    "m video/mp4",
+    "image https://myvideo.com/1080/12345.jpg",
+    "image https://myotherserver.com/1080/12345.jpg",
+    "fallback https://myotherserver.com/1080/12345.mp4",
+    "fallback https://andanotherserver.com/1080/12345.mp4",
+    "service nip96",
+  ],
+  ["imeta",
+    "dim 1280x720",
+    "url https://myvideo.com/720/12345.mp4",
+    "x e1d4f808dae475ed32fb23ce52ef8ac82e3cc760702fca10d62d382d2da3697d",
+    "m video/mp4",
+    "image https://myvideo.com/720/12345.jpg",
+    "image https://myotherserver.com/720/12345.jpg",
+    "fallback https://myotherserver.com/720/12345.mp4",
+    "fallback https://andanotherserver.com/720/12345.mp4",
+    "service nip96",
+  ],
+  ["imeta",
+    "dim 1280x720",
+    "url https://myvideo.com/720/12345.m3u8",
+    "x 704e720af2697f5d6a198ad377789d462054b6e8d790f8a3903afbc1e044014f",
+    "m application/x-mpegURL",
+    "image https://myvideo.com/720/12345.jpg",
+    "image https://myotherserver.com/720/12345.jpg",
+    "fallback https://myotherserver.com/720/12345.m3u8",
+    "fallback https://andanotherserver.com/720/12345.m3u8",
+    "service nip96",
+  ],
+]
+</code></pre>
+<p>Where <code>url</code> is the primary server url and <code>fallback</code> are other servers hosting the same file, both <code>url</code> and <code>fallback</code> should be weighted equally and clients are recommended to use any of the provided video urls.</p>
+<p>The <code>image</code> tag contains a preview image (at the same resolution). Multiple <code>image</code> tags may be used to specify fallback copies in the same way <code>fallback</code> is used for <code>url</code>.</p>
+<p>Additionally <code>service nip96</code> may be included to allow clients to search the authors NIP-96 server list to find the file using the hash.</p>
+<h3>Other tags:</h3>
+<ul>
+<li><code>title</code> (required) title of the video</li>
+<li><code>published_at</code>, for the timestamp in unix seconds (stringified) of the first time the video was published</li>
+<li><code>duration</code> (optional) video duration in seconds</li>
+<li><code>text-track</code> (optional, repeated) link to WebVTT file for video, type of supplementary information (captions/subtitles/chapters/metadata), optional language code</li>
+<li><code>content-warning</code> (optional) warning about content of NSFW video</li>
+<li><code>alt</code> (optional) description for accessibility</li>
+<li><code>segment</code> (optional, repeated) start timestamp in format <code>HH:MM:SS.sss</code>, end timestamp in format <code>HH:MM:SS.sss</code>, chapter/segment title, chapter thumbnail-url</li>
+<li><code>t</code> (optional, repeated) hashtag to categorize video</li>
+<li><code>p</code> (optional, repeated) 32-bytes hex pubkey of a participant in the video, optional recommended relay URL</li>
+<li><code>r</code> (optional, repeated) references / links to web pages</li>
+</ul>
+<pre><code class="language-jsonc">{
+  "id": &lt;32-bytes lowercase hex-encoded SHA-256 of the the serialized event data&gt;,
+  "pubkey": &lt;32-bytes lowercase hex-encoded public key of the event creator&gt;,
+  "created_at": &lt;Unix timestamp in seconds&gt;,
+  "kind": 21 | 22,
+  "content": "&lt;summary / description of video&gt;",
+  "tags": [
+    ["title", "&lt;title of video&gt;"],
+    ["published_at", "&lt;unix timestamp&gt;"],
+    ["alt", &lt;description&gt;],
+
+    // video Data
+    ["imeta",
+      "dim 1920x1080",
+      "url https://myvideo.com/1080/12345.mp4",
+      "x 3093509d1e0bc604ff60cb9286f4cd7c781553bc8991937befaacfdc28ec5cdc",
+      "m video/mp4",
+      "image https://myvideo.com/1080/12345.jpg",
+      "image https://myotherserver.com/1080/12345.jpg",
+      "fallback https://myotherserver.com/1080/12345.mp4",
+      "fallback https://andanotherserver.com/1080/12345.mp4",
+      "service nip96",
+    ],
+
+    ["duration", &lt;duration of video in seconds&gt;],
+    ["text-track", "&lt;encoded `kind 6000` event&gt;", "&lt;recommended relay urls&gt;"],
+    ["content-warning", "&lt;reason&gt;"],
+    ["segment", &lt;start&gt;, &lt;end&gt;, "&lt;title&gt;", "&lt;thumbnail URL&gt;"],
+
+    // participants
+    ["p", "&lt;32-bytes hex of a pubkey&gt;", "&lt;optional recommended relay URL&gt;"],
+    ["p", "&lt;32-bytes hex of a pubkey&gt;", "&lt;optional recommended relay URL&gt;"],
+
+    // hashtags
+    ["t", "&lt;tag&gt;"],
+    ["t", "&lt;tag&gt;"],
+
+    // reference links
+    ["r", "&lt;url&gt;"],
+    ["r", "&lt;url&gt;"]
+  ]
+}
+</code></pre>
