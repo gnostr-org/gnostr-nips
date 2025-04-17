@@ -1,0 +1,42 @@
+<h1>NIP-38</h1>
+<h2>User Statuses</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2>Abstract</h2>
+<p>This NIP enables a way for users to share live statuses such as what music they are listening to, as well as what they are currently doing: work, play, out of office, etc.</p>
+<h2>Live Statuses</h2>
+<p>A special event with <code>kind:30315</code> "User Status" is defined as an <em>optionally expiring</em> <em>addressable event</em>, where the <code>d</code> tag represents the status type:</p>
+<p>For example:</p>
+<pre><code class="language-json">{
+  "kind": 30315,
+  "content": "Sign up for nostrasia!",
+  "tags": [
+    ["d", "general"],
+    ["r", "https://nostr.world"]
+  ],
+}
+</code></pre>
+<pre><code class="language-json">{
+  "kind": 30315,
+  "content": "Intergalatic - Beastie Boys",
+  "tags": [
+    ["d", "music"],
+    ["r", "spotify:search:Intergalatic%20-%20Beastie%20Boys"],
+    ["expiration", "1692845589"]
+  ],
+}
+</code></pre>
+<p>Two common status types are defined: <code>general</code> and <code>music</code>. <code>general</code> represent general statuses: "Working", "Hiking", etc.</p>
+<p><code>music</code> status events are for live streaming what you are currently listening to. The expiry of the <code>music</code> status should be when the track will stop playing.</p>
+<p>Any other status types can be used but they are not defined by this NIP.</p>
+<p>The status MAY include an <code>r</code>, <code>p</code>, <code>e</code> or <code>a</code> tag linking to a URL, profile, note, or addressable event.</p>
+<p>The <code>content</code> MAY include emoji(s), or <a href="30.md">NIP-30</a> custom emoji(s). If the <code>content</code> is an empty string then the client should clear the status.</p>
+<h1>Client behavior</h1>
+<p>Clients MAY display this next to the username on posts or profiles to provide live user status information.</p>
+<h1>Use Cases</h1>
+<ul>
+<li>Calendar nostr apps that update your general status when you're in a meeting</li>
+<li>Nostr Nests that update your general status with a link to the nest when you join</li>
+<li>Nostr music streaming services that update your music status when you're listening</li>
+<li>Podcasting apps that update your music status when you're listening to a podcast, with a link for others to listen as well</li>
+<li>Clients can use the system media player to update playing music status</li>
+</ul>
