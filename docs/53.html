@@ -1,0 +1,94 @@
+<h1>NIP-53</h1>
+<h2>Live Activities</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Service providers want to offer live activities to the Nostr network in such a way that participants can easily log and query by clients. This NIP describes a general framework to advertise the involvement of pubkeys in such live activities.</p>
+<h2>Concepts</h2>
+<h3>Live Event</h3>
+<p>A special event with <code>kind:30311</code> "Live Event" is defined as an <em>addressable event</em> of public <code>p</code> tags. Each <code>p</code> tag SHOULD have a <strong>displayable</strong> marker name for the current role (e.g. <code>Host</code>, <code>Speaker</code>, <code>Participant</code>) of the user in the event and the relay information MAY be empty. This event will be constantly updated as participants join and leave the activity.</p>
+<p>For example:</p>
+<pre><code class="language-jsonc">{
+  "kind": 30311,
+  "tags": [
+    ["d", "&lt;unique identifier&gt;"],
+    ["title", "&lt;name of the event&gt;"],
+    ["summary", "&lt;description&gt;"],
+    ["image", "&lt;preview image url&gt;"],
+    ["t", "hashtag"]
+    ["streaming", "&lt;url&gt;"],
+    ["recording", "&lt;url&gt;"], // used to place the edited video once the activity is over
+    ["starts", "&lt;unix timestamp in seconds&gt;"],
+    ["ends", "&lt;unix timestamp in seconds&gt;"],
+    ["status", "&lt;planned, live, ended&gt;"],
+    ["current_participants", "&lt;number&gt;"],
+    ["total_participants", "&lt;number&gt;"],
+    ["p", "91cf9..4e5ca", "wss://provider1.com/", "Host", "&lt;proof&gt;"],
+    ["p", "14aeb..8dad4", "wss://provider2.com/nostr", "Speaker"],
+    ["p", "612ae..e610f", "ws://provider3.com/ws", "Participant"],
+    ["relays", "wss://one.com", "wss://two.com", /*...*/],
+    ["pinned", "&lt;event id of pinned live chat message&gt;"],
+  ],
+  "content": "",
+  // other fields...
+}
+</code></pre>
+<p>A distinct <code>d</code> tag should be used for each activity. All other tags are optional.</p>
+<p>Providers SHOULD keep the participant list small (e.g. under 1000 users) and, when limits are reached, Providers SHOULD select which participants get named in the event. Clients should not expect a comprehensive list. Once the activity ends, the event can be deleted or updated to summarize the activity and provide async content (e.g. recording of the event).</p>
+<p>Clients are expected to subscribe to <code>kind:30311</code> events in general or for given follow lists and statuses. Clients MAY display participants' roles in activities as well as access points to join the activity.</p>
+<p>Live Activity management clients are expected to constantly update <code>kind:30311</code> during the event. Clients MAY choose to consider <code>status=live</code> events after 1hr without any update as <code>ended</code>. The <code>starts</code> and <code>ends</code> timestamp SHOULD be updated when the status changes to and from <code>live</code></p>
+<p>The activity MUST be linked to using the <a href="19.md">NIP-19</a> <code>naddr</code> code along with the <code>a</code> tag.</p>
+<h3>Proof of Agreement to Participate</h3>
+<p>Event owners can add proof as the 5th term in each <code>p</code> tag to clarify the participant's agreement in joining the event. The proof is a signed SHA256 of the complete <code>a</code> Tag of the event (<code>kind:pubkey:dTag</code>) by each <code>p</code>'s private key, encoded in hex.</p>
+<p>Clients MAY only display participants if the proof is available or MAY display participants as "invited" if the proof is not available.</p>
+<p>This feature is important to avoid malicious event owners adding large account holders to the event, without their knowledge, to lure their followers into the malicious owner's trap.</p>
+<h3>Live Chat Message</h3>
+<p>Event <code>kind:1311</code> is live chat's channel message. Clients MUST include the <code>a</code> tag of the activity. An <code>e</code> tag denotes the direct parent message this post is replying to.</p>
+<pre><code class="language-jsonc">{
+  "kind": 1311,
+  "tags": [
+    ["a", "30311:&lt;Community event author pubkey&gt;:&lt;d-identifier of the community&gt;", "&lt;Optional relay url&gt;", "root"],
+  ],
+  "content": "Zaps to live streams is beautiful.",
+  // other fields...
+}
+</code></pre>
+<p><code>q</code> tags MAY be used when citing events in the <code>.content</code> with <a href="21.md">NIP-21</a>.</p>
+<pre><code class="language-json">["q", "&lt;event-id&gt; or &lt;event-address&gt;", "&lt;relay-url&gt;", "&lt;pubkey-if-a-regular-event&gt;"]
+</code></pre>
+<p>Hosts may choose to pin one or more live chat messages by updating the <code>pinned</code> tags in the live event kind <code>30311</code>.</p>
+<h2>Use Cases</h2>
+<p>Common use cases include meeting rooms/workshops, watch-together activities, or event spaces, such as <a href="https://zap.stream">zap.stream</a>.</p>
+<h2>Example</h2>
+<h3>Live Streaming</h3>
+<pre><code class="language-json">{
+  "id": "57f28dbc264990e2c61e80a883862f7c114019804208b14da0bff81371e484d2",
+  "pubkey": "1597246ac22f7d1375041054f2a4986bd971d8d196d7997e48973263ac9879ec",
+  "created_at": 1687182672,
+  "kind": 30311,
+  "tags": [
+    ["d", "demo-cf-stream"],
+    ["title", "Adult Swim Metalocalypse"],
+    ["summary", "Live stream from IPTV-ORG collection"],
+    ["streaming", "https://adultswim-vodlive.cdn.turner.com/live/metalocalypse/stream.m3u8"],
+    ["starts", "1687182672"],
+    ["status", "live"],
+    ["t", "animation"],
+    ["t", "iptv"],
+    ["image", "https://i.imgur.com/CaKq6Mt.png"]
+  ],
+  "content": "",
+  "sig": "5bc7a60f5688effa5287244a24768cbe0dcd854436090abc3bef172f7f5db1410af4277508dbafc4f70a754a891c90ce3b966a7bc47e7c1eb71ff57640f3d389"
+}
+</code></pre>
+<h3>Live Streaming chat message</h3>
+<pre><code class="language-json">{
+  "id": "97aa81798ee6c5637f7b21a411f89e10244e195aa91cb341bf49f718e36c8188",
+  "pubkey": "3f770d65d3a764a9c5cb503ae123e62ec7598ad035d836e2a810f3877a745b24",
+  "created_at": 1687286726,
+  "kind": 1311,
+  "tags": [
+    ["a", "30311:1597246ac22f7d1375041054f2a4986bd971d8d196d7997e48973263ac9879ec:demo-cf-stream", "", "root"]
+  ],
+  "content": "Zaps to live streams is beautiful.",
+  "sig": "997f62ddfc0827c121043074d50cfce7a528e978c575722748629a4137c45b75bdbc84170bedc723ef0a5a4c3daebf1fef2e93f5e2ddb98e5d685d022c30b622"
+}
+</code></pre>
