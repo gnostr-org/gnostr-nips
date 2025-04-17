@@ -53,7 +53,7 @@ echo $padded_commit_hash
 export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
-gnostr --nsec $padded_commit_hash -t $padded_commit_hash --tag nip_commit $commit_hash --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay wss://e.nos.lol || true
+gnostr --nsec $padded_commit_hash text-note --content "$(git show $commit_hash || exit)" | gnostr-post-event --relay wss://e.nos.lol || true
 ##echo $commit_hash;
 	#for commit_padded_hash in $(gnostr-reflog -p);do
 	##echo $commit_padded_hash;
