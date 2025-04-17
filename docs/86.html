@@ -1,0 +1,130 @@
+<h1>NIP-86</h1>
+<h2>Relay Management API</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Relays may provide an API for performing management tasks. This is made available as a JSON-RPC-like request-response protocol over HTTP, on the same URI as the relay's websocket.</p>
+<p>When a relay receives an HTTP(s) request with a <code>Content-Type</code> header of <code>application/nostr+json+rpc</code> to a URI supporting WebSocket upgrades, it should parse the request as a JSON document with the following fields:</p>
+<pre><code class="language-json">{
+  "method": "&lt;method-name&gt;",
+  "params": ["&lt;array&gt;", "&lt;of&gt;", "&lt;parameters&gt;"]
+}
+</code></pre>
+<p>Then it should return a response in the format</p>
+<pre><code class="language-json">{
+  "result": {"&lt;arbitrary&gt;": "&lt;value&gt;"},
+  "error": "&lt;optional error message, if the call has errored&gt;"
+}
+</code></pre>
+<p>This is the list of <strong>methods</strong> that may be supported:</p>
+<ul>
+<li><code>supportedmethods</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>["&lt;method-name&gt;", "&lt;method-name&gt;", ...]</code> (an array with the names of all the other supported methods)</li>
+</ul>
+</li>
+<li><code>banpubkey</code>:
+<ul>
+<li>params: <code>["&lt;32-byte-hex-public-key&gt;", "&lt;optional-reason&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>listbannedpubkeys</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>[{"pubkey": "&lt;32-byte-hex&gt;", "reason": "&lt;optional-reason&gt;"}, ...]</code>, an array of objects</li>
+</ul>
+</li>
+<li><code>allowpubkey</code>:
+<ul>
+<li>params: <code>["&lt;32-byte-hex-public-key&gt;", "&lt;optional-reason&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>listallowedpubkeys</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>[{"pubkey": "&lt;32-byte-hex&gt;", "reason": "&lt;optional-reason&gt;"}, ...]</code>, an array of objects</li>
+</ul>
+</li>
+<li><code>listeventsneedingmoderation</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>[{"id": "&lt;32-byte-hex&gt;", "reason": "&lt;optional-reason&gt;"}]</code>, an array of objects</li>
+</ul>
+</li>
+<li><code>allowevent</code>:
+<ul>
+<li>params: <code>["&lt;32-byte-hex-event-id&gt;", "&lt;optional-reason&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>banevent</code>:
+<ul>
+<li>params: <code>["&lt;32-byte-hex-event-id&gt;", "&lt;optional-reason&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>listbannedevents</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>[{"id": "&lt;32-byte hex&gt;", "reason": "&lt;optional-reason&gt;"}, ...]</code>, an array of objects</li>
+</ul>
+</li>
+<li><code>changerelayname</code>:
+<ul>
+<li>params: <code>["&lt;new-name&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>changerelaydescription</code>:
+<ul>
+<li>params: <code>["&lt;new-description&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>changerelayicon</code>:
+<ul>
+<li>params: <code>["&lt;new-icon-url&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>allowkind</code>:
+<ul>
+<li>params: <code>[&lt;kind-number&gt;]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>disallowkind</code>:
+<ul>
+<li>params: <code>[&lt;kind-number&gt;]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>listallowedkinds</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>[&lt;kind-number&gt;, ...]</code>, an array of numbers</li>
+</ul>
+</li>
+<li><code>blockip</code>:
+<ul>
+<li>params: <code>["&lt;ip-address&gt;", "&lt;optional-reason&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>unblockip</code>:
+<ul>
+<li>params: <code>["&lt;ip-address&gt;"]</code></li>
+<li>result: <code>true</code> (a boolean always set to <code>true</code>)</li>
+</ul>
+</li>
+<li><code>listblockedips</code>:
+<ul>
+<li>params: <code>[]</code></li>
+<li>result: <code>[{"ip": "&lt;ip-address&gt;", "reason": "&lt;optional-reason&gt;"}, ...]</code>, an array of objects</li>
+</ul>
+</li>
+</ul>
+<h3>Authorization</h3>
+<p>The request must contain an <code>Authorization</code> header with a valid <a href="./98.md">NIP-98</a> event, except the <code>payload</code> tag is required. The <code>u</code> tag is the relay URL.</p>
+<p>If <code>Authorization</code> is not provided or is invalid, the endpoint should return a 401 response.</p>
