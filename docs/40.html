@@ -1,0 +1,38 @@
+<h1>NIP-40</h1>
+<h2>Expiration Timestamp</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>The <code>expiration</code> tag enables users to specify a unix timestamp at which the message SHOULD be considered expired (by relays and clients) and SHOULD be deleted by relays.</p>
+<h4>Spec</h4>
+<pre><code>tag: expiration
+values:
+ - [UNIX timestamp in seconds]: required
+</code></pre>
+<h4>Example</h4>
+<pre><code class="language-json">{
+  "pubkey": "&lt;pub-key&gt;",
+  "created_at": 1000000000,
+  "kind": 1,
+  "tags": [
+    ["expiration", "1600000000"]
+  ],
+  "content": "This message will expire at the specified timestamp and be deleted by relays.\n",
+  "id": "&lt;event-id&gt;"
+}
+</code></pre>
+<p>Note: The timestamp should be in the same format as the created_at timestamp and should be interpreted as the time at which the message should be deleted by relays.</p>
+<h2>Client Behavior</h2>
+<p>Clients SHOULD use the <code>supported_nips</code> field to learn if a relay supports this NIP. Clients SHOULD NOT send expiration events to relays that do not support this NIP.</p>
+<p>Clients SHOULD ignore events that have expired.</p>
+<h2>Relay Behavior</h2>
+<p>Relays MAY NOT delete expired messages immediately on expiration and MAY persist them indefinitely.
+Relays SHOULD NOT send expired events to clients, even if they are stored.
+Relays SHOULD drop any events that are published to them if they are expired.
+An expiration timestamp does not affect storage of ephemeral events.</p>
+<h2>Suggested Use Cases</h2>
+<ul>
+<li>Temporary announcements - This tag can be used to make temporary announcements. For example, an event organizer could use this tag to post announcements about an upcoming event.</li>
+<li>Limited-time offers - This tag can be used by businesses to make limited-time offers that expire after a certain amount of time. For example, a business could use this tag to make a special offer that is only available for a limited time.</li>
+</ul>
+<h4>Warning</h4>
+<p>The events could be downloaded by third parties as they are publicly accessible all the time on the relays.
+So don't consider expiring messages as a security feature for your conversations or other uses.</p>
