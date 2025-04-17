@@ -1,0 +1,7 @@
+<h1>NIP-31</h1>
+<h2>Dealing with unknown event kinds</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>When creating a new custom event kind that is part of a custom protocol and isn't meant to be read as text (like <code>kind:1</code>), clients should use an <code>alt</code> tag to write a short human-readable plaintext summary of what that event is about.</p>
+<p>The intent is that social clients, used to display only <code>kind:1</code> notes, can still show something in case a custom event pops up in their timelines. The content of the <code>alt</code> tag should provide enough context for a user that doesn't know anything about this event kind to understand what it is.</p>
+<p>These clients that only know <code>kind:1</code> are not expected to ask relays for events of different kinds, but users could still reference these weird events on their notes, and without proper context these could be nonsensical notes. Having the fallback text makes that situation much better -- even if only for making the user aware that they should try to view that custom event elsewhere.</p>
+<p><code>kind:1</code>-centric clients can make interacting with these event kinds more functional by supporting <a href="89.md">NIP-89</a>.</p>
