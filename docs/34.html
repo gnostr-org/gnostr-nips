@@ -1,0 +1,130 @@
+<h1>NIP-34</h1>
+<h2><code>git</code> stuff</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines all the ways code collaboration using and adjacent to <a href="https://git-scm.com/"><code>git</code></a> can be done using Nostr.</p>
+<h2>Repository announcements</h2>
+<p>Git repositories are hosted in Git-enabled servers, but their existence can be announced using Nostr events, as well as their willingness to receive patches, bug reports and comments in general.</p>
+<pre><code class="language-jsonc">{
+  "kind": 30617,
+  "content": "",
+  "tags": [
+    ["d", "&lt;repo-id&gt;"], // usually kebab-case short name
+    ["name", "&lt;human-readable project name&gt;"],
+    ["description", "brief human-readable project description&gt;"],
+    ["web", "&lt;url for browsing&gt;", ...], // a webpage url, if the git server being used provides such a thing
+    ["clone", "&lt;url for git-cloning&gt;", ...], // a url to be given to `git clone` so anyone can clone it
+    ["relays", "&lt;relay-url&gt;", ...], // relays that this repository will monitor for patches and issues
+    ["r", "&lt;earliest-unique-commit-id&gt;", "euc"],
+    ["maintainers", "&lt;other-recognized-maintainer&gt;", ...],
+    ["t", "&lt;arbitrary string&gt;"], // hashtags labelling the repository
+  ]
+}
+</code></pre>
+<p>The tags <code>web</code>, <code>clone</code>, <code>relays</code>, <code>maintainers</code> can have multiple values.</p>
+<p>The <code>r</code> tag annotated with the <code>"euc"</code> marker should be the commit ID of the earliest unique commit of this repo, made to identify it among forks and group it with other repositories hosted elsewhere that may represent essentially the same project. In most cases it will be the root commit of a repository. In case of a permanent fork between two projects, then the first commit after the fork should be used.</p>
+<p>Except <code>d</code>, all tags are optional.</p>
+<h2>Repository state announcements</h2>
+<p>An optional source of truth for the state of branches and tags in a repository.</p>
+<pre><code class="language-jsonc">{
+  "kind": 30618,
+  "content": "",
+  "tags": [
+    ["d", "&lt;repo-id&gt;"], // matches the identifier in the coresponding repository announcement
+    ["refs/&lt;heads|tags&gt;/&lt;branch-or-tag-name&gt;","&lt;commit-id&gt;"]
+    ["HEAD", "ref: refs/heads/&lt;branch-name&gt;"]
+  ]
+}
+</code></pre>
+<p>The <code>refs</code> tag may appear multiple times, or none.</p>
+<p>If no <code>refs</code> tags are present, the author is no longer tracking repository state using this event. This approach enables the author to restart tracking state at a later time unlike <a href="09.md">NIP-09</a> deletion requests.</p>
+<p>The <code>refs</code> tag can be optionally extended to enable clients to identify how many commits ahead a ref is:</p>
+<pre><code class="language-jsonc">{
+  "tags": [
+    ["refs/&lt;heads|tags&gt;/&lt;branch-or-tag-name&gt;", "&lt;commit-id&gt;", "&lt;shorthand-parent-commit-id&gt;", "&lt;shorthand-grandparent&gt;", ...],
+  ]
+}
+</code></pre>
+<h2>Patches</h2>
+<p>Patches can be sent by anyone to any repository. Patches to a specific repository SHOULD be sent to the relays specified in that repository's announcement event's <code>"relays"</code> tag. Patch events SHOULD include an <code>a</code> tag pointing to that repository's announcement address.</p>
+<p>Patches in a patch set SHOULD include a NIP-10 <code>e</code> <code>reply</code> tag pointing to the previous patch.</p>
+<p>The first patch revision in a patch revision SHOULD include a NIP-10 <code>e</code> <code>reply</code> to the original root patch.</p>
+<pre><code class="language-jsonc">{
+  "kind": 1617,
+  "content": "&lt;patch&gt;", // contents of &lt;git format-patch&gt;
+  "tags": [
+    ["a", "30617:&lt;base-repo-owner-pubkey&gt;:&lt;base-repo-id&gt;"],
+    ["r", "&lt;earliest-unique-commit-id-of-repo&gt;"] // so clients can subscribe to all patches sent to a local git repo
+    ["p", "&lt;repository-owner&gt;"],
+    ["p", "&lt;other-user&gt;"], // optionally send the patch to another user to bring it to their attention
+
+    ["t", "root"], // omitted for additional patches in a series
+    // for the first patch in a revision
+    ["t", "root-revision"],
+
+    // optional tags for when it is desirable that the merged patch has a stable commit id
+    // these fields are necessary for ensuring that the commit resulting from applying a patch
+    // has the same id as it had in the proposer's machine -- all these tags can be omitted
+    // if the maintainer doesn't care about these things
+    ["commit", "&lt;current-commit-id&gt;"],
+    ["r", "&lt;current-commit-id&gt;"] // so clients can find existing patches for a specific commit
+    ["parent-commit", "&lt;parent-commit-id&gt;"],
+    ["commit-pgp-sig", "-----BEGIN PGP SIGNATURE-----..."], // empty string for unsigned commit
+    ["committer", "&lt;name&gt;", "&lt;email&gt;", "&lt;timestamp&gt;", "&lt;timezone offset in minutes&gt;"],
+  ]
+}
+</code></pre>
+<p>The first patch in a series MAY be a cover letter in the format produced by <code>git format-patch</code>.</p>
+<h2>Issues</h2>
+<p>Issues are Markdown text that is just human-readable conversational threads related to the repository: bug reports, feature requests, questions or comments of any kind. Like patches, these SHOULD be sent to the relays specified in that repository's announcement event's <code>"relays"</code> tag.</p>
+<p>Issues may have a <code>subject</code> tag, which clients can utilize to display a header. Additionally, one or more <code>t</code> tags may be included to provide labels for the issue.</p>
+<pre><code class="language-json">{
+  "kind": 1621,
+  "content": "&lt;markdown text&gt;",
+  "tags": [
+    ["a", "30617:&lt;base-repo-owner-pubkey&gt;:&lt;base-repo-id&gt;"],
+    ["p", "&lt;repository-owner&gt;"]
+    ["subject", "&lt;issue-subject&gt;"]
+    ["t", "&lt;issue-label&gt;"]
+    ["t", "&lt;another-issue-label&gt;"]
+  ]
+}
+</code></pre>
+<h2>Replies</h2>
+<p>Replies to either a <code>kind:1621</code> <em>issue</em> or a <code>kind:1617</code> <em>patch</em> event should follow <a href="22.md">NIP-22 comment</a>.</p>
+<h2>Status</h2>
+<p>Root Patches and Issues have a Status that defaults to 'Open' and can be set by issuing Status events.</p>
+<pre><code class="language-jsonc">{
+  "kind": 1630, // Open
+  "kind": 1631, // Applied / Merged for Patches; Resolved for Issues
+  "kind": 1632, // Closed
+  "kind": 1633, // Draft
+  "content": "&lt;markdown text&gt;",
+  "tags": [
+    ["e", "&lt;issue-or-original-root-patch-id-hex&gt;", "", "root"],
+    ["e", "&lt;accepted-revision-root-id-hex&gt;", "", "reply"], // for when revisions applied
+    ["p", "&lt;repository-owner&gt;"],
+    ["p", "&lt;root-event-author&gt;"],
+    ["p", "&lt;revision-author&gt;"],
+
+    // optional for improved subscription filter efficiency
+    ["a", "30617:&lt;base-repo-owner-pubkey&gt;:&lt;base-repo-id&gt;", "&lt;relay-url&gt;"],
+    ["r", "&lt;earliest-unique-commit-id-of-repo&gt;"]
+
+    // optional for `1631` status
+    ["e", "&lt;applied-or-merged-patch-event-id&gt;", "", "mention"], // for each
+    // when merged
+    ["merge-commit", "&lt;merge-commit-id&gt;"]
+    ["r", "&lt;merge-commit-id&gt;"]
+    // when applied
+    ["applied-as-commits", "&lt;commit-id-in-master-branch&gt;", ...]
+    ["r", "&lt;applied-commit-id&gt;"] // for each
+  ]
+}
+</code></pre>
+<p>The Status event with the largest created_at date is valid.</p>
+<p>The Status of a patch-revision defaults to either that of the root-patch, or <code>1632</code> (Closed) if the root-patch's Status is <code>1631</code> and the patch-revision isn't tagged in the <code>1631</code> event.</p>
+<h2>Possible things to be added later</h2>
+<ul>
+<li>"branch merge" kind (specifying a URL from where to fetch the branch to be merged)</li>
+<li>inline file comments kind (we probably need one for patches and a different one for merged files)</li>
+</ul>
