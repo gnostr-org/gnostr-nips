@@ -1,0 +1,58 @@
+<h1>NIP-25</h1>
+<h2>Reactions</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>A reaction is a <code>kind 7</code> event that is used to react to other events.</p>
+<p>The generic reaction, represented by the <code>content</code> set to a <code>+</code> string, SHOULD
+be interpreted as a "like" or "upvote".</p>
+<p>A reaction with <code>content</code> set to <code>-</code> SHOULD be interpreted as a "dislike" or
+"downvote". It SHOULD NOT be counted as a "like", and MAY be displayed as a
+downvote or dislike on a post. A client MAY also choose to tally likes against
+dislikes in a reddit-like system of upvotes and downvotes, or display them as
+separate tallies.</p>
+<p>The <code>content</code> MAY be an emoji, or <a href="30.md">NIP-30</a> custom emoji in this case it MAY be interpreted as a "like" or "dislike",
+or the client MAY display this emoji reaction on the post. If the <code>content</code> is an empty string then the client should
+consider it a "+".</p>
+<h2>Tags</h2>
+<p>There MUST be always an <code>e</code> tag set to the <code>id</code> of the event that is being reacted to. The <code>e</code> tag SHOULD include a relay hint pointing to a relay where the event being reacted to can be found. If a client decides to include other <code>e</code>, which not recommended, the target event <code>id</code> should be last of the <code>e</code> tags.</p>
+<p>The SHOULD be a <code>p</code> tag set to the <code>pubkey</code> of the event being reacted to. If a client decides to include other <code>p</code> tags, which not recommended, the target event <code>pubkey</code> should be last the <code>p</code> tags.</p>
+<p>If the event being reacted to is an addressable event, an <code>a</code> SHOULD be included together with the <code>e</code> tag, it must be set to the coordinates (<code>kind:pubkey:d-tag</code>) of the event being reacted to.</p>
+<p>The reaction SHOULD include a <code>k</code> tag with the stringified kind number of the reacted event as its value.</p>
+<p><strong>Example code</strong></p>
+<pre><code class="language-swift">func make_like_event(pubkey: String, privkey: String, liked: NostrEvent) -&gt; NostrEvent {
+    tags.append(["e", liked.id, liked.source_relays.first ?? ""])
+    tags.append(["p", liked.pubkey])
+    tags.append(["k", String(liked.kind)])
+    let ev = NostrEvent(content: "+", pubkey: pubkey, kind: 7, tags: tags)
+    ev.calculate_id()
+    ev.sign(privkey: privkey)
+    return ev
+}
+</code></pre>
+<h2>Reactions to a website</h2>
+<p>If the target of the reaction is a website, the reaction MUST be a <code>kind 17</code> event and MUST include an <code>r</code> tag with the website's URL.</p>
+<pre><code class="language-jsonc">{
+  "kind": 17,
+  "content": "⭐",
+  "tags": [
+    ["r", "https://example.com/"]
+  ],
+  // other fields...
+}
+</code></pre>
+<p>URLs SHOULD be <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6">normalized</a>, so that reactions to the same website are not omitted from queries.
+A fragment MAY be attached to the URL, to react to a section of the page.
+It should be noted that a URL with a fragment is not considered to be the same URL as the original.</p>
+<h2>Custom Emoji Reaction</h2>
+<p>The client may specify a custom emoji (<a href="30.md">NIP-30</a>) <code>:shortcode:</code> in the
+reaction content. The client should refer to the emoji tag and render the
+content as an emoji if shortcode is specified.</p>
+<pre><code class="language-jsonc">{
+  "kind": 7,
+  "content": ":soapbox:",
+  "tags": [
+    ["emoji", "soapbox", "https://gleasonator.com/emoji/Gleasonator/soapbox.png"]
+  ],
+  // other fields...
+}
+</code></pre>
+<p>The content can be set only one <code>:shortcode:</code>. And emoji tag should be one.</p>
