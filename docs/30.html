@@ -1,0 +1,51 @@
+<h1>NIP-30</h1>
+<h2>Custom Emoji</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Custom emoji may be added to <strong>kind 0</strong>, <strong>kind 1</strong>, <strong>kind 7</strong> (<a href="25.md">NIP-25</a>) and <strong>kind 30315</strong> (<a href="38.md">NIP-38</a>) events by including one or more <code>"emoji"</code> tags, in the form:</p>
+<pre><code>["emoji", &lt;shortcode&gt;, &lt;image-url&gt;]
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>&lt;shortcode&gt;</code> is a name given for the emoji, which MUST be comprised of only alphanumeric characters and underscores.</li>
+<li><code>&lt;image-url&gt;</code> is a URL to the corresponding image file of the emoji.</li>
+</ul>
+<p>For each emoji tag, clients should parse emoji shortcodes (aka "emojify") like <code>:shortcode:</code> in the event to display custom emoji.</p>
+<p>Clients may allow users to add custom emoji to an event by including <code>:shortcode:</code> identifier in the event, and adding the relevant <code>"emoji"</code> tags.</p>
+<h3>Kind 0 events</h3>
+<p>In kind 0 events, the <code>name</code> and <code>about</code> fields should be emojified.</p>
+<pre><code class="language-json">{
+  "kind": 0,
+  "content": "{\"name\":\"Alex Gleason :soapbox:\"}",
+  "tags": [
+    ["emoji", "soapbox", "https://gleasonator.com/emoji/Gleasonator/soapbox.png"]
+  ],
+  "pubkey": "79c2cae114ea28a981e7559b4fe7854a473521a8d22a66bbab9fa248eb820ff6",
+  "created_at": 1682790000
+}
+</code></pre>
+<h3>Kind 1 events</h3>
+<p>In kind 1 events, the <code>content</code> should be emojified.</p>
+<pre><code class="language-json">{
+  "kind": 1,
+  "content": "Hello :gleasonator: 😂 :ablobcatrainbow: :disputed: yolo",
+    "tags": [
+    ["emoji", "ablobcatrainbow", "https://gleasonator.com/emoji/blobcat/ablobcatrainbow.png"],
+    ["emoji", "disputed", "https://gleasonator.com/emoji/Fun/disputed.png"],
+    ["emoji", "gleasonator", "https://gleasonator.com/emoji/Gleasonator/gleasonator.png"]
+  ],
+  "pubkey": "79c2cae114ea28a981e7559b4fe7854a473521a8d22a66bbab9fa248eb820ff6",
+  "created_at": 1682630000
+}
+</code></pre>
+<h3>Kind 7 events</h3>
+<p>In kind 7 events, the <code>content</code> should be emojified.</p>
+<pre><code class="language-json">{
+  "kind": 7,
+  "content": ":dezh:",
+  "tags": [
+    ["emoji", "dezh", "https://raw.githubusercontent.com/dezh-tech/brand-assets/main/dezh/logo/black-normal.svg"]
+  ],
+  "pubkey": "79c2cae114ea28a981e7559b4fe7854a473521a8d22a66bbab9fa248eb820ff6",
+  "created_at": 1682630000
+}
+</code></pre>
