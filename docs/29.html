@@ -1,0 +1,171 @@
+<h1>NIP-29</h1>
+<h2>Relay-based Groups</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines a standard for groups that are only writable by a closed set of users. They can be public for reading by external users or not.</p>
+<p>Groups are identified by a random string of any length that serves as an <em>id</em>.</p>
+<p>There is no way to create a group, what happens is just that relays (most likely when asked by users) will create rules around some specific ids so these ids can serve as an actual group, henceforth messages sent to that group will be subject to these rules.</p>
+<p>Normally a group will originally belong to one specific relay, but the community may choose to move the group to other relays or even fork the group so it exists in different forms -- still using the same <em>id</em> -- across different relays.</p>
+<h2>Relay-generated events</h2>
+<p>Relays are supposed to generate the events that describe group metadata and group admins. These are <em>addressable</em> events signed by the relay keypair directly, with the group <em>id</em> as the <code>d</code> tag.</p>
+<h2>Group identifier</h2>
+<p>A group may be identified by a string in the format <code>&lt;host&gt;'&lt;group-id&gt;</code>. For example, a group with <em>id</em> <code>abcdef</code> hosted at the relay <code>wss://groups.nostr.com</code> would be identified by the string <code>groups.nostr.com'abcdef</code>.</p>
+<p>Group identifiers must be strings restricted to the characters <code>a-z0-9-_</code>, and SHOULD be random in order to avoid name collisions.</p>
+<p>When encountering just the <code>&lt;host&gt;</code> without the <code>'&lt;group-id&gt;</code>, clients MAY infer <code>_</code> as the group id, which is a special top-level group dedicated to relay-local discussions.</p>
+<h2>The <code>h</code> tag</h2>
+<p>Events sent by users to groups (chat messages, text notes, moderation events etc) MUST have an <code>h</code> tag with the value set to the group <em>id</em>.</p>
+<h2>Timeline references</h2>
+<p>In order to not be used out of context, events sent to these groups may contain references to previous events seen from the same relay in the <code>previous</code> tag. The choice of which previous events to pick belongs to the clients. The references are to be made using the first 8 characters (4 bytes) of any event in the last 50 events seen by the user in the relay, excluding events by themselves. There can be any number of references (including zero), but it's recommended that clients include at least 3 and that relays enforce this.</p>
+<p>This is a hack to prevent messages from being broadcasted to external relays that have forks of one group out of context. Relays are expected to reject any events that contain timeline references to events not found in their own database. Clients should also check these to keep relays honest about them.</p>
+<h2>Late publication</h2>
+<p>Relays should prevent late publication (messages published now with a timestamp from days or even hours ago) unless they are open to receive a group forked or moved from another relay.</p>
+<h2>Group management</h2>
+<p>Groups can have any number of users with elevated access. These users are identified by role labels which are arbitrarily defined by the relays (see also the description of <code>kind:39003</code>). What each role is capable of not defined in this NIP either, it's a relay policy that can vary. Roles can be assigned by other users (as long as they have the capability to add roles) by publishing a <code>kind:9000</code> event with that user's pubkey in a <code>p</code> tag and the roles afterwards (even if the user is already a group member a <code>kind:9000</code> can be issued and the user roles must just be updated).</p>
+<p>The roles supported by the group as to having some special privilege assigned to them should be accessible on the event <code>kind:39003</code>, but the relay may also accept other role names, arbitrarily defined by clients, and just not do anything with them.</p>
+<p>Users with any roles that have any privilege can be considered <em>admins</em> in a broad sense and be returned in the <code>kind:39001</code> event for a group.</p>
+<h2>Unmanaged groups</h2>
+<p>Unmanaged groups are impromptu groups that can be used in any public relay unaware of NIP-29 specifics. They piggyback on relays' natural white/blacklists (or lack of) but aside from that are not actively managed and won't have any admins, group state or metadata events.</p>
+<p>In <code>unmanaged</code> groups, everybody is considered to be a member.</p>
+<p>Unmanaged groups can transition to managed groups, in that case the relay master key just has to publish moderation events setting the state of all groups and start enforcing the rules they choose to.</p>
+<h2>Event definitions</h2>
+<p>These are the events expected to be found in NIP-29 groups.</p>
+<h3>Normal user-created events</h3>
+<p>Groups may accept any event kind, including chats, threads, long-form articles, calendar, livestreams, market announcements and so on. These should be as defined in their respective NIPs, with the addition of the <code>h</code> tag.</p>
+<h3>User-related group management events</h3>
+<p>These are events that can be sent by users to manage their situation in a group, they also require the <code>h</code> tag.</p>
+<ul>
+<li><em>join request</em> (<code>kind:9021</code>)</li>
+</ul>
+<p>Any user can send a kind <code>9021</code> event to the relay in order to request admission to the group. Relays MUST reject the request if the user has not been added to the group. The accompanying error message SHOULD explain whether the rejection is final, if the request is pending review, or if some other special handling is relevant (e.g. if payment is required). If a user is already a member, the event MUST be rejected with <code>duplicate: </code> as the error message prefix.</p>
+<pre><code class="language-json">{
+  "kind": 9021,
+  "content": "optional reason",
+  "tags": [
+    ["h", "&lt;group-id&gt;"],
+    ["code", "&lt;optional-invite-code&gt;"]
+  ]
+}
+</code></pre>
+<p>The optional <code>code</code> tag may be used by the relay to preauthorize acceptances in <code>closed</code> groups, together with the <code>kind:9009</code> <code>create-invite</code> moderation event.</p>
+<ul>
+<li><em>leave request</em> (<code>kind:9022</code>)</li>
+</ul>
+<p>Any user can send one of these events to the relay in order to be automatically removed from the group. The relay will automatically issue a <code>kind:9001</code> in response removing this user.</p>
+<pre><code class="language-json">{
+  "kind": 9022,
+  "content": "optional reason",
+  "tags": [
+    ["h", "&lt;group-id&gt;"]
+  ]
+}
+</code></pre>
+<h3>Group state -- or moderation</h3>
+<p>These are events expected to be sent by the relay master key or by group admins -- and relays should reject them if they don't come from an authorized admin. They also require the <code>h</code> tag.</p>
+<ul>
+<li><em>moderation events</em> (<code>kinds:9000-9020</code>) (optional)</li>
+</ul>
+<p>Clients can send these events to a relay in order to accomplish a moderation action. Relays must check if the pubkey sending the event is capable of performing the given action based on its role and the relay's internal policy (see also the description of <code>kind:39003</code>).</p>
+<pre><code class="language-jsonc">{
+  "kind": 90xx,
+  "content": "optional reason",
+  "tags": [
+    ["h", "&lt;group-id&gt;"],
+    ["previous", /*...*/]
+  ]
+}
+</code></pre>
+<p>Each moderation action uses a different kind and requires different arguments, which are given as tags. These are defined in the following table:</p>
+<table><thead><tr><th>kind</th><th>name</th><th>tags</th></tr></thead><tbody>
+<tr><td>9000</td><td><code>put-user</code></td><td><code>p</code> with pubkey hex and optional roles</td></tr>
+<tr><td>9001</td><td><code>remove-user</code></td><td><code>p</code> with pubkey hex</td></tr>
+<tr><td>9002</td><td><code>edit-metadata</code></td><td>fields from <code>kind:39000</code> to be modified</td></tr>
+<tr><td>9005</td><td><code>delete-event</code></td><td><code>e</code> with event id hex</td></tr>
+<tr><td>9007</td><td><code>create-group</code></td><td></td></tr>
+<tr><td>9008</td><td><code>delete-group</code></td><td></td></tr>
+<tr><td>9009</td><td><code>create-invite</code></td><td></td></tr>
+</tbody></table>
+<p>It's expected that the group state (of who is an allowed member or not, who is an admin and with which permission or not, what are the group name and picture etc) can be fully reconstructed from the canonical sequence of these events.</p>
+<h3>Group metadata events</h3>
+<p>These events contain the group id in a <code>d</code> tag instead of the <code>h</code> tag. They MUST be created by the relay master key only and a single instance of each (or none) should exist at all times for each group. They are merely informative but should reflect the latest group state (as it was changed by moderation events over time).</p>
+<ul>
+<li><em>group metadata</em> (<code>kind:39000</code>) (optional)</li>
+</ul>
+<p>This event defines the metadata for the group -- basically how clients should display it. It must be generated and signed by the relay in which is found. Relays shouldn't accept these events if they're signed by anyone else.</p>
+<p>If the group is forked and hosted in multiple relays, there will be multiple versions of this event in each different relay and so on.</p>
+<p>When this event is not found, clients may still connect to the group, but treat it as having a different status, <code>unmanaged</code>,</p>
+<pre><code class="language-jsonc">{
+  "kind": 39000,
+  "content": "",
+  "tags": [
+    ["d", "&lt;group-id&gt;"],
+    ["name", "Pizza Lovers"],
+    ["picture", "https://pizza.com/pizza.png"],
+    ["about", "a group for people who love pizza"],
+    ["public"], // or ["private"]
+    ["open"] // or ["closed"]
+  ]
+  // other fields...
+}
+</code></pre>
+<p><code>name</code>, <code>picture</code> and <code>about</code> are basic metadata for the group for display purposes. <code>public</code> signals the group can be <em>read</em> by anyone, while <code>private</code> signals that only AUTHed users can read. <code>open</code> signals that anyone can request to join and the request will be automatically granted, while <code>closed</code> signals that members must be pre-approved or that requests to join will be manually handled.</p>
+<ul>
+<li><em>group admins</em> (<code>kind:39001</code>) (optional)</li>
+</ul>
+<p>Each admin is listed along with one or more roles. These roles SHOULD have a correspondence with the roles supported by the relay, as advertised by the <code>kind:39003</code> event.</p>
+<pre><code class="language-jsonc">{
+  "kind": 39001,
+  "content": "list of admins for the pizza lovers group",
+  "tags": [
+    ["d", "&lt;group-id&gt;"],
+    ["p", "&lt;pubkey1-as-hex&gt;", "ceo"],
+    ["p", "&lt;pubkey2-as-hex&gt;", "secretary", "gardener"],
+    // other pubkeys...
+  ],
+  // other fields...
+}
+</code></pre>
+<ul>
+<li><em>group members</em> (<code>kind:39002</code>) (optional)</li>
+</ul>
+<p>It's a list of pubkeys that are members of the group. Relays might choose to not to publish this information, to restrict what pubkeys can fetch it or to only display a subset of the members in it.</p>
+<p>Clients should not assume this will always be present or that it will contain a full list of members.</p>
+<pre><code class="language-jsonc">{
+  "kind": 39002,
+  "content": "list of members for the pizza lovers group",
+  "tags": [
+    ["d", "&lt;group-id&gt;"],
+    ["p", "&lt;admin1&gt;"],
+    ["p", "&lt;member-pubkey1&gt;"],
+    ["p", "&lt;member-pubkey2&gt;"],
+    // other pubkeys...
+  ],
+  // other fields...
+}
+</code></pre>
+<ul>
+<li><em>group roles</em> (<code>kind:39003</code>) (optional)</li>
+</ul>
+<p>This is an event that MAY be published by the relay informing users and clients about what are the roles supported by this relay according to its internal logic.</p>
+<p>For example, a relay may choose to support the roles <code>"admin"</code> and <code>"moderator"</code>, in which the <code>"admin"</code> will be allowed to edit the group metadata, delete messages and remove users from the group, while the <code>"moderator"</code> can only delete messages (or the relay may choose to call these roles <code>"ceo"</code> and <code>"secretary"</code> instead, the exact role name is not relevant).</p>
+<p>The process through which the relay decides what roles to support and how to handle moderation events internally based on them is specific to each relay and not specified here.</p>
+<pre><code class="language-jsonc">{
+  "kind": 39003,
+  "content": "list of roles supported by this group",
+  "tags": [
+    ["d", "&lt;group-id&gt;"],
+    ["role", "&lt;role-name&gt;", "&lt;optional-description&gt;"],
+    ["role", "&lt;role-name&gt;", "&lt;optional-description&gt;"],
+    // other roles...
+  ],
+  // other fields...
+}
+</code></pre>
+<h2>Implementation quirks</h2>
+<h3>Checking your own membership in a group</h3>
+<p>The latest of either <code>kind:9000</code> or <code>kind:9001</code> events present in a group should tell a user that they are currently members of the group or if they were removed. In case none of these exist the user is assumed to not be a member of the group -- unless the group is <code>unmanaged</code>, in which case the user is assumed to be a member.</p>
+<h3>Adding yourself to a group</h3>
+<p>When a group is <code>open</code>, anyone can send a <code>kind:9021</code> event to it in order to be added, then expect a <code>kind:9000</code> event to be emitted confirming that the user was added. The same happens with <code>closed</code> groups, except in that case a user may only send a <code>kind:9021</code> if it has an invite code.</p>
+<h3>Storing your list of groups</h3>
+<p>A definition for <code>kind:10009</code> was included in <a href="51.md">NIP-51</a> that allows clients to store the list of groups a user wants to remember being in.</p>
+<h3>Using <code>unmanaged</code> relays</h3>
+<p>To prevent event leakage, when using <code>unmanaged</code> relays, clients should include the <a href="70.md">NIP-70</a> <code>-</code> tag, as just the <code>previous</code> tag won't be checked by other <code>unmanaged</code> relays.</p>
+<p>Groups MAY be named without relay support by adding a <code>name</code> to the corresponding tag in a user's <code>kind 10009</code> group list.</p>
