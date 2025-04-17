@@ -1,0 +1,11 @@
+<h1>NIP-14</h1>
+<h2>Subject tag in Text events</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines the use of the "subject" tag in text (kind: 1) events.
+(implemented in more-speech)</p>
+<pre><code class="language-json">["subject": &lt;string&gt;]
+</code></pre>
+<p>Browsers often display threaded lists of messages.  The contents of the subject tag can be used in such lists, instead of the more ad hoc approach of using the first few words of the message.  This is very similar to the way email browsers display lists of incoming emails by subject rather than by contents.</p>
+<p>When replying to a message with a subject, clients SHOULD replicate the subject tag.  Clients MAY adorn the subject to denote
+that it is a reply.  e.g. by prepending "Re:".</p>
+<p>Subjects should generally be shorter than 80 chars.  Long subjects will likely be trimmed by clients.</p>
