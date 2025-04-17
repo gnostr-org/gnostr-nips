@@ -1,0 +1,306 @@
+<h1>NIP-11</h1>
+<h2>Relay Information Document</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>Relays may provide server metadata to clients to inform them of capabilities, administrative contacts, and various server attributes.  This is made available as a JSON document over HTTP, on the same URI as the relay's websocket.</p>
+<p>When a relay receives an HTTP(s) request with an <code>Accept</code> header of <code>application/nostr+json</code> to a URI supporting WebSocket upgrades, they SHOULD return a document with the following structure.</p>
+<pre><code class="language-json">{
+  "name": &lt;string identifying relay&gt;,
+  "description": &lt;string with detailed information&gt;,
+  "banner": &lt;a link to an image (e.g. in .jpg, or .png format)&gt;,
+  "icon": &lt;a link to an icon (e.g. in .jpg, or .png format&gt;,
+  "pubkey": &lt;administrative contact pubkey&gt;,
+  "contact": &lt;administrative alternate contact&gt;,
+  "supported_nips": &lt;a list of NIP numbers supported by the relay&gt;,
+  "software": &lt;string identifying relay software URL&gt;,
+  "version": &lt;string version identifier&gt;
+}
+</code></pre>
+<p>Any field may be omitted, and clients MUST ignore any additional fields they do not understand. Relays MUST accept CORS requests by sending <code>Access-Control-Allow-Origin</code>, <code>Access-Control-Allow-Headers</code>, and <code>Access-Control-Allow-Methods</code> headers.</p>
+<h2>Field Descriptions</h2>
+<h3>Name</h3>
+<p>A relay may select a <code>name</code> for use in client software.  This is a string, and SHOULD be less than 30 characters to avoid client truncation.</p>
+<h3>Description</h3>
+<p>Detailed plain-text information about the relay may be contained in the <code>description</code> string.  It is recommended that this contain no markup, formatting or line breaks for word wrapping, and simply use double newline characters to separate paragraphs.  There are no limitations on length.</p>
+<h3>Banner</h3>
+<p>To make nostr relay management more user friendly, an effort should be made by relay owners to communicate with non-dev non-technical nostr end users. A banner is a visual representation of the relay. It should aim to visually communicate the brand of the relay, complementing the text <code>Description</code>. <a href="https://image.nostr.build/232ddf6846e8aea5a61abcd70f9222ab521f711aa545b7ab02e430248fa3a249.png">Here is an example banner</a> mockup as visualized in Damus iOS relay view of the Damus relay.</p>
+<h3>Icon</h3>
+<p>Icon is a compact visual representation of the relay for use in UI with limited real estate such as a nostr user's relay list view. Below is an example URL pointing to an image to be used as an icon for the relay. Recommended to be squared in shape.</p>
+<pre><code class="language-jsonc">{
+  "icon": "https://nostr.build/i/53866b44135a27d624e99c6165cabd76ac8f72797209700acb189fce75021f47.jpg",
+  // other fields...
+}
+</code></pre>
+<h3>Pubkey</h3>
+<p>An administrative contact may be listed with a <code>pubkey</code>, in the same format as Nostr events (32-byte hex for a <code>secp256k1</code> public key).  If a contact is listed, this provides clients with a recommended address to send encrypted direct messages (See <a href="17.md">NIP-17</a>) to a system administrator.  Expected uses of this address are to report abuse or illegal content, file bug reports, or request other technical assistance.</p>
+<p>Relay operators have no obligation to respond to direct messages.</p>
+<h3>Contact</h3>
+<p>An alternative contact may be listed under the <code>contact</code> field as well, with the same purpose as <code>pubkey</code>.  Use of a Nostr public key and direct message SHOULD be preferred over this.  Contents of this field SHOULD be a URI, using schemes such as <code>mailto</code> or <code>https</code> to provide users with a means of contact.</p>
+<h3>Supported NIPs</h3>
+<p>As the Nostr protocol evolves, some functionality may only be available by relays that implement a specific <code>NIP</code>.  This field is an array of the integer identifiers of <code>NIP</code>s that are implemented in the relay.  Examples would include <code>1</code>, for <code>"NIP-01"</code> and <code>9</code>, for <code>"NIP-09"</code>.  Client-side <code>NIPs</code> SHOULD NOT be advertised, and can be ignored by clients.</p>
+<h3>Software</h3>
+<p>The relay server implementation MAY be provided in the <code>software</code> attribute.  If present, this MUST be a URL to the project's homepage.</p>
+<h3>Version</h3>
+<p>The relay MAY choose to publish its software version as a string attribute.  The string format is defined by the relay implementation.  It is recommended this be a version number or commit identifier.</p>
+<h2>Extra Fields</h2>
+<h3>Server Limitations</h3>
+<p>These are limitations imposed by the relay on clients. Your client
+should expect that requests exceed these <em>practical</em> limitations
+are rejected or fail immediately.</p>
+<pre><code class="language-jsonc">{
+  "limitation": {
+    "max_message_length": 16384,
+    "max_subscriptions": 300,
+    "max_limit": 5000,
+    "max_subid_length": 100,
+    "max_event_tags": 100,
+    "max_content_length": 8196,
+    "min_pow_difficulty": 30,
+    "auth_required": true,
+    "payment_required": true,
+    "restricted_writes": true,
+    "created_at_lower_limit": 31536000,
+    "created_at_upper_limit": 3,
+    "default_limit": 500
+  },
+  // other fields...
+}
+</code></pre>
+<ul>
+<li>
+<p><code>max_message_length</code>: the maximum number of bytes for incoming JSON that the relay
+will attempt to decode and act upon. When you send large subscriptions, you will be
+limited by this value. It also effectively limits the maximum size of any event. Value is
+calculated from <code>[</code> to <code>]</code> after UTF-8 serialization (so some unicode characters
+will cost 2-3 bytes). It is equal to the maximum size of the WebSocket message frame.</p>
+</li>
+<li>
+<p><code>max_subscriptions</code>: total number of subscriptions that may be
+active on a single websocket connection to this relay. Authenticated clients with a (paid) relationship to the relay
+may have higher limits.</p>
+</li>
+<li>
+<p><code>max_subid_length</code>: maximum length of subscription id as a string.</p>
+</li>
+<li>
+<p><code>max_limit</code>: the relay server will clamp each filter's <code>limit</code> value to this number.
+This means the client won't be able to get more than this number
+of events from a single subscription filter. This clamping is typically done silently
+by the relay, but with this number, you can know that there are additional results
+if you narrow your filter's time range or other parameters.</p>
+</li>
+<li>
+<p><code>max_event_tags</code>: in any event, this is the maximum number of elements in the <code>tags</code> list.</p>
+</li>
+<li>
+<p><code>max_content_length</code>: maximum number of characters in the <code>content</code>
+field of any event. This is a count of unicode characters. After
+serializing into JSON it may be larger (in bytes), and is still
+subject to the <code>max_message_length</code>, if defined.</p>
+</li>
+<li>
+<p><code>min_pow_difficulty</code>: new events will require at least this difficulty of PoW,
+based on <a href="13.md">NIP-13</a>, or they will be rejected by this server.</p>
+</li>
+<li>
+<p><code>auth_required</code>: this relay requires <a href="42.md">NIP-42</a> authentication
+to happen before a new connection may perform any other action.
+Even if set to False, authentication may be required for specific actions.</p>
+</li>
+<li>
+<p><code>payment_required</code>: this relay requires payment before a new connection may perform any action.</p>
+</li>
+<li>
+<p><code>restricted_writes</code>: this relay requires some kind of condition to be fulfilled to
+accept events (not necessarily, but including <code>payment_required</code> and <code>min_pow_difficulty</code>).
+This should only be set to <code>true</code> when users are expected to know the relay policy before trying
+to write to it -- like belonging to a special pubkey-based whitelist or writing only events of
+a specific niche kind or content. Normal anti-spam heuristics, for example, do not qualify.</p>
+</li>
+<li>
+<p><code>created_at_lower_limit</code>: 'created_at' lower limit</p>
+</li>
+<li>
+<p><code>created_at_upper_limit</code>: 'created_at' upper limit</p>
+</li>
+<li>
+<p><code>default_limit</code>: The maximum returned events if you send a filter with the limit set to 0.</p>
+</li>
+</ul>
+<h3>Event Retention</h3>
+<p>There may be a cost associated with storing data forever, so relays
+may wish to state retention times. The values stated here are defaults
+for unauthenticated users and visitors. Paid users would likely have
+other policies.</p>
+<p>Retention times are given in seconds, with <code>null</code> indicating infinity.
+If zero is provided, this means the event will not be stored at
+all, and preferably an error will be provided when those are received.</p>
+<pre><code class="language-jsonc">{
+  "retention": [
+    {"kinds": [0, 1, [5, 7], [40, 49]], "time": 3600},
+    {"kinds": [[40000, 49999]], "time": 100},
+    {"kinds": [[30000, 39999]], "count": 1000},
+    {"time": 3600, "count": 10000}
+  ],
+  // other fields...
+}
+</code></pre>
+<p><code>retention</code> is a list of specifications: each will apply to either all kinds, or
+a subset of kinds. Ranges may be specified for the kind field as a tuple of inclusive
+start and end values. Events of indicated kind (or all) are then limited to a <code>count</code>
+and/or time period.</p>
+<p>It is possible to effectively blacklist Nostr-based protocols that rely on
+a specific <code>kind</code> number, by giving a retention time of zero for those <code>kind</code> values.
+While that is unfortunate, it does allow clients to discover servers that will
+support their protocol quickly via a single HTTP fetch.</p>
+<p>There is no need to specify retention times for <em>ephemeral events</em> since they are not retained.</p>
+<h3>Content Limitations</h3>
+<p>Some relays may be governed by the arbitrary laws of a nation state. This
+may limit what content can be stored in clear-text on those relays. All
+clients are encouraged to use encryption to work around this limitation.</p>
+<p>It is not possible to describe the limitations of each country's laws
+and policies which themselves are typically vague and constantly shifting.</p>
+<p>Therefore, this field allows the relay operator to indicate which
+countries' laws might end up being enforced on them, and then
+indirectly on their users' content.</p>
+<p>Users should be able to avoid relays in countries they don't like,
+and/or select relays in more favorable zones. Exposing this
+flexibility is up to the client software.</p>
+<pre><code class="language-jsonc">{
+  "relay_countries": [ "CA", "US" ],
+  // other fields...
+}
+</code></pre>
+<ul>
+<li><code>relay_countries</code>: a list of two-level ISO country codes (ISO 3166-1 alpha-2)  whose
+laws and policies may affect this relay. <code>EU</code> may be used for European Union countries. A <code>*</code> can be used for global relays.</li>
+</ul>
+<p>Remember that a relay may be hosted in a country which is not the
+country of the legal entities who own the relay, so it's very
+likely a number of countries are involved.</p>
+<h3>Community Preferences</h3>
+<p>For public text notes at least, a relay may try to foster a
+local community. This would encourage users to follow the global
+feed on that relay, in addition to their usual individual follows.
+To support this goal, relays MAY specify some of the following values.</p>
+<pre><code class="language-jsonc">{
+  "language_tags": ["en", "en-419"],
+  "tags": ["sfw-only", "bitcoin-only", "anime"],
+  "posting_policy": "https://example.com/posting-policy.html",
+  // other fields...
+}
+</code></pre>
+<ul>
+<li>
+<p><code>language_tags</code> is an ordered list
+of <a href="https://en.wikipedia.org/wiki/IETF_language_tag">IETF language tags</a> indicating
+the major languages spoken on the relay. A <code>*</code> can be used for global relays.</p>
+</li>
+<li>
+<p><code>tags</code> is a list of limitations on the topics to be discussed.
+For example <code>sfw-only</code> indicates that only "Safe For Work" content
+is encouraged on this relay. This relies on assumptions of what the
+"work" "community" feels "safe" talking about. In time, a common
+set of tags may emerge that allow users to find relays that suit
+their needs, and client software will be able to parse these tags easily.
+The <code>bitcoin-only</code> tag indicates that any <em>altcoin</em>, <em>"crypto"</em> or <em>blockchain</em>
+comments will be ridiculed without mercy.</p>
+</li>
+<li>
+<p><code>posting_policy</code> is a link to a human-readable page which specifies the
+community policies for the relay. In cases where <code>sfw-only</code> is True, it's
+important to link to a page which gets into the specifics of your posting policy.</p>
+</li>
+</ul>
+<p>The <code>description</code> field should be used to describe your community
+goals and values, in brief. The <code>posting_policy</code> is for additional
+detail and legal terms. Use the <code>tags</code> field to signify limitations
+on content, or topics to be discussed, which could be machine
+processed by appropriate client software.</p>
+<h3>Pay-to-Relay</h3>
+<p>Relays that require payments may want to expose their fee schedules.</p>
+<pre><code class="language-jsonc">{
+  "payments_url": "https://my-relay/payments",
+  "fees": {
+    "admission": [{ "amount": 1000000, "unit": "msats" }],
+    "subscription": [{ "amount": 5000000, "unit": "msats", "period": 2592000 }],
+    "publication": [{ "kinds": [4], "amount": 100, "unit": "msats" }],
+  },
+  // other fields...
+}
+</code></pre>
+<h3>Examples</h3>
+<p>As of 25 March 2025 the following command provided these results:</p>
+<pre><code class="language-bash">curl -H "Accept: application/nostr+json" https://jellyfish.land | jq
+</code></pre>
+<pre><code class="language-json">{
+  "name": "JellyFish",
+  "description": "Stay Immortal!",
+  "banner": "https://image.nostr.build/7fdefea2dec1f1ec25b8ce69362566c13b2b7f13f1726c2e4584f05f64f62496.jpg",
+  "pubkey": "bf2bee5281149c7c350f5d12ae32f514c7864ff10805182f4178538c2c421007",
+  "contact": "hi@dezh.tech",
+  "software": "https://github.com/dezh-tech/immortal",
+  "supported_nips": [
+    1,
+    9,
+    11,
+    13,
+    17,
+    40,
+    42,
+    59,
+    62,
+    70
+  ],
+  "version": "immortal - 0.0.9",
+  "relay_countries": [
+    "*"
+  ],
+  "language_tags": [
+    "*"
+  ],
+  "tags": [],
+  "posting_policy": "https://jellyfish.land/tos.txt",
+  "payments_url": "https://jellyfish.land/relay",
+  "icon": "https://image.nostr.build/2547e9ec4b23589e09bc7071e0806c3d4293f76284c58ff331a64bce978aaee8.jpg",
+  "retention": [],
+  "fees": {
+    "subscription": [
+      {
+        "amount": 3000,
+        "period": 2628003,
+        "unit": "sats"
+      },
+      {
+        "amount": 8000,
+        "period": 7884009,
+        "unit": "sats"
+      },
+      {
+        "amount": 15000,
+        "period": 15768018,
+        "unit": "sats"
+      },
+      {
+        "amount": 28000,
+        "period": 31536036,
+        "unit": "sats"
+      }
+    ]
+  },
+  "limitation": {
+    "auth_required": false,
+    "max_message_length": 70000,
+    "max_subid_length": 256,
+    "max_subscriptions": 350,
+    "min_pow_difficulty": 0,
+    "payment_required": true,
+    "restricted_writes": true,
+    "max_event_tags": 2000,
+    "max_content_length": 70000,
+    "created_at_lower_limit": 0,
+    "created_at_upper_limit": 2147483647,
+    "default_limit": 500,
+    "max_limit": 5000
+  }
+}
+</code></pre>
