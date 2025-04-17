@@ -1,0 +1,359 @@
+<h1>NIPs</h1>
+<p>NIPs stand for <strong>Nostr Implementation Possibilities</strong>.</p>
+<p>They exist to document what may be implemented by <a href="https://github.com/nostr-protocol/nostr">Nostr</a>-compatible <em>relay</em> and <em>client</em> software.</p>
+<hr />
+<ul>
+<li><a href="#list">List</a></li>
+<li><a href="#event-kinds">Event Kinds</a></li>
+<li><a href="#message-types">Message Types</a>
+<ul>
+<li><a href="#client-to-relay">Client to Relay</a></li>
+<li><a href="#relay-to-client">Relay to Client</a></li>
+</ul>
+</li>
+<li><a href="#standardized-tags">Standardized Tags</a></li>
+<li><a href="#criteria-for-acceptance-of-nips">Criteria for acceptance of NIPs</a></li>
+<li><a href="#is-this-repository-a-centralizing-factor">Is this repository a centralizing factor?</a></li>
+<li><a href="#how-this-repository-works">How this repository works</a></li>
+<li><a href="#breaking-changes">Breaking Changes</a></li>
+<li><a href="#license">License</a></li>
+</ul>
+<hr />
+<h2>List</h2>
+<ul>
+<li><a href="01.md">NIP-01: Basic protocol flow description</a></li>
+<li><a href="02.md">NIP-02: Follow List</a></li>
+<li><a href="03.md">NIP-03: OpenTimestamps Attestations for Events</a></li>
+<li><a href="04.md">NIP-04: Encrypted Direct Message</a> --- <strong>unrecommended</strong>: deprecated in favor of <a href="17.md">NIP-17</a></li>
+<li><a href="05.md">NIP-05: Mapping Nostr keys to DNS-based internet identifiers</a></li>
+<li><a href="06.md">NIP-06: Basic key derivation from mnemonic seed phrase</a></li>
+<li><a href="07.md">NIP-07: <code>window.nostr</code> capability for web browsers</a></li>
+<li><a href="08.md">NIP-08: Handling Mentions</a> --- <strong>unrecommended</strong>: deprecated in favor of <a href="27.md">NIP-27</a></li>
+<li><a href="09.md">NIP-09: Event Deletion Request</a></li>
+<li><a href="10.md">NIP-10: Text Notes and Threads</a></li>
+<li><a href="11.md">NIP-11: Relay Information Document</a></li>
+<li><a href="13.md">NIP-13: Proof of Work</a></li>
+<li><a href="14.md">NIP-14: Subject tag in text events</a></li>
+<li><a href="15.md">NIP-15: Nostr Marketplace (for resilient marketplaces)</a></li>
+<li><a href="17.md">NIP-17: Private Direct Messages</a></li>
+<li><a href="18.md">NIP-18: Reposts</a></li>
+<li><a href="19.md">NIP-19: bech32-encoded entities</a></li>
+<li><a href="21.md">NIP-21: <code>nostr:</code> URI scheme</a></li>
+<li><a href="22.md">NIP-22: Comment</a></li>
+<li><a href="23.md">NIP-23: Long-form Content</a></li>
+<li><a href="24.md">NIP-24: Extra metadata fields and tags</a></li>
+<li><a href="25.md">NIP-25: Reactions</a></li>
+<li><a href="26.md">NIP-26: Delegated Event Signing</a></li>
+<li><a href="27.md">NIP-27: Text Note References</a></li>
+<li><a href="28.md">NIP-28: Public Chat</a></li>
+<li><a href="29.md">NIP-29: Relay-based Groups</a></li>
+<li><a href="30.md">NIP-30: Custom Emoji</a></li>
+<li><a href="31.md">NIP-31: Dealing with Unknown Events</a></li>
+<li><a href="32.md">NIP-32: Labeling</a></li>
+<li><a href="34.md">NIP-34: <code>git</code> stuff</a></li>
+<li><a href="35.md">NIP-35: Torrents</a></li>
+<li><a href="36.md">NIP-36: Sensitive Content</a></li>
+<li><a href="37.md">NIP-37: Draft Events</a></li>
+<li><a href="38.md">NIP-38: User Statuses</a></li>
+<li><a href="39.md">NIP-39: External Identities in Profiles</a></li>
+<li><a href="40.md">NIP-40: Expiration Timestamp</a></li>
+<li><a href="42.md">NIP-42: Authentication of clients to relays</a></li>
+<li><a href="44.md">NIP-44: Encrypted Payloads (Versioned)</a></li>
+<li><a href="45.md">NIP-45: Counting results</a></li>
+<li><a href="46.md">NIP-46: Nostr Remote Signing</a></li>
+<li><a href="47.md">NIP-47: Nostr Wallet Connect</a></li>
+<li><a href="48.md">NIP-48: Proxy Tags</a></li>
+<li><a href="49.md">NIP-49: Private Key Encryption</a></li>
+<li><a href="50.md">NIP-50: Search Capability</a></li>
+<li><a href="51.md">NIP-51: Lists</a></li>
+<li><a href="52.md">NIP-52: Calendar Events</a></li>
+<li><a href="53.md">NIP-53: Live Activities</a></li>
+<li><a href="54.md">NIP-54: Wiki</a></li>
+<li><a href="55.md">NIP-55: Android Signer Application</a></li>
+<li><a href="56.md">NIP-56: Reporting</a></li>
+<li><a href="57.md">NIP-57: Lightning Zaps</a></li>
+<li><a href="58.md">NIP-58: Badges</a></li>
+<li><a href="59.md">NIP-59: Gift Wrap</a></li>
+<li><a href="60.md">NIP-60: Cashu Wallet</a></li>
+<li><a href="61.md">NIP-61: Nutzaps</a></li>
+<li><a href="62.md">NIP-62: Request to Vanish</a></li>
+<li><a href="64.md">NIP-64: Chess (PGN)</a></li>
+<li><a href="65.md">NIP-65: Relay List Metadata</a></li>
+<li><a href="66.md">NIP-66: Relay Discovery and Liveness Monitoring</a></li>
+<li><a href="68.md">NIP-68: Picture-first feeds</a></li>
+<li><a href="69.md">NIP-69: Peer-to-peer Order events</a></li>
+<li><a href="70.md">NIP-70: Protected Events</a></li>
+<li><a href="71.md">NIP-71: Video Events</a></li>
+<li><a href="72.md">NIP-72: Moderated Communities</a></li>
+<li><a href="73.md">NIP-73: External Content IDs</a></li>
+<li><a href="75.md">NIP-75: Zap Goals</a></li>
+<li><a href="78.md">NIP-78: Application-specific data</a></li>
+<li><a href="84.md">NIP-84: Highlights</a></li>
+<li><a href="86.md">NIP-86: Relay Management API</a></li>
+<li><a href="88.md">NIP-88: Polls</a></li>
+<li><a href="89.md">NIP-89: Recommended Application Handlers</a></li>
+<li><a href="90.md">NIP-90: Data Vending Machines</a></li>
+<li><a href="92.md">NIP-92: Media Attachments</a></li>
+<li><a href="94.md">NIP-94: File Metadata</a></li>
+<li><a href="96.md">NIP-96: HTTP File Storage Integration</a></li>
+<li><a href="98.md">NIP-98: HTTP Auth</a></li>
+<li><a href="99.md">NIP-99: Classified Listings</a></li>
+<li><a href="7D.md">NIP-7D: Threads</a></li>
+<li><a href="C0.md">NIP-C0: Code Snippets</a></li>
+<li><a href="C7.md">NIP-C7: Chats</a></li>
+</ul>
+<h2>Event Kinds</h2>
+<table><thead><tr><th>kind</th><th>description</th><th>NIP</th></tr></thead><tbody>
+<tr><td><code>0</code></td><td>User Metadata</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>1</code></td><td>Short Text Note</td><td><a href="10.md">10</a></td></tr>
+<tr><td><code>2</code></td><td>Recommend Relay</td><td>01 (deprecated)</td></tr>
+<tr><td><code>3</code></td><td>Follows</td><td><a href="02.md">02</a></td></tr>
+<tr><td><code>4</code></td><td>Encrypted Direct Messages</td><td><a href="04.md">04</a></td></tr>
+<tr><td><code>5</code></td><td>Event Deletion Request</td><td><a href="09.md">09</a></td></tr>
+<tr><td><code>6</code></td><td>Repost</td><td><a href="18.md">18</a></td></tr>
+<tr><td><code>7</code></td><td>Reaction</td><td><a href="25.md">25</a></td></tr>
+<tr><td><code>8</code></td><td>Badge Award</td><td><a href="58.md">58</a></td></tr>
+<tr><td><code>9</code></td><td>Chat Message</td><td><a href="C7.md">C7</a></td></tr>
+<tr><td><code>10</code></td><td>Group Chat Threaded Reply</td><td>29 (deprecated)</td></tr>
+<tr><td><code>11</code></td><td>Thread</td><td><a href="7D.md">7D</a></td></tr>
+<tr><td><code>12</code></td><td>Group Thread Reply</td><td>29 (deprecated)</td></tr>
+<tr><td><code>13</code></td><td>Seal</td><td><a href="59.md">59</a></td></tr>
+<tr><td><code>14</code></td><td>Direct Message</td><td><a href="17.md">17</a></td></tr>
+<tr><td><code>15</code></td><td>File Message</td><td><a href="17.md">17</a></td></tr>
+<tr><td><code>16</code></td><td>Generic Repost</td><td><a href="18.md">18</a></td></tr>
+<tr><td><code>17</code></td><td>Reaction to a website</td><td><a href="25.md">25</a></td></tr>
+<tr><td><code>20</code></td><td>Picture</td><td><a href="68.md">68</a></td></tr>
+<tr><td><code>21</code></td><td>Video Event</td><td><a href="71.md">71</a></td></tr>
+<tr><td><code>22</code></td><td>Short-form Portrait Video Event</td><td><a href="71.md">71</a></td></tr>
+<tr><td><code>30</code></td><td>internal reference</td><td><a href="https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-03</a></td></tr>
+<tr><td><code>31</code></td><td>external web reference</td><td><a href="https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-03</a></td></tr>
+<tr><td><code>32</code></td><td>hardcopy reference</td><td><a href="https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-03</a></td></tr>
+<tr><td><code>33</code></td><td>prompt reference</td><td><a href="https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-03</a></td></tr>
+<tr><td><code>40</code></td><td>Channel Creation</td><td><a href="28.md">28</a></td></tr>
+<tr><td><code>41</code></td><td>Channel Metadata</td><td><a href="28.md">28</a></td></tr>
+<tr><td><code>42</code></td><td>Channel Message</td><td><a href="28.md">28</a></td></tr>
+<tr><td><code>43</code></td><td>Channel Hide Message</td><td><a href="28.md">28</a></td></tr>
+<tr><td><code>44</code></td><td>Channel Mute User</td><td><a href="28.md">28</a></td></tr>
+<tr><td><code>62</code></td><td>Request to Vanish</td><td><a href="62.md">62</a></td></tr>
+<tr><td><code>64</code></td><td>Chess (PGN)</td><td><a href="64.md">64</a></td></tr>
+<tr><td><code>818</code></td><td>Merge Requests</td><td><a href="54.md">54</a></td></tr>
+<tr><td><code>1018</code></td><td>Poll Response</td><td><a href="88.md">88</a></td></tr>
+<tr><td><code>1021</code></td><td>Bid</td><td><a href="15.md">15</a></td></tr>
+<tr><td><code>1022</code></td><td>Bid confirmation</td><td><a href="15.md">15</a></td></tr>
+<tr><td><code>1040</code></td><td>OpenTimestamps</td><td><a href="03.md">03</a></td></tr>
+<tr><td><code>1059</code></td><td>Gift Wrap</td><td><a href="59.md">59</a></td></tr>
+<tr><td><code>1063</code></td><td>File Metadata</td><td><a href="94.md">94</a></td></tr>
+<tr><td><code>1068</code></td><td>Poll</td><td><a href="88.md">88</a></td></tr>
+<tr><td><code>1111</code></td><td>Comment</td><td><a href="22.md">22</a></td></tr>
+<tr><td><code>1311</code></td><td>Live Chat Message</td><td><a href="53.md">53</a></td></tr>
+<tr><td><code>1337</code></td><td>Code Snippet</td><td><a href="C0.md">C0</a></td></tr>
+<tr><td><code>1617</code></td><td>Patches</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>1621</code></td><td>Issues</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>1622</code></td><td>Git Replies (deprecated)</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>1630</code>-<code>1633</code></td><td>Status</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>1971</code></td><td>Problem Tracker</td><td><a href="https://github.com/nostrocket/NIPS/blob/main/Problems.md">nostrocket</a></td></tr>
+<tr><td><code>1984</code></td><td>Reporting</td><td><a href="56.md">56</a></td></tr>
+<tr><td><code>1985</code></td><td>Label</td><td><a href="32.md">32</a></td></tr>
+<tr><td><code>1986</code></td><td>Relay reviews</td><td></td></tr>
+<tr><td><code>1987</code></td><td>AI Embeddings / Vector lists</td><td><a href="https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-02</a></td></tr>
+<tr><td><code>2003</code></td><td>Torrent</td><td><a href="35.md">35</a></td></tr>
+<tr><td><code>2004</code></td><td>Torrent Comment</td><td><a href="35.md">35</a></td></tr>
+<tr><td><code>2022</code></td><td>Coinjoin Pool</td><td><a href="https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md">joinstr</a></td></tr>
+<tr><td><code>4550</code></td><td>Community Post Approval</td><td><a href="72.md">72</a></td></tr>
+<tr><td><code>5000</code>-<code>5999</code></td><td>Job Request</td><td><a href="90.md">90</a></td></tr>
+<tr><td><code>6000</code>-<code>6999</code></td><td>Job Result</td><td><a href="90.md">90</a></td></tr>
+<tr><td><code>7000</code></td><td>Job Feedback</td><td><a href="90.md">90</a></td></tr>
+<tr><td><code>7374</code></td><td>Reserved Cashu Wallet Tokens</td><td><a href="60.md">60</a></td></tr>
+<tr><td><code>7375</code></td><td>Cashu Wallet Tokens</td><td><a href="60.md">60</a></td></tr>
+<tr><td><code>7376</code></td><td>Cashu Wallet History</td><td><a href="60.md">60</a></td></tr>
+<tr><td><code>9000</code>-<code>9030</code></td><td>Group Control Events</td><td><a href="29.md">29</a></td></tr>
+<tr><td><code>9041</code></td><td>Zap Goal</td><td><a href="75.md">75</a></td></tr>
+<tr><td><code>9321</code></td><td>Nutzap</td><td><a href="61.md">61</a></td></tr>
+<tr><td><code>9467</code></td><td>Tidal login</td><td><a href="https://wikistr.com/tidal-nostr">Tidal-nostr</a></td></tr>
+<tr><td><code>9734</code></td><td>Zap Request</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>9735</code></td><td>Zap</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>9802</code></td><td>Highlights</td><td><a href="84.md">84</a></td></tr>
+<tr><td><code>10000</code></td><td>Mute list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10001</code></td><td>Pin list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10002</code></td><td>Relay List Metadata</td><td><a href="65.md">65</a>, <a href="51.md">51</a></td></tr>
+<tr><td><code>10003</code></td><td>Bookmark list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10004</code></td><td>Communities list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10005</code></td><td>Public chats list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10006</code></td><td>Blocked relays list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10007</code></td><td>Search relays list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10009</code></td><td>User groups</td><td><a href="51.md">51</a>, <a href="29.md">29</a></td></tr>
+<tr><td><code>10013</code></td><td>Private event relay list</td><td><a href="37.md">37</a></td></tr>
+<tr><td><code>10015</code></td><td>Interests list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10019</code></td><td>Nutzap Mint Recommendation</td><td><a href="61.md">61</a></td></tr>
+<tr><td><code>10030</code></td><td>User emoji list</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>10050</code></td><td>Relay list to receive DMs</td><td><a href="51.md">51</a>, <a href="17.md">17</a></td></tr>
+<tr><td><code>10063</code></td><td>User server list</td><td><a href="https://github.com/hzrd149/blossom">Blossom</a></td></tr>
+<tr><td><code>10096</code></td><td>File storage server list</td><td><a href="96.md">96</a></td></tr>
+<tr><td><code>10166</code></td><td>Relay Monitor Announcement</td><td><a href="66.md">66</a></td></tr>
+<tr><td><code>13194</code></td><td>Wallet Info</td><td><a href="47.md">47</a></td></tr>
+<tr><td><code>17375</code></td><td>Cashu Wallet Event</td><td><a href="60.md">60</a></td></tr>
+<tr><td><code>21000</code></td><td>Lightning Pub RPC</td><td><a href="https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/client.md">Lightning.Pub</a></td></tr>
+<tr><td><code>22242</code></td><td>Client Authentication</td><td><a href="42.md">42</a></td></tr>
+<tr><td><code>23194</code></td><td>Wallet Request</td><td><a href="47.md">47</a></td></tr>
+<tr><td><code>23195</code></td><td>Wallet Response</td><td><a href="47.md">47</a></td></tr>
+<tr><td><code>24133</code></td><td>Nostr Connect</td><td><a href="46.md">46</a></td></tr>
+<tr><td><code>24242</code></td><td>Blobs stored on mediaservers</td><td><a href="https://github.com/hzrd149/blossom">Blossom</a></td></tr>
+<tr><td><code>27235</code></td><td>HTTP Auth</td><td><a href="98.md">98</a></td></tr>
+<tr><td><code>30000</code></td><td>Follow sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30001</code></td><td>Generic lists</td><td>51 (deprecated)</td></tr>
+<tr><td><code>30002</code></td><td>Relay sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30003</code></td><td>Bookmark sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30004</code></td><td>Curation sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30005</code></td><td>Video sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30007</code></td><td>Kind mute sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30008</code></td><td>Profile Badges</td><td><a href="58.md">58</a></td></tr>
+<tr><td><code>30009</code></td><td>Badge Definition</td><td><a href="58.md">58</a></td></tr>
+<tr><td><code>30015</code></td><td>Interest sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30017</code></td><td>Create or update a stall</td><td><a href="15.md">15</a></td></tr>
+<tr><td><code>30018</code></td><td>Create or update a product</td><td><a href="15.md">15</a></td></tr>
+<tr><td><code>30019</code></td><td>Marketplace UI/UX</td><td><a href="15.md">15</a></td></tr>
+<tr><td><code>30020</code></td><td>Product sold as an auction</td><td><a href="15.md">15</a></td></tr>
+<tr><td><code>30023</code></td><td>Long-form Content</td><td><a href="23.md">23</a></td></tr>
+<tr><td><code>30024</code></td><td>Draft Long-form Content</td><td><a href="23.md">23</a></td></tr>
+<tr><td><code>30030</code></td><td>Emoji sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30040</code></td><td>Curated Publication Index</td><td><a href="https://wikistr.com/nkbip-01*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-01</a></td></tr>
+<tr><td><code>30041</code></td><td>Curated Publication Content</td><td><a href="https://wikistr.com/nkbip-01*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1">NKBIP-01</a></td></tr>
+<tr><td><code>30063</code></td><td>Release artifact sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30078</code></td><td>Application-specific Data</td><td><a href="78.md">78</a></td></tr>
+<tr><td><code>30166</code></td><td>Relay Discovery</td><td><a href="66.md">66</a></td></tr>
+<tr><td><code>30267</code></td><td>App curation sets</td><td><a href="51.md">51</a></td></tr>
+<tr><td><code>30311</code></td><td>Live Event</td><td><a href="53.md">53</a></td></tr>
+<tr><td><code>30315</code></td><td>User Statuses</td><td><a href="38.md">38</a></td></tr>
+<tr><td><code>30388</code></td><td>Slide Set</td><td><a href="https://cornychat.com/datatypes#kind30388slideset">Corny Chat</a></td></tr>
+<tr><td><code>30402</code></td><td>Classified Listing</td><td><a href="99.md">99</a></td></tr>
+<tr><td><code>30403</code></td><td>Draft Classified Listing</td><td><a href="99.md">99</a></td></tr>
+<tr><td><code>30617</code></td><td>Repository announcements</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>30618</code></td><td>Repository state announcements</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>30818</code></td><td>Wiki article</td><td><a href="54.md">54</a></td></tr>
+<tr><td><code>30819</code></td><td>Redirects</td><td><a href="54.md">54</a></td></tr>
+<tr><td><code>31234</code></td><td>Draft Event</td><td><a href="37.md">37</a></td></tr>
+<tr><td><code>31388</code></td><td>Link Set</td><td><a href="https://cornychat.com/datatypes#kind31388linkset">Corny Chat</a></td></tr>
+<tr><td><code>31890</code></td><td>Feed</td><td><a href="https://wikifreedia.xyz/cip-01/">NUD: Custom Feeds</a></td></tr>
+<tr><td><code>31922</code></td><td>Date-Based Calendar Event</td><td><a href="52.md">52</a></td></tr>
+<tr><td><code>31923</code></td><td>Time-Based Calendar Event</td><td><a href="52.md">52</a></td></tr>
+<tr><td><code>31924</code></td><td>Calendar</td><td><a href="52.md">52</a></td></tr>
+<tr><td><code>31925</code></td><td>Calendar Event RSVP</td><td><a href="52.md">52</a></td></tr>
+<tr><td><code>31989</code></td><td>Handler recommendation</td><td><a href="89.md">89</a></td></tr>
+<tr><td><code>31990</code></td><td>Handler information</td><td><a href="89.md">89</a></td></tr>
+<tr><td><code>32267</code></td><td>Software Application</td><td></td></tr>
+<tr><td><code>34550</code></td><td>Community Definition</td><td><a href="72.md">72</a></td></tr>
+<tr><td><code>38383</code></td><td>Peer-to-peer Order events</td><td><a href="69.md">69</a></td></tr>
+<tr><td><code>39000-9</code></td><td>Group metadata events</td><td><a href="29.md">29</a></td></tr>
+</tbody></table>
+<h2>Message types</h2>
+<h3>Client to Relay</h3>
+<table><thead><tr><th>type</th><th>description</th><th>NIP</th></tr></thead><tbody>
+<tr><td><code>EVENT</code></td><td>used to publish events</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>REQ</code></td><td>used to request events and subscribe to new updates</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>CLOSE</code></td><td>used to stop previous subscriptions</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>AUTH</code></td><td>used to send authentication events</td><td><a href="42.md">42</a></td></tr>
+<tr><td><code>COUNT</code></td><td>used to request event counts</td><td><a href="45.md">45</a></td></tr>
+</tbody></table>
+<h3>Relay to Client</h3>
+<table><thead><tr><th>type</th><th>description</th><th>NIP</th></tr></thead><tbody>
+<tr><td><code>EOSE</code></td><td>used to notify clients all stored events have been sent</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>EVENT</code></td><td>used to send events requested to clients</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>NOTICE</code></td><td>used to send human-readable messages to clients</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>OK</code></td><td>used to notify clients if an EVENT was successful</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>CLOSED</code></td><td>used to notify clients that a REQ was ended and why</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>AUTH</code></td><td>used to send authentication challenges</td><td><a href="42.md">42</a></td></tr>
+<tr><td><code>COUNT</code></td><td>used to send requested event counts to clients</td><td><a href="45.md">45</a></td></tr>
+</tbody></table>
+<h2>Standardized Tags</h2>
+<table><thead><tr><th>name</th><th>value</th><th>other parameters</th><th>NIP</th></tr></thead><tbody>
+<tr><td><code>a</code></td><td>coordinates to an event</td><td>relay URL</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>A</code></td><td>root address</td><td>relay URL</td><td><a href="22.md">22</a></td></tr>
+<tr><td><code>d</code></td><td>identifier</td><td>--</td><td><a href="01.md">01</a></td></tr>
+<tr><td><code>e</code></td><td>event id (hex)</td><td>relay URL, marker, pubkey (hex)</td><td><a href="01.md">01</a>, <a href="10.md">10</a></td></tr>
+<tr><td><code>E</code></td><td>root event id</td><td>relay URL</td><td><a href="22.md">22</a></td></tr>
+<tr><td><code>f</code></td><td>currency code</td><td>--</td><td><a href="69.md">69</a></td></tr>
+<tr><td><code>g</code></td><td>geohash</td><td>--</td><td><a href="52.md">52</a></td></tr>
+<tr><td><code>h</code></td><td>group id</td><td>--</td><td><a href="29.md">29</a></td></tr>
+<tr><td><code>i</code></td><td>external identity</td><td>proof, url hint</td><td><a href="35.md">35</a>, <a href="39.md">39</a>, <a href="73.md">73</a></td></tr>
+<tr><td><code>I</code></td><td>root external identity</td><td>--</td><td><a href="22.md">22</a></td></tr>
+<tr><td><code>k</code></td><td>kind</td><td>--</td><td><a href="18.md">18</a>, <a href="25.md">25</a>, <a href="72.md">72</a>, <a href="73.md">73</a></td></tr>
+<tr><td><code>K</code></td><td>root scope</td><td>--</td><td><a href="22.md">22</a></td></tr>
+<tr><td><code>l</code></td><td>label, label namespace, language name</td><td>--</td><td><a href="32.md">32</a>, <a href="C0.md">C0</a></td></tr>
+<tr><td><code>L</code></td><td>label namespace</td><td>--</td><td><a href="32.md">32</a></td></tr>
+<tr><td><code>m</code></td><td>MIME type</td><td>--</td><td><a href="94.md">94</a></td></tr>
+<tr><td><code>p</code></td><td>pubkey (hex)</td><td>relay URL, petname</td><td><a href="01.md">01</a>, <a href="02.md">02</a>, <a href="22.md">22</a></td></tr>
+<tr><td><code>P</code></td><td>pubkey (hex)</td><td>--</td><td><a href="22.md">22</a>, <a href="57.md">57</a></td></tr>
+<tr><td><code>q</code></td><td>event id (hex)</td><td>relay URL, pubkey (hex)</td><td><a href="18.md">18</a></td></tr>
+<tr><td><code>r</code></td><td>a reference (URL, etc)</td><td>--</td><td><a href="24.md">24</a>, <a href="25.md">25</a></td></tr>
+<tr><td><code>r</code></td><td>relay url</td><td>marker</td><td><a href="65.md">65</a></td></tr>
+<tr><td><code>s</code></td><td>status</td><td>--</td><td><a href="69.md">69</a></td></tr>
+<tr><td><code>t</code></td><td>hashtag</td><td>--</td><td><a href="24.md">24</a>, <a href="34.md">34</a>, <a href="35.md">35</a></td></tr>
+<tr><td><code>u</code></td><td>url</td><td>--</td><td><a href="61.md">61</a>, <a href="98.md">98</a></td></tr>
+<tr><td><code>x</code></td><td>hash</td><td>--</td><td><a href="35.md">35</a>, <a href="56.md">56</a></td></tr>
+<tr><td><code>y</code></td><td>platform</td><td>--</td><td><a href="69.md">69</a></td></tr>
+<tr><td><code>z</code></td><td>order number</td><td>--</td><td><a href="69.md">69</a></td></tr>
+<tr><td><code>-</code></td><td>--</td><td>--</td><td><a href="70.md">70</a></td></tr>
+<tr><td><code>alt</code></td><td>summary</td><td>--</td><td><a href="31.md">31</a></td></tr>
+<tr><td><code>amount</code></td><td>millisatoshis, stringified</td><td>--</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>bolt11</code></td><td><code>bolt11</code> invoice</td><td>--</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>challenge</code></td><td>challenge string</td><td>--</td><td><a href="42.md">42</a></td></tr>
+<tr><td><code>client</code></td><td>name, address</td><td>relay URL</td><td><a href="89.md">89</a></td></tr>
+<tr><td><code>clone</code></td><td>git clone URL</td><td>--</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>content-warning</code></td><td>reason</td><td>--</td><td><a href="36.md">36</a></td></tr>
+<tr><td><code>delegation</code></td><td>pubkey, conditions, delegation token</td><td>--</td><td><a href="26.md">26</a></td></tr>
+<tr><td><code>dep</code></td><td>Required dependency</td><td>--</td><td><a href="C0.md">C0</a></td></tr>
+<tr><td><code>description</code></td><td>description</td><td>--</td><td><a href="34.md">34</a>, <a href="57.md">57</a>, <a href="58.md">58</a>, <a href="C0.md">C0</a></td></tr>
+<tr><td><code>emoji</code></td><td>shortcode, image URL</td><td>--</td><td><a href="30.md">30</a></td></tr>
+<tr><td><code>encrypted</code></td><td>--</td><td>--</td><td><a href="90.md">90</a></td></tr>
+<tr><td><code>extension</code></td><td>File extension</td><td>--</td><td><a href="C0.md">C0</a></td></tr>
+<tr><td><code>expiration</code></td><td>unix timestamp (string)</td><td>--</td><td><a href="40.md">40</a></td></tr>
+<tr><td><code>file</code></td><td>full path (string)</td><td>--</td><td><a href="35.md">35</a></td></tr>
+<tr><td><code>goal</code></td><td>event id (hex)</td><td>relay URL</td><td><a href="75.md">75</a></td></tr>
+<tr><td><code>image</code></td><td>image URL</td><td>dimensions in pixels</td><td><a href="23.md">23</a>, <a href="52.md">52</a>, <a href="58.md">58</a></td></tr>
+<tr><td><code>imeta</code></td><td>inline metadata</td><td>--</td><td><a href="92.md">92</a></td></tr>
+<tr><td><code>license</code></td><td>License of the shared content</td><td>--</td><td><a href="C0.md">C0</a></td></tr>
+<tr><td><code>lnurl</code></td><td><code>bech32</code> encoded <code>lnurl</code></td><td>--</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>location</code></td><td>location string</td><td>--</td><td><a href="52.md">52</a>, <a href="99.md">99</a></td></tr>
+<tr><td><code>name</code></td><td>name</td><td>--</td><td><a href="34.md">34</a>, <a href="58.md">58</a>, <a href="72.md">72</a>, <a href="C0.md">C0</a></td></tr>
+<tr><td><code>nonce</code></td><td>random</td><td>difficulty</td><td><a href="13.md">13</a></td></tr>
+<tr><td><code>preimage</code></td><td>hash of <code>bolt11</code> invoice</td><td>--</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>price</code></td><td>price</td><td>currency, frequency</td><td><a href="99.md">99</a></td></tr>
+<tr><td><code>proxy</code></td><td>external ID</td><td>protocol</td><td><a href="48.md">48</a></td></tr>
+<tr><td><code>published_at</code></td><td>unix timestamp (string)</td><td>--</td><td><a href="23.md">23</a></td></tr>
+<tr><td><code>relay</code></td><td>relay url</td><td>--</td><td><a href="42.md">42</a>, <a href="17.md">17</a></td></tr>
+<tr><td><code>relays</code></td><td>relay list</td><td>--</td><td><a href="57.md">57</a></td></tr>
+<tr><td><code>repo</code></td><td>Reference to the origin repository</td><td>--</td><td><a href="C0.md">C0</a></td></tr>
+<tr><td><code>runtime</code></td><td>Runtime or environment specification</td><td>--</td><td><a href="C0.md">C0</a></td></tr>
+<tr><td><code>server</code></td><td>file storage server url</td><td>--</td><td><a href="96.md">96</a></td></tr>
+<tr><td><code>subject</code></td><td>subject</td><td>--</td><td><a href="14.md">14</a>, <a href="17.md">17</a>, <a href="34.md">34</a></td></tr>
+<tr><td><code>summary</code></td><td>summary</td><td>--</td><td><a href="23.md">23</a>, <a href="52.md">52</a></td></tr>
+<tr><td><code>thumb</code></td><td>badge thumbnail</td><td>dimensions in pixels</td><td><a href="58.md">58</a></td></tr>
+<tr><td><code>title</code></td><td>article title</td><td>--</td><td><a href="23.md">23</a></td></tr>
+<tr><td><code>tracker</code></td><td>torrent tracker URL</td><td>--</td><td><a href="35.md">35</a></td></tr>
+<tr><td><code>web</code></td><td>webpage URL</td><td>--</td><td><a href="34.md">34</a></td></tr>
+<tr><td><code>zap</code></td><td>pubkey (hex), relay URL</td><td>weight</td><td><a href="57.md">57</a></td></tr>
+</tbody></table>
+<p>Please update these lists when proposing new NIPs.</p>
+<h2>Criteria for acceptance of NIPs</h2>
+<ol>
+<li>They should be fully implemented in at least two clients and one relay -- when applicable.</li>
+<li>They should make sense.</li>
+<li>They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.</li>
+<li>There should be no more than one way of doing the same thing.</li>
+<li>Other rules will be made up when necessary.</li>
+</ol>
+<h2>Is this repository a centralizing factor?</h2>
+<p>To promote interoperability, we need standards that everybody can follow, and we need them to define a <strong>single way of doing each thing</strong> without ever hurting <strong>backwards-compatibility</strong>, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such an index exists doesn't hurt the decentralization of Nostr. <em>At any point the central index can be challenged if it is failing to fulfill the needs of the protocol</em> and it can migrate to other places and be maintained by other people.</p>
+<p>It can even fork into multiple versions, and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.</p>
+<p>There is a list of notable Nostr software developers who have commit access to this repository, but that exists mostly for practical reasons, as by the nature of the thing we're dealing with the repository owner can revoke membership and rewrite history as they want -- and if these actions are unjustified or perceived as bad or evil the community must react.</p>
+<h2>How this repository works</h2>
+<p>Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking <strong>backwards-compatibility</strong> and the principle of having <strong>a single way of doing things</strong>, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.</p>
+<p>These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.</p>
+<h2>Breaking Changes</h2>
+<p><a href="BREAKING.md">Breaking Changes</a></p>
+<h2>License</h2>
+<p>All NIPs are public domain.</p>
+<h2>Contributors</h2>
+<a align="center" href="https://github.com/nostr-protocol/nips/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nostr-protocol/nips" />
+</a>
