@@ -1,0 +1,104 @@
+<h1>NIP-88</h1>
+<h2>Polls</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines the event scheme that describe Polls on nostr.</p>
+<h2>Events</h2>
+<h3>Poll Event</h3>
+<p>The poll event is defined as a <code>kind:1068</code> event.</p>
+<ul>
+<li><strong>content</strong> key holds the label for the poll.</li>
+</ul>
+<p>Major tags in the poll event are:</p>
+<ul>
+<li><strong>option</strong>: The option tags contain an OptionId(any alphanumeric) field, followed by an option label field.</li>
+<li><strong>relay</strong>: One or multiple tags that the poll is expecting respondents to respond on.</li>
+<li><strong>polltype</strong>: can be "singlechoice" or "multiplechoice". Polls that do not have a polltype should be considered a "singlechoice" poll.</li>
+<li><strong>endsAt</strong>: signifying at which unix timestamp the poll is meant to end.</li>
+</ul>
+<p>Example Event</p>
+<pre><code class="language-json">{
+  "content": "Pineapple on pizza",
+  "created_at": 1719888496,
+  "id": "9d1b6b9562e66f2ecf35eb0a3c2decc736c47fddb13d6fb8f87185a153ea3634",
+  "kind": 1068,
+  "pubkey": "dee45a23c4f1d93f3a2043650c5081e4ac14a778e0acbef03de3768e4f81ac7b",
+  "sig": "7fa93bf3c430eaef784b0dacc217d3cd5eff1c520e7ef5d961381bc0f014dde6286618048d924808e54d1be03f2f2c2f0f8b5c9c2082a4480caf45a565ca9797",
+  "tags": [
+    ["option", "qj518h583", "Yay"],
+    ["option", "gga6cdnqj", "Nay"],
+    ["relay", "&lt;relay url1&gt;"],
+    ["relay", "&lt;relay url2&gt;"],
+    ["polltype", "singlechoice"],
+    ["endsAt", "&lt;unix timestamp in seconds&gt;"]
+  ]
+}
+</code></pre>
+<h3>Responses</h3>
+<p>The response event is a <code>kind:1018</code> event. It contains an e tag with the poll event it is referencing, followed by one or more response tags.</p>
+<ul>
+<li><strong>response</strong> : The tag contains "response" as it's first positional argument followed by the option Id selected.</li>
+</ul>
+<p>The responses are meant to be published to the relays specified in the poll event.</p>
+<p>Example Response Event</p>
+<pre><code class="language-json">{
+  "content": "",
+  "created_at": 1720097117,
+  "id": "60a005e32e9596c3f544a841a9bc4e46d3020ca3650d6a739c95c1568e33f6d8",
+  "kind": 1018,
+  "pubkey": "1bc70a0148b3f316da33fe7e89f23e3e71ac4ff998027ec712b905cd24f6a411",
+  "sig": "30071a633c65db8f3a075c7a8de757fbd8ce65e3607f4ba287fe6d7fbf839a380f94ff4e826fbba593f6faaa13683b7ea9114ade140720ecf4927010ebf3e44f",
+  "tags": [
+    ["e", "1fc80cf813f1af33d5a435862b7ef7fb96b47e68a48f1abcadf8081f5a545550"],
+    ["response", "gga6cdnqj"],
+    ["response", "m3agjsdq1"]
+  ]
+}
+</code></pre>
+<h3>Poll Types</h3>
+<p>The polltype setting dictates how multiple response tags are handled in the <code>kind:1018</code> event.</p>
+<ul>
+<li><strong>polltype: singlechoice</strong>: The first response tag is to be considered the actual response.</li>
+<li><strong>polltype: multiplechoice</strong>: The first response tag pointing to each id is considered the actual response, without considering the order of the response tags.</li>
+</ul>
+<h3>Counting Results</h3>
+<p>Results can be queried by fetching <code>kind:1018</code> events from the relays specified in the poll.
+The results displayed should only be 1 vote event per pubkey.
+In case of multiple events for a pubkey, the event with the largest timestamp within the poll limits should be considered.</p>
+<p>Example for querying polls.</p>
+<pre><code class="language-ts">const fetchVoteEvents = (filterPubkeys: string[]) =&gt; {
+  let resultFilter: Filter = {
+    "#e": [pollEvent.id],
+    kinds: [1018],
+  };
+  if (filterPubkeys?.length) {
+    resultFilter.authors = filterPubkeys;
+  }
+  if (pollExpiration) {
+    resultFilter.until = Number(pollExpiration);
+  }
+  pool.subscribeMany(relays, [resultFilter], {
+    onevent: handleResultEvent,
+  });
+};
+</code></pre>
+<p>Example for maintaining OneVotePerPubkey</p>
+<pre><code class="language-ts">const oneVotePerPubkey = (events: Event[]) =&gt; {
+  const eventMap = new Map&lt;string, Event&gt;();
+
+  events.forEach((event) =&gt; {
+    if (
+      !eventMap.has(event.pubkey) ||
+      event.created_at &gt; eventMap.get(event.pubkey)!.created_at
+    ) {
+      eventMap.set(event.pubkey, event);
+    }
+  });
+
+  return Array.from(eventMap.values());
+};
+</code></pre>
+<h3>Relays</h3>
+<p>It is advisable for poll authors to use relays that do not allow backdated events and do not honor kind:5 (delete) requests for vote events in order to maintain the integrity of poll results after the poll has ended.</p>
+<h3>Curation</h3>
+<p>The clients may configure fetching results by specific people. This can be achieved by creating <code>kind:30000</code> follow sets, and fetching results only from the follow set.
+Clients can also employ other curation algorithms, like Proof Of Work and Web of Trust scores for result curations.</p>
