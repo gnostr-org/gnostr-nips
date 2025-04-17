@@ -1,0 +1,49 @@
+<h1>NIP-23</h1>
+<h2>Long-form Content</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:30023</code> (an <em>addressable event</em>) for long-form text content, generally referred to as "articles" or "blog posts". <code>kind:30024</code> has the same structure as <code>kind:30023</code> and is used to save long form drafts.</p>
+<p>"Social" clients that deal primarily with <code>kind:1</code> notes should not be expected to implement this NIP.</p>
+<h3>Format</h3>
+<p>The <code>.content</code> of these events should be a string text in Markdown syntax. To maximize compatibility and readability between different clients and devices, any client that is creating long form notes:</p>
+<ul>
+<li>
+<p>MUST NOT hard line-break paragraphs of text, such as arbitrary line breaks at 80 column boundaries.</p>
+</li>
+<li>
+<p>MUST NOT support adding HTML to Markdown.</p>
+</li>
+</ul>
+<h3>Metadata</h3>
+<p>For the date of the last update the <code>.created_at</code> field should be used, for "tags"/"hashtags" (i.e. topics about which the event might be of relevance) the <code>t</code> tag should be used.</p>
+<p>Other metadata fields can be added as tags to the event as necessary. Here we standardize 4 that may be useful, although they remain strictly optional:</p>
+<ul>
+<li><code>"title"</code>, for the article title</li>
+<li><code>"image"</code>, for a URL pointing to an image to be shown along with the title</li>
+<li><code>"summary"</code>, for the article summary</li>
+<li><code>"published_at"</code>, for the timestamp in unix seconds (stringified) of the first time the article was published</li>
+</ul>
+<h3>Editability</h3>
+<p>These articles are meant to be editable, so they should include a <code>d</code> tag with an identifier for the article. Clients should take care to only publish and read these events from relays that implement that. If they don't do that they should also take care to hide old versions of the same article they may receive.</p>
+<h3>Linking</h3>
+<p>The article may be linked to using the <a href="19.md">NIP-19</a> <code>naddr</code> code along with the <code>a</code> tag.</p>
+<h3>References</h3>
+<p>References to other Nostr notes, articles or profiles must be made according to <a href="27.md">NIP-27</a>, i.e. by using <a href="21.md">NIP-21</a> <code>nostr:...</code> links and optionally adding tags for these (see example below).</p>
+<h2>Example Event</h2>
+<pre><code class="language-json">{
+  "kind": 30023,
+  "created_at": 1675642635,
+  "content": "Lorem [ipsum][nostr:nevent1qqst8cujky046negxgwwm5ynqwn53t8aqjr6afd8g59nfqwxpdhylpcpzamhxue69uhhyetvv9ujuetcv9khqmr99e3k7mg8arnc9] dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nRead more at nostr:naddr1qqzkjurnw4ksz9thwden5te0wfjkccte9ehx7um5wghx7un8qgs2d90kkcq3nk2jry62dyf50k0h36rhpdtd594my40w9pkal876jxgrqsqqqa28pccpzu.",
+  "tags": [
+    ["d", "lorem-ipsum"],
+    ["title", "Lorem Ipsum"],
+    ["published_at", "1296962229"],
+    ["t", "placeholder"],
+    ["e", "b3e392b11f5d4f28321cedd09303a748acfd0487aea5a7450b3481c60b6e4f87", "wss://relay.example.com"],
+    ["a", "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum", "wss://relay.nostr.org"]
+  ],
+  "pubkey": "...",
+  "id": "..."
+}
+</code></pre>
+<h3>Replies &amp; Comments</h3>
+<p>Replies to <code>kind 30023</code> MUST use <a href="./22.md">NIP-22</a> <code>kind 1111</code> comments.</p>
