@@ -1,0 +1,29 @@
+<h1>NIP-84</h1>
+<h2>Highlights</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:9802</code>, a "highlight" event, to signal content a user finds valuable.</p>
+<h2>Format</h2>
+<p>The <code>.content</code> of these events is the highlighted portion of the text.</p>
+<p><code>.content</code> might be empty for highlights of non-text based media (e.g. NIP-94 audio/video).</p>
+<h3>References</h3>
+<p>Events SHOULD tag the source of the highlight, whether nostr-native or not.
+<code>a</code> or <code>e</code> tags should be used for nostr events and <code>r</code> tags for URLs.</p>
+<p>When tagging a URL, clients generating these events SHOULD do a best effort of cleaning the URL from trackers
+or obvious non-useful information from the query string.</p>
+<h3>Attribution</h3>
+<p>Clients MAY include one or more <code>p</code> tags, tagging the original authors of the material being highlighted; this is particularly
+useful when highlighting non-nostr content for which the client might be able to get a nostr pubkey somehow
+(e.g. prompting the user or reading a <code>&lt;meta name="nostr:nprofile1..." /&gt;</code> tag on the document). A role MAY be included as the
+last value of the tag.</p>
+<pre><code class="language-jsonc">{
+  "tags": [
+    ["p", "&lt;pubkey-hex&gt;", "&lt;relay-url&gt;", "author"],
+    ["p", "&lt;pubkey-hex&gt;", "&lt;relay-url&gt;", "author"],
+    ["p", "&lt;pubkey-hex&gt;", "&lt;relay-url&gt;", "editor"]
+  ],
+  // other fields...
+}
+</code></pre>
+<h3>Context</h3>
+<p>Clients MAY include a <code>context</code> tag, useful when the highlight is a subset of a paragraph and displaying the
+surrounding content might be beneficial to give context to the highlight.</p>
