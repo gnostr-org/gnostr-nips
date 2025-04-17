@@ -1,0 +1,155 @@
+<h1>NIP-57</h1>
+<h2>Lightning Zaps</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines two new event types for recording lightning payments between users. <code>9734</code> is a <code>zap request</code>, representing a payer's request to a recipient's lightning wallet for an invoice. <code>9735</code> is a <code>zap receipt</code>, representing the confirmation by the recipient's lightning wallet that the invoice issued in response to a <code>zap request</code> has been paid.</p>
+<p>Having lightning receipts on nostr allows clients to display lightning payments from entities on the network. These can be used for fun or for spam deterrence.</p>
+<h2>Protocol flow</h2>
+<ol>
+<li>Client calculates a recipient's lnurl pay request url from the <code>zap</code> tag on the event being zapped (see Appendix G), or by decoding their lud06 or lud16 field on their profile according to the <a href="https://github.com/lnurl/luds">lnurl specifications</a>. The client MUST send a GET request to this url and parse the response. If <code>allowsNostr</code> exists and it is <code>true</code>, and if <code>nostrPubkey</code> exists and is a valid BIP 340 public key in hex, the client should associate this information with the user, along with the response's <code>callback</code>, <code>minSendable</code>, and <code>maxSendable</code> values.</li>
+<li>Clients may choose to display a lightning zap button on each post or on a user's profile. If the user's lnurl pay request endpoint supports nostr, the client SHOULD use this NIP to request a <code>zap receipt</code> rather than a normal lnurl invoice.</li>
+<li>When a user (the "sender") indicates they want to send a zap to another user (the "recipient"), the client should create a <code>zap request</code> event as described in Appendix A of this NIP and sign it.</li>
+<li>Instead of publishing the <code>zap request</code>, the <code>9734</code> event should instead be sent to the <code>callback</code> url received from the lnurl pay endpoint for the recipient using a GET request. See Appendix B for details and an example.</li>
+<li>The recipient's lnurl server will receive this <code>zap request</code> and validate it. See Appendix C for details on how to properly configure an lnurl server to support zaps, and Appendix D for details on how to validate the <code>nostr</code> query parameter.</li>
+<li>If the <code>zap request</code> is valid, the server should fetch a description hash invoice where the description is this <code>zap request</code> note and this note only. No additional lnurl metadata is included in the description. This will be returned in the response according to <a href="https://github.com/lnurl/luds/blob/luds/06.md">LUD06</a>.</li>
+<li>On receiving the invoice, the client MAY pay it or pass it to an app that can pay the invoice.</li>
+<li>Once the invoice is paid, the recipient's lnurl server MUST generate a <code>zap receipt</code> as described in Appendix E, and publish it to the <code>relays</code> specified in the <code>zap request</code>.</li>
+<li>Clients MAY fetch <code>zap receipt</code>s on posts and profiles, but MUST authorize their validity as described in Appendix F. If the <code>zap request</code> note contains a non-empty <code>content</code>, it may display a zap comment. Generally clients should show users the <code>zap request</code> note, and use the <code>zap receipt</code> to show "zap authorized by ..." but this is optional.</li>
+</ol>
+<h2>Reference and examples</h2>
+<h3>Appendix A: Zap Request Event</h3>
+<p>A <code>zap request</code> is an event of kind <code>9734</code> that is <em>not</em> published to relays, but is instead sent to a recipient's lnurl pay <code>callback</code> url. This event's <code>content</code> MAY be an optional message to send along with the payment. The event MUST include the following tags:</p>
+<ul>
+<li><code>relays</code> is a list of relays the recipient's wallet should publish its <code>zap receipt</code> to. Note that relays should not be nested in an additional list, but should be included as shown in the example below.</li>
+<li><code>amount</code> is the amount in <em>millisats</em> the sender intends to pay, formatted as a string. This is recommended, but optional.</li>
+<li><code>lnurl</code> is the lnurl pay url of the recipient, encoded using bech32 with the prefix <code>lnurl</code>. This is recommended, but optional.</li>
+<li><code>p</code> is the hex-encoded pubkey of the recipient.</li>
+</ul>
+<p>In addition, the event MAY include the following tags:</p>
+<ul>
+<li><code>e</code> is an optional hex-encoded event id. Clients MUST include this if zapping an event rather than a person.</li>
+<li><code>a</code> is an optional event coordinate that allows tipping addressable events such as NIP-23 long-form notes.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-json">{
+  "kind": 9734,
+  "content": "Zap!",
+  "tags": [
+    ["relays", "wss://nostr-pub.wellorder.com", "wss://anotherrelay.example.com"],
+    ["amount", "21000"],
+    ["lnurl", "lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9uh8wetvdskkkmn0wahz7mrww4excup0dajx2mrv92x9xp"],
+    ["p", "04c915daefee38317fa734444acee390a8269fe5810b2241e5e6dd343dfbecc9"],
+    ["e", "9ae37aa68f48645127299e9453eb5d908a0cbb6058ff340d528ed4d37c8994fb"]
+  ],
+  "pubkey": "97c70a44366a6535c145b333f973ea86dfdc2d7a99da618c40c64705ad98e322",
+  "created_at": 1679673265,
+  "id": "30efed56a035b2549fcaeec0bf2c1595f9a9b3bb4b1a38abaf8ee9041c4b7d93",
+  "sig": "f2cb581a84ed10e4dc84937bd98e27acac71ab057255f6aa8dfa561808c981fe8870f4a03c1e3666784d82a9c802d3704e174371aa13d63e2aeaf24ff5374d9d"
+}
+</code></pre>
+<h3>Appendix B: Zap Request HTTP Request</h3>
+<p>A signed <code>zap request</code> event is not published, but is instead sent using a HTTP GET request to the recipient's <code>callback</code> url, which was provided by the recipient's lnurl pay endpoint. This request should have the following query parameters defined:</p>
+<ul>
+<li><code>amount</code> is the amount in <em>millisats</em> the sender intends to pay</li>
+<li><code>nostr</code> is the <code>9734</code> <code>zap request</code> event, JSON encoded then URI encoded</li>
+<li><code>lnurl</code> is the lnurl pay url of the recipient, encoded using bech32 with the prefix <code>lnurl</code></li>
+</ul>
+<p>This request should return a JSON response with a <code>pr</code> key, which is the invoice the sender must pay to finalize their zap. Here is an example flow in javascript:</p>
+<pre><code class="language-javascript">const senderPubkey // The sender's pubkey
+const recipientPubkey = // The recipient's pubkey
+const callback = // The callback received from the recipients lnurl pay endpoint
+const lnurl = // The recipient's lightning address, encoded as a lnurl
+const sats = 21
+
+const amount = sats * 1000
+const relays = ['wss://nostr-pub.wellorder.net']
+const event = encodeURI(JSON.stringify(await signEvent({
+  kind: 9734,
+  content: "",
+  pubkey: senderPubkey,
+  created_at: Math.round(Date.now() / 1000),
+  tags: [
+    ["relays", ...relays],
+    ["amount", amount.toString()],
+    ["lnurl", lnurl],
+    ["p", recipientPubkey],
+  ],
+})))
+
+const {pr: invoice} = await fetchJson(`${callback}?amount=${amount}&amp;nostr=${event}&amp;lnurl=${lnurl}`)
+</code></pre>
+<h3>Appendix C: LNURL Server Configuration</h3>
+<p>The lnurl server will need some additional pieces of information so that clients can know that zap invoices are supported:</p>
+<ol>
+<li>Add a <code>nostrPubkey</code> to the lnurl-pay static endpoint <code>/.well-known/lnurlp/&lt;user&gt;</code>, where <code>nostrPubkey</code> is the nostr pubkey your server will use to sign <code>zap receipt</code> events. Clients will use this to validate <code>zap receipt</code>s.</li>
+<li>Add an <code>allowsNostr</code> field and set it to true.</li>
+</ol>
+<h3>Appendix D: LNURL Server Zap Request Validation</h3>
+<p>When a client sends a <code>zap request</code> event to a server's lnurl-pay callback URL, there will be a <code>nostr</code> query parameter whose value is that event which is URI- and JSON-encoded. If present, the <code>zap request</code> event must be validated in the following ways:</p>
+<ol>
+<li>It MUST have a valid nostr signature</li>
+<li>It MUST have tags</li>
+<li>It MUST have only one <code>p</code> tag</li>
+<li>It MUST have 0 or 1 <code>e</code> tags</li>
+<li>There should be a <code>relays</code> tag with the relays to send the <code>zap receipt</code> to.</li>
+<li>If there is an <code>amount</code> tag, it MUST be equal to the <code>amount</code> query parameter.</li>
+<li>If there is an <code>a</code> tag, it MUST be a valid event coordinate</li>
+<li>There MUST be 0 or 1 <code>P</code> tags. If there is one, it MUST be equal to the <code>zap receipt</code>'s <code>pubkey</code>.</li>
+</ol>
+<p>The event MUST then be stored for use later, when the invoice is paid.</p>
+<h3>Appendix E: Zap Receipt Event</h3>
+<p>A <code>zap receipt</code> is created by a lightning node when an invoice generated by a <code>zap request</code> is paid. <code>Zap receipt</code>s are only created when the invoice description (committed to the description hash) contains a <code>zap request</code> note.</p>
+<p>When receiving a payment, the following steps are executed:</p>
+<ol>
+<li>Get the description for the invoice. This needs to be saved somewhere during the generation of the description hash invoice. It is saved automatically for you with CLN, which is the reference implementation used here.</li>
+<li>Parse the bolt11 description as a JSON nostr event. This SHOULD be validated based on the requirements in Appendix D, either when it is received, or before the invoice is paid.</li>
+<li>Create a nostr event of kind <code>9735</code> as described below, and publish it to the <code>relays</code> declared in the <code>zap request</code>.</li>
+</ol>
+<p>The following should be true of the <code>zap receipt</code> event:</p>
+<ul>
+<li>The <code>content</code> SHOULD be empty.</li>
+<li>The <code>created_at</code> date SHOULD be set to the invoice <code>paid_at</code> date for idempotency.</li>
+<li><code>tags</code> MUST include the <code>p</code> tag (zap recipient) AND optional <code>e</code> tag from the <code>zap request</code> AND optional <code>a</code> tag from the <code>zap request</code> AND optional <code>P</code> tag from the pubkey of the zap request (zap sender).</li>
+<li>The <code>zap receipt</code> MUST have a <code>bolt11</code> tag containing the description hash bolt11 invoice.</li>
+<li>The <code>zap receipt</code> MUST contain a <code>description</code> tag which is the JSON-encoded zap request.</li>
+<li><code>SHA256(description)</code> SHOULD match the description hash in the bolt11 invoice.</li>
+<li>The <code>zap receipt</code> MAY contain a <code>preimage</code> tag to match against the payment hash of the bolt11 invoice. This isn't really a payment proof, there is no real way to prove that the invoice is real or has been paid. You are trusting the author of the <code>zap receipt</code> for the legitimacy of the payment.</li>
+</ul>
+<p>The <code>zap receipt</code> is not a proof of payment, all it proves is that some nostr user fetched an invoice. The existence of the <code>zap receipt</code> implies the invoice as paid, but it could be a lie given a rogue implementation.</p>
+<p>A reference implementation for a zap-enabled lnurl server can be found <a href="https://github.com/jb55/cln-nostr-zapper">here</a>.</p>
+<p>Example <code>zap receipt</code>:</p>
+<pre><code class="language-json">{
+    "id": "67b48a14fb66c60c8f9070bdeb37afdfcc3d08ad01989460448e4081eddda446",
+    "pubkey": "9630f464cca6a5147aa8a35f0bcdd3ce485324e732fd39e09233b1d848238f31",
+    "created_at": 1674164545,
+    "kind": 9735,
+    "tags": [
+      ["p", "32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245"],
+      ["P", "97c70a44366a6535c145b333f973ea86dfdc2d7a99da618c40c64705ad98e322"],
+      ["e", "3624762a1274dd9636e0c552b53086d70bc88c165bc4dc0f9e836a1eaf86c3b8"],
+      ["bolt11", "lnbc10u1p3unwfusp5t9r3yymhpfqculx78u027lxspgxcr2n2987mx2j55nnfs95nxnzqpp5jmrh92pfld78spqs78v9euf2385t83uvpwk9ldrlvf6ch7tpascqhp5zvkrmemgth3tufcvflmzjzfvjt023nazlhljz2n9hattj4f8jq8qxqyjw5qcqpjrzjqtc4fc44feggv7065fqe5m4ytjarg3repr5j9el35xhmtfexc42yczarjuqqfzqqqqqqqqlgqqqqqqgq9q9qxpqysgq079nkq507a5tw7xgttmj4u990j7wfggtrasah5gd4ywfr2pjcn29383tphp4t48gquelz9z78p4cq7ml3nrrphw5w6eckhjwmhezhnqpy6gyf0"],
+      ["description", "{\"pubkey\":\"97c70a44366a6535c145b333f973ea86dfdc2d7a99da618c40c64705ad98e322\",\"content\":\"\",\"id\":\"d9cc14d50fcb8c27539aacf776882942c1a11ea4472f8cdec1dea82fab66279d\",\"created_at\":1674164539,\"sig\":\"77127f636577e9029276be060332ea565deaf89ff215a494ccff16ae3f757065e2bc59b2e8c113dd407917a010b3abd36c8d7ad84c0e3ab7dab3a0b0caa9835d\",\"kind\":9734,\"tags\":[[\"e\",\"3624762a1274dd9636e0c552b53086d70bc88c165bc4dc0f9e836a1eaf86c3b8\"],[\"p\",\"32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245\"],[\"relays\",\"wss://relay.damus.io\",\"wss://nostr-relay.wlvs.space\",\"wss://nostr.fmt.wiz.biz\",\"wss://relay.nostr.bg\",\"wss://nostr.oxtr.dev\",\"wss://nostr.v0l.io\",\"wss://brb.io\",\"wss://nostr.bitcoiner.social\",\"ws://monad.jb55.com:8080\",\"wss://relay.snort.social\"]]}"],
+      ["preimage", "5d006d2cf1e73c7148e7519a4c68adc81642ce0e25a432b2434c99f97344c15f"]
+    ],
+    "content": "",
+  }
+</code></pre>
+<h3>Appendix F: Validating Zap Receipts</h3>
+<p>A client can retrieve <code>zap receipt</code>s on events and pubkeys using a NIP-01 filter, for example <code>{"kinds": [9735], "#e": [...]}</code>. Zaps MUST be validated using the following steps:</p>
+<ul>
+<li>The <code>zap receipt</code> event's <code>pubkey</code> MUST be the same as the recipient's lnurl provider's <code>nostrPubkey</code> (retrieved in step 1 of the protocol flow).</li>
+<li>The <code>invoiceAmount</code> contained in the <code>bolt11</code> tag of the <code>zap receipt</code> MUST equal the <code>amount</code> tag of the <code>zap request</code> (if present).</li>
+<li>The <code>lnurl</code> tag of the <code>zap request</code> (if present) SHOULD equal the recipient's <code>lnurl</code>.</li>
+</ul>
+<h3>Appendix G: <code>zap</code> tag on other events</h3>
+<p>When an event includes one or more <code>zap</code> tags, clients wishing to zap it SHOULD calculate the lnurl pay request based on the tags value instead of the event author's profile field. The tag's second argument is the <code>hex</code> string of the receiver's pub key and the third argument is the relay to download the receiver's metadata (Kind-0). An optional fourth parameter specifies the weight (a generalization of a percentage) assigned to the respective receiver. Clients should parse all weights, calculate a sum, and then a percentage to each receiver. If weights are not present, CLIENTS should equally divide the zap amount to all receivers. If weights are only partially present, receivers without a weight should not be zapped (<code>weight = 0</code>).</p>
+<pre><code class="language-jsonc">{
+    "tags": [
+        [ "zap", "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2", "wss://nostr.oxtr.dev", "1" ],  // 25%
+        [ "zap", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52", "wss://nostr.wine/",    "1" ],  // 25%
+        [ "zap", "460c25e682fda7832b52d1f22d3d22b3176d972f60dcdc3212ed8c92ef85065c", "wss://nos.lol/",       "2" ]   // 50%
+    ]
+}
+</code></pre>
+<p>Clients MAY display the zap split configuration in the note.</p>
+<h2>Future Work</h2>
+<p>Zaps can be extended to be more private by encrypting <code>zap request</code> notes to the target user, but for simplicity it has been left out of this initial draft.</p>
