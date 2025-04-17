@@ -1,0 +1,77 @@
+<h1>NIP-99</h1>
+<h2>Classified Listings</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:30402</code>: an addressable event to describe classified listings that list any arbitrary product, service, or other thing for sale or offer and includes enough structured metadata to make them useful.</p>
+<p>The category of classifieds includes a very broad range of physical goods, services, work opportunities, rentals, free giveaways, personals, etc. and is distinct from the more strictly structured marketplaces defined in <a href="15.md">NIP-15</a> that often sell many units of specific products through very specific channels.</p>
+<p>The structure of these events is very similar to <a href="23.md">NIP-23</a> long-form content events.</p>
+<h3>Draft / Inactive Listings</h3>
+<p><code>kind:30403</code> has the same structure as <code>kind:30402</code> and is used to save draft or inactive classified listings.</p>
+<h3>Content</h3>
+<p>The <code>.content</code> field should be a description of what is being offered and by whom. These events should be a string in Markdown syntax.</p>
+<h3>Author</h3>
+<p>The <code>.pubkey</code> field of these events are treated as the party creating the listing.</p>
+<h3>Metadata</h3>
+<ul>
+<li>For "tags"/"hashtags" (i.e. categories or keywords of relevance for the listing) the <code>"t"</code> event tag should be used.</li>
+<li>For images, whether included in the markdown content or not, clients SHOULD use <code>image</code> tags as described in <a href="58.md">NIP-58</a>. This allows clients to display images in carousel format more easily.</li>
+</ul>
+<p>The following tags, used for structured metadata, are standardized and SHOULD be included. Other tags may be added as necessary.</p>
+<ul>
+<li><code>"title"</code>, a title for the listing</li>
+<li><code>"summary"</code>, for short tagline or summary for the listing</li>
+<li><code>"published_at"</code>, for the timestamp (in unix seconds – converted to string) of the first time the listing was published.</li>
+<li><code>"location"</code>, for the location.</li>
+<li><code>"price"</code>, for the price of the thing being listed. This is an array in the format <code>[ "price", "&lt;number&gt;", "&lt;currency&gt;", "&lt;frequency&gt;" ]</code>.
+<ul>
+<li><code>"price"</code> is the name of the tag</li>
+<li><code>"&lt;number&gt;"</code> is the amount in numeric format (but included in the tag as a string)</li>
+<li><code>"&lt;currency&gt;"</code> is the currency unit in 3-character ISO 4217 format or ISO 4217-like currency code (e.g. <code>"btc"</code>, <code>"eth"</code>).</li>
+<li><code>"&lt;frequency&gt;"</code> is optional and can be used to describe recurring payments. SHOULD be in noun format (hour, day, week, month, year, etc.)</li>
+</ul>
+</li>
+<li>
+<ul>
+<li><code>"status"</code> (optional), the status of the listing. SHOULD be either "active" or "sold".</li>
+</ul>
+</li>
+</ul>
+<h4><code>price</code> examples</h4>
+<ul>
+<li>$50 one-time payment <code>["price", "50", "USD"]</code></li>
+<li>€15 per month <code>["price", "15", "EUR", "month"]</code></li>
+<li>£50,000 per year <code>["price", "50000", "GBP", "year"]</code></li>
+</ul>
+<p>Other standard tags that might be useful.</p>
+<ul>
+<li><code>"g"</code>, a geohash for more precise location</li>
+</ul>
+<h2>Example Event</h2>
+<pre><code class="language-jsonc">{
+  "kind": 30402,
+  "created_at": 1675642635,
+  // Markdown content
+  "content": "Lorem [ipsum][nostr:nevent1qqst8cujky046negxgwwm5ynqwn53t8aqjr6afd8g59nfqwxpdhylpcpzamhxue69uhhyetvv9ujuetcv9khqmr99e3k7mg8arnc9] dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nRead more at nostr:naddr1qqzkjurnw4ksz9thwden5te0wfjkccte9ehx7um5wghx7un8qgs2d90kkcq3nk2jry62dyf50k0h36rhpdtd594my40w9pkal876jxgrqsqqqa28pccpzu.",
+  "tags": [
+    ["d", "lorem-ipsum"],
+    ["title", "Lorem Ipsum"],
+    ["published_at", "1296962229"],
+    ["t", "electronics"],
+    ["image", "https://url.to.img", "256x256"],
+    ["summary", "More lorem ipsum that is a little more than the title"],
+    ["location", "NYC"],
+    ["price", "100", "USD"],
+    [
+      "e",
+      "b3e392b11f5d4f28321cedd09303a748acfd0487aea5a7450b3481c60b6e4f87",
+      "wss://relay.example.com"
+    ],
+    [
+      "a",
+      "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum",
+      "wss://relay.nostr.org"
+    ]
+  ],
+  "pubkey": "...",
+  "id": "..."
+}
+</code></pre>
