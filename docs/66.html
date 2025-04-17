@@ -1,0 +1,241 @@
+<h1>NIP-66: Relay Discovery and Liveness Monitoring</h1>
+<p><code>draft</code> <code>optional</code></p>
+<p>You want to find relays. You may want to discover relays based on criteria that's up to date. You may even want to ensure that you have a complete dataset. You probably want to filter relays based on their reported liveness.</p>
+<p>In its purest form:</p>
+<pre><code class="language-json">{
+  "kind": 30166,
+  "created_at": 1722173222,  
+  "content": "{}",
+  "tags": [
+    [ "d", "wss://somerelay.abc/" ]
+  ],
+  "pubkey": "&lt;pubkey&gt;", 
+  "sig": "&lt;signature&gt;",
+  "id": "&lt;eventid&gt;"
+}
+</code></pre>
+<p>This event signals that the relay at <code>wss://somerelay.abc/</code> was reported "online" by <code>&lt;pubkey&gt;</code> at timestamp <code>1722173222</code>. This event <strong>MAY</strong> be extended upon to include more information.</p>
+<h2>Kinds</h2>
+<p><code>NIP-66</code> defines two (2) event kinds, <code>30166</code> and <code>10166</code></p>
+<table><thead><tr><th>kind</th><th>name</th><th>description</th></tr></thead><tbody>
+<tr><td><a href="#k30166">30166</a></td><td>Relay Discovery</td><td>An addressable event that is published by a monitor when a relay is online</td></tr>
+<tr><td><a href="#k10166">10166</a></td><td>Relay Monitor Announcement</td><td>An RE that stores data that signals the intent of a pubkey to monitor relays and publish <code>30166</code> events at a regular <em>frequency</em></td></tr>
+</tbody></table>
+<h2>Ontology</h2>
+<ul>
+<li><code>Relay Operator</code>: someone who operates a relay</li>
+<li><code>Monitor</code>: A pubkey that monitors relays and publishes <code>30166</code> events at the frequency specified in their <code>10166</code> event.</li>
+<li><code>Ad-hoc Monitor</code>: A pubkey that monitors relays and publishes <code>30166</code> events at an irregular frequency.</li>
+<li><code>Monitor Service</code>: A group or individual that monitors relays using one or more <code>Monitors</code>.</li>
+<li><code>Check</code>: a specific data point that is tested or aggregated by a monitor.</li>
+</ul>
+<h2><code>30166</code>: "Relay Discovery" <a id="k30166"></a></h2>
+<h3>Summary</h3>
+<p><code>30166</code> is a <code>NIP-33</code> addressable event, referred to as a "Relay Discovery" event. These events are optimized with a small footprint for protocol-level relay Discovery.</p>
+<h3>Purpose</h3>
+<p>Discovery of relays over nostr.</p>
+<h3>Schema</h3>
+<h4>Content</h4>
+<p><code>30166</code> content fields <strong>SHOULD</strong> include the stringified JSON of the relay's NIP-11 informational document. This data <strong>MAY</strong> be provided for informational purposes only.</p>
+<h4><code>created_at</code></h4>
+<p>The <code>created_at</code> field in a NIP-66 event should reflect the time when the relay liveness (and potentially other data points) was checked.</p>
+<h4><code>tags</code></h4>
+<h5>Meta Tags (unindexed)</h5>
+<ul>
+<li><code>rtt-open</code> The relay's open <strong>round-trip time</strong> in milliseconds.</li>
+<li><code>rtt-read</code> The relay's read <strong>round-trip time</strong> in milliseconds.</li>
+<li><code>rtt-write</code> The relay's write <strong>round-trip time</strong> in milliseconds.</li>
+</ul>
+<p><em>Other <code>rtt</code> values <strong>MAY</strong> be present. This NIP should be updated if there is value found in more <code>rtt</code> values.</em></p>
+<h5>Single Letter Tags (indexed)</h5>
+<ul>
+<li>
+<p><code>d</code> The relay URL/URI. The <code>#d</code> tag <strong>must</strong> be included in the <code>event.tags[]</code> array. Index position <code>1</code> <strong>must</strong> be the relay websocket URL/URI. If a URL it <strong>SHOULD</strong> be <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6">normalized</a>. For relays not accessible via conventional means but rather by an npub/pubkey, an npub/pubkey <strong>MAY</strong> be used in place of a URL.</p>
+<pre><code class="language-json">[ "d", "wss://somerelay.abc/"]
+</code></pre>
+</li>
+<li>
+<p><code>n</code>: Network</p>
+<pre><code class="language-json">[ "n", "clearnet" ]
+</code></pre>
+</li>
+<li>
+<p><code>T</code>: Relay Type. Enumerated <a href="https://github.com/nostr-protocol/nips/issues/1282">relay type</a> formatted as <code>PascalCase</code></p>
+<pre><code class="language-json">["T", "PrivateInbox" ]
+</code></pre>
+</li>
+<li>
+<p><code>N</code>: Supported Nips <em>From NIP-11 "Informational Document" <code>nip11.supported_nips[]</code></em></p>
+<pre><code class="language-json">[ "N", "42" ]
+</code></pre>
+</li>
+<li>
+<p><code>R</code>: Requirements <em>NIP-11 "Informational Document" <code>nip11.limitations.payment_required</code>, <code>nip11.limitations.auth_required</code> and/or any other boolean value within <code>nip11.limitations[]</code> that is added in the future</em></p>
+<pre><code class="language-json">[ "R", "payment" ],
+[ "R", "auth" ],
+</code></pre>
+<p>Since the nostr protocol does not currently support filtering on whether an indexed tag <strong>is</strong> or <strong>is not</strong> set, to make "public" and "no auth" relays discoverable requires a <code>!</code> flag</p>
+<pre><code class="language-json">[ "R", "!payment" ], //no payment required, is public
+[ "R", "!auth" ], //no authentication required
+</code></pre>
+</li>
+<li>
+<p><code>t</code>: "Topics" <em>From NIP-11 "Informational Document" <code>nip11.tags[]</code></em></p>
+<pre><code class="language-json">[ "t", "nsfw" ]
+</code></pre>
+</li>
+<li>
+<p><code>k</code>: Accepted/Blocked Kinds [<code>NIP-22</code>]</p>
+<pre><code class="language-json">[ "k", "0" ],
+[ "k", "3" ],
+[ "k", "10002" ]
+</code></pre>
+<p>or for blocked kinds</p>
+<pre><code class="language-json">[ "k", "!0" ]
+[ "k", "!3" ],
+[ "k", "!10002" ]
+</code></pre>
+</li>
+<li>
+<p><code>g</code>: <code>NIP-52</code> <code>g</code> tags (geohash)</p>
+<pre><code class="language-json">[ "g", "9r1652whz" ]
+</code></pre>
+</li>
+<li>
+<p><code>30166</code> <strong>MAY</strong> be extended with global tags defined by other NIPs that do no collide with locally defined indices, including but not limited to: <code>p</code>, <code>t</code>, <code>e</code>, <code>a</code>, <code>i</code> and <code>l/L</code>.</p>
+</li>
+</ul>
+<h4>Robust Example of a <code>30166</code> Event</h4>
+<p><em>Relay was online, and you can filter on a number of different tags</em></p>
+<pre><code class="language-json">{
+  "id": "&lt;eventid&gt;",
+  "pubkey": "&lt;monitor's pubkey&gt;",
+  "created_at": "&lt;created_at  [some recent date ...]&gt;",
+  "signature": "&lt;signature&gt;",
+  "content": "{}",
+  "kind": 30166,
+  "tags": [  
+    ["d","wss://some.relay/"],
+    ["n", "clearnet"],
+    ["N", "40"],
+    ["N", "33"],
+    ["R", "!payment"],
+    ["R", "auth"],
+    ["g", "ww8p1r4t8"],
+    ["p", "somehexkey..."],
+    ["l", "en", "ISO-639-1"],
+    ["t", "nsfw" ],
+    ["rtt-open", 234 ]
+  ]
+} 
+</code></pre>
+<h2><code>10166</code>: "Relay Monitor Announcement" Events <a id="k10166"></a></h2>
+<h3>Summary</h3>
+<p><code>10166</code> is a replacable event herein referred to as "Relay Monitor Announcement" events. These events contain information about a publisher's intent to monitor and publish data as <code>30166</code> events. This event is optional and is intended for monitors who intend to provide monitoring services at a regular and predictable frequency.</p>
+<h3>Purpose</h3>
+<p>To provide a directory of monitors, their intent to publish, their criteria and parameters of monitoring activities. Absence of this event implies the monitor is ad-hoc and does not publish events at a predictable frequency, and relies on mechanisms to infer data integrity, such as web-of-trust.</p>
+<h3>Schema</h3>
+<h4>Standard Tags</h4>
+<ul>
+<li>
+<p><code>frequency</code> The frequency <strong>in seconds</strong> at which the monitor publishes events. A string-integer at index <code>1</code> represents the expected frequency the monitor will publish <code>30166</code> events. There should only be <code>1</code> frequency per monitor.</p>
+<pre><code class="language-json">[ "frequency", "3600" ]
+</code></pre>
+</li>
+<li>
+<p><code>timeout</code> (optional) The timeout values for various checks conducted by a monitor. Index <code>1</code> is the monitor's timeout in milliseconds. Index <code>2</code> describes what test the timeout is used for. If no index <code>2</code> is provided, it is inferred that the timeout provided applies to all tests. These values can assist relay operators in understanding data signaled by the monitor in <em>Relay Discovery Events</em>.</p>
+<pre><code class="language-json">[ "timeout", "2000", "open" ],
+[ "timeout", "2000", "read" ],
+[ "timeout", "3000", "write" ],
+[ "timeout", "2000", "nip11" ],
+[ "timeout", "4000", "ssl" ]
+</code></pre>
+</li>
+</ul>
+<h4>Indexed Tags</h4>
+<ul>
+<li>
+<p><code>c</code>  "Checks" <strong>SHOULD</strong> be a lowercase string describing the check(s) conducted by a monitor. Due to the rapidly evolving nature of relays, enumeration is organic and not strictly defined. But examples of some checks could be websocket <code>open/read/write/auth</code>, <code>nip11</code> checks, <code>dns</code> and <code>geo</code> checks, and and any other checks the monitor may deem useful.. Other checks <strong>MAY</strong> be included. New types of checks <strong>SHOULD</strong> be added to this NIP as they are needed.</p>
+<pre><code class="language-json">[ "c", "ws" ],
+[ "c", "nip11" ],
+[ "c", "dns" ],
+[ "c", "geo" ],
+[ "c", "ssl" ],
+</code></pre>
+</li>
+<li>
+<p><code>g</code>: <code>NIP-52</code> <code>g</code> tags (geohash)</p>
+<pre><code class="language-json">[ "g", "9r1652whz" ]
+</code></pre>
+</li>
+<li>
+<p>Any other globally defined indexable tags <strong>MAY</strong> be included as found necessary.</p>
+</li>
+</ul>
+<h3>Other Requirements</h3>
+<p>Monitors <strong>SHOULD</strong> have the following</p>
+<ul>
+<li>A published <code>0</code> (NIP-1) event</li>
+<li>A published <code>10002</code> (NIP-65) event that defines the relays the monitor publishes to.</li>
+</ul>
+<h3>Robust Example of a <code>10166</code> Event</h3>
+<pre><code class="language-json">{
+  "id": "&lt;eventid&gt;",
+  "pubkey": "&lt;monitor's pubkey&gt;",
+  "created_at": "&lt;created_at  [some recent date ...]&gt;",
+  "signature": "&lt;signature&gt;",
+  "content": "",
+  "tags": [  
+
+    [ "timeout", "open", "5000"  ],
+    [ "timeout", "read", "3000"  ],
+    [ "timeout", "write", "3000" ],
+    [ "timeout", "nip11", "3000" ],
+
+    [ "frequency", "3600" ],
+
+    [ "c", "ws" ],
+    [ "c", "nip11" ],
+    [ "c", "ssl" ],
+    [ "c", "dns" ],
+    [ "c", "geo" ]
+
+    [ "g", "ww8p1r4t8" ]
+  ]
+} 
+</code></pre>
+<h2>Methodology</h2>
+<h3>Monitors</h3>
+<ol>
+<li>
+<p>A <em>Relay Monitor</em> checks the liveness and potentially other attributes of a relay.</p>
+</li>
+<li>
+<p><em>Relay Monitor</em> publishes a kind <code>30166</code> note when a relay it is monitoring is online. If the monitor has a <code>10166</code> event, events should be published at the frequency defined in their <code>10166</code> note.</p>
+</li>
+</ol>
+<p><em>Any pubkey that publishes <code>30166</code> events <strong>SHOULD</strong> at a minimum be checking that the relay is available by websocket and behaves like a relay</em></p>
+<h3>Clients</h3>
+<ol>
+<li>
+<p>In most cases, a client <strong>SHOULD</strong> filter on <code>30166</code> events using either a statically or dynamically defined monitor's <code>pubkey</code> and a <code>created_at</code> value respective of the monitor's published <code>frequency</code>. If the monitor has no stated frequency, other mechanisms should be employed to determine data integrity.</p>
+</li>
+<li>
+<p><em>Relay Liveness</em> is subjectively determined by the client, starting with the <code>frequency</code> value of a monitor.</p>
+</li>
+<li>
+<p>The liveness of a <em>Relay Monitor</em> can be subjectively determined by detecting whether the <em>Relay Monitor</em> has published events with respect to <code>frequency</code> value of any particular monitor.</p>
+</li>
+<li>
+<p>The reliability and trustworthiness of a <em>Relay Monitor</em> could be established via web-of-trust, reviews or similar mechanisms.</p>
+</li>
+</ol>
+<h2>Risk Mitigation</h2>
+<ul>
+<li>
+<p>When a client implements <code>NIP-66</code> events, the client should have a fallback if <code>NIP-66</code> events cannot be located.</p>
+</li>
+<li>
+<p>A <code>Monitor</code> or <code>Ad-hoc Monitor</code> may publish erroneous <code>30166</code> events, intentionally or otherwise. Therefor, it's important to program defensively to limit the impact of such events. This can be achieved with web-of-trust, reviews, fallbacks and/or data-aggregation for example.</p>
+</li>
+</ul>
