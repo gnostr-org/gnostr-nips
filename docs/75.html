@@ -1,0 +1,63 @@
+<h1>NIP-75</h1>
+<h2>Zap Goals</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines an event for creating fundraising goals. Users can contribute funds towards the goal by zapping the goal event.</p>
+<h2>Nostr Event</h2>
+<p>A <code>kind:9041</code> event is used.</p>
+<p>The <code>.content</code> contains a human-readable description of the goal.</p>
+<p>The following tags are defined as REQUIRED.</p>
+<ul>
+<li><code>amount</code> - target amount in milisats.</li>
+<li><code>relays</code> - a list of relays the zaps to this goal will be sent to and tallied from.</li>
+</ul>
+<p>Example event:</p>
+<pre><code class="language-jsonc">{
+  "kind": 9041,
+  "tags": [
+    ["relays", "wss://alicerelay.example.com", "wss://bobrelay.example.com", /*...*/],
+    ["amount", "210000"],
+  ],
+  "content": "Nostrasia travel expenses",
+  // other fields...
+}
+</code></pre>
+<p>The following tags are OPTIONAL.</p>
+<ul>
+<li><code>closed_at</code> - timestamp for determining which zaps are included in the tally. Zap receipts published after the <code>closed_at</code> timestamp SHOULD NOT count towards the goal progress.</li>
+<li><code>image</code> - an image for the goal</li>
+<li><code>summary</code> - a brief description</li>
+</ul>
+<pre><code class="language-jsonc">{
+  "kind": 9041,
+  "tags": [
+    ["relays", "wss://alicerelay.example.com", "wss://bobrelay.example.com", /*...*/],
+    ["amount", "210000"],
+    ["closed_at", "&lt;unix timestamp in seconds&gt;"],
+    ["image", "&lt;image URL&gt;"],
+    ["summary", "&lt;description of the goal&gt;"],
+  ],
+  "content": "Nostrasia travel expenses",
+  // other fields...
+}
+</code></pre>
+<p>The goal MAY include an <code>r</code> or <code>a</code> tag linking to a URL or addressable event.</p>
+<p>The goal MAY include multiple beneficiary pubkeys by specifying <a href="57.md#appendix-g-zap-tag-on-other-events"><code>zap</code> tags</a>.</p>
+<p>Addressable events can link to a goal by using a <code>goal</code> tag specifying the event id and an optional relay hint.</p>
+<pre><code class="language-jsonc">{
+  "kind": 3xxxx,
+  "tags": [
+    ["goal", "&lt;event id&gt;", "&lt;Relay URL (optional)&gt;"],
+    // rest of tags...
+  ],
+  // other fields...
+}
+</code></pre>
+<h2>Client behavior</h2>
+<p>Clients MAY display funding goals on user profiles.</p>
+<p>When zapping a goal event, clients MUST include the relays in the <code>relays</code> tag of the goal event in the zap request <code>relays</code> tag.</p>
+<p>When zapping an addressable event with a <code>goal</code> tag, clients SHOULD tag the goal event id in the <code>e</code> tag of the zap request.</p>
+<h2>Use cases</h2>
+<ul>
+<li>Fundraising clients</li>
+<li>Adding funding goals to events such as long form posts, badges or live streams</li>
+</ul>
