@@ -1,0 +1,76 @@
+<h1>NIP-42</h1>
+<h2>Authentication of clients to relays</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines a way for clients to authenticate to relays by signing an ephemeral event.</p>
+<h2>Motivation</h2>
+<p>A relay may want to require clients to authenticate to access restricted resources. For example,</p>
+<ul>
+<li>A relay may request payment or other forms of whitelisting to publish events -- this can naïvely be achieved by limiting publication to events signed by the whitelisted key, but with this NIP they may choose to accept any events as long as they are published from an authenticated user;</li>
+<li>A relay may limit access to <code>kind: 4</code> DMs to only the parties involved in the chat exchange, and for that it may require authentication before clients can query for that kind.</li>
+<li>A relay may limit subscriptions of any kind to paying users or users whitelisted through any other means, and require authentication.</li>
+</ul>
+<h2>Definitions</h2>
+<h3>New client-relay protocol messages</h3>
+<p>This NIP defines a new message, <code>AUTH</code>, which relays CAN send when they support authentication and clients can send to relays when they want to authenticate. When sent by relays the message has the following form:</p>
+<pre><code>["AUTH", &lt;challenge-string&gt;]
+</code></pre>
+<p>And, when sent by clients, the following form:</p>
+<pre><code>["AUTH", &lt;signed-event-json&gt;]
+</code></pre>
+<p><code>AUTH</code> messages sent by clients MUST be answered with an <code>OK</code> message, like any <code>EVENT</code> message.</p>
+<h3>Canonical authentication event</h3>
+<p>The signed event is an ephemeral event not meant to be published or queried, it must be of <code>kind: 22242</code> and it should have at least two tags, one for the relay URL and one for the challenge string as received from the relay. Relays MUST exclude <code>kind: 22242</code> events from being broadcasted to any client. <code>created_at</code> should be the current time. Example:</p>
+<pre><code class="language-jsonc">{
+  "kind": 22242,
+  "tags": [
+    ["relay", "wss://relay.example.com/"],
+    ["challenge", "challengestringhere"]
+  ],
+  // other fields...
+}
+</code></pre>
+<h3><code>OK</code> and <code>CLOSED</code> machine-readable prefixes</h3>
+<p>This NIP defines two new prefixes that can be used in <code>OK</code> (in response to event writes by clients) and <code>CLOSED</code> (in response to rejected subscriptions by clients):</p>
+<ul>
+<li><code>"auth-required: "</code> - for when a client has not performed <code>AUTH</code> and the relay requires that to fulfill the query or write the event.</li>
+<li><code>"restricted: "</code> - for when a client has already performed <code>AUTH</code> but the key used to perform it is still not allowed by the relay or is exceeding its authorization.</li>
+</ul>
+<h2>Protocol flow</h2>
+<p>At any moment the relay may send an <code>AUTH</code> message to the client containing a challenge. The challenge is valid for the duration of the connection or until another challenge is sent by the relay. The client MAY decide to send its <code>AUTH</code> event at any point and the authenticated session is valid afterwards for the duration of the connection.</p>
+<h3><code>auth-required</code> in response to a <code>REQ</code> message</h3>
+<p>Given that a relay is likely to require clients to perform authentication only for certain jobs, like answering a <code>REQ</code> or accepting an <code>EVENT</code> write, these are some expected common flows:</p>
+<pre><code>relay: ["AUTH", "&lt;challenge&gt;"]
+client: ["REQ", "sub_1", {"kinds": [4]}]
+relay: ["CLOSED", "sub_1", "auth-required: we can't serve DMs to unauthenticated users"]
+client: ["AUTH", {"id": "abcdef...", ...}]
+relay: ["OK", "abcdef...", true, ""]
+client: ["REQ", "sub_1", {"kinds": [4]}]
+relay: ["EVENT", "sub_1", {...}]
+relay: ["EVENT", "sub_1", {...}]
+relay: ["EVENT", "sub_1", {...}]
+relay: ["EVENT", "sub_1", {...}]
+...
+</code></pre>
+<p>In this case, the <code>AUTH</code> message from the relay could be sent right as the client connects or it can be sent immediately before the <code>CLOSED</code> is sent. The only requirement is that <em>the client must have a stored challenge associated with that relay</em> so it can act upon that in response to the <code>auth-required</code> <code>CLOSED</code> message.</p>
+<h3><code>auth-required</code> in response to an <code>EVENT</code> message</h3>
+<p>The same flow is valid for when a client wants to write an <code>EVENT</code> to the relay, except now the relay sends back an <code>OK</code> message instead of a <code>CLOSED</code> message:</p>
+<pre><code>relay: ["AUTH", "&lt;challenge&gt;"]
+client: ["EVENT", {"id": "012345...", ...}]
+relay: ["OK", "012345...", false, "auth-required: we only accept events from registered users"]
+client: ["AUTH", {"id": "abcdef...", ...}]
+relay: ["OK", "abcdef...", true, ""]
+client: ["EVENT", {"id": "012345...", ...}]
+relay: ["OK", "012345...", true, ""]
+</code></pre>
+<h2>Signed Event Verification</h2>
+<p>To verify <code>AUTH</code> messages, relays must ensure:</p>
+<ul>
+<li>that the <code>kind</code> is <code>22242</code>;</li>
+<li>that the event <code>created_at</code> is close (e.g. within ~10 minutes) of the current time;</li>
+<li>that the <code>"challenge"</code> tag matches the challenge sent before;</li>
+<li>that the <code>"relay"</code> tag matches the relay URL:
+<ul>
+<li>URL normalization techniques can be applied. For most cases just checking if the domain name is correct should be enough.</li>
+</ul>
+</li>
+</ul>
