@@ -1,0 +1,83 @@
+<h1>NIP-73</h1>
+<h2>External Content IDs</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>There are certain established global content identifiers such as <a href="https://en.wikipedia.org/wiki/ISBN">Book ISBNs</a>, <a href="https://podcastnamespace.org/tag/guid">Podcast GUIDs</a>, and <a href="https://en.wikipedia.org/wiki/International_Standard_Audiovisual_Number">Movie ISANs</a> that are useful to reference in nostr events so that clients can query all the events assosiated with these ids.</p>
+<p><code>i</code> tags are used for referencing these external content ids, with <code>k</code> tags representing the external content id kind so that clients can query all the events for a specific kind.</p>
+<h2>Supported IDs</h2>
+<table><thead><tr><th>Type</th><th><code>i</code> tag</th><th><code>k</code> tag</th></tr></thead><tbody>
+<tr><td>URLs</td><td>"<code>&lt;URL, normalized, no fragment&gt;</code>"</td><td>"web"</td></tr>
+<tr><td>Books</td><td>"isbn:<code>&lt;id, without hyphens&gt;</code>"</td><td>"isbn"</td></tr>
+<tr><td>Geohashes</td><td>"geo:<code>&lt;geohash, lowercase&gt;</code>"</td><td>"geo"</td></tr>
+<tr><td>Movies</td><td>"isan:<code>&lt;id, without version part&gt;</code>"</td><td>"isan"</td></tr>
+<tr><td>Papers</td><td>"doi:<code>&lt;id, lowercase&gt;</code>"</td><td>"doi"</td></tr>
+<tr><td>Hashtags</td><td>"#<code>&lt;topic, lowercase&gt;</code>"</td><td>"#"</td></tr>
+<tr><td>Podcast Feeds</td><td>"podcast:guid:<code>&lt;guid&gt;</code>"</td><td>"podcast:guid"</td></tr>
+<tr><td>Podcast Episodes</td><td>"podcast:item:guid:<code>&lt;guid&gt;</code>"</td><td>"podcast:item:guid"</td></tr>
+<tr><td>Podcast Publishers</td><td>"podcast:publisher:guid:<code>&lt;guid&gt;</code>"</td><td>"podcast:publisher:guid"</td></tr>
+<tr><td>Blockchain Transaction</td><td>"<code>&lt;blockchain&gt;</code>:[<code>&lt;chainId&gt;</code>:]tx:<code>&lt;txid, hex, lowercase&gt;</code>"</td><td>"<code>&lt;blockchain&gt;</code>:tx"</td></tr>
+<tr><td>Blockchain Address</td><td>"<code>&lt;blockchain&gt;</code>:[<code>&lt;chainId&gt;</code>:]address:<code>&lt;address&gt;</code>"</td><td>"<code>&lt;blockchain&gt;</code>:address"</td></tr>
+</tbody></table>
+<hr />
+<h2>Examples</h2>
+<h3>Webpages</h3>
+<p>For the webpage "https://myblog.example.com/post/2012-03-27/hello-world" the "i" and "k" tags are:</p>
+<pre><code class="language-jsonc">[
+  ["i", "https://myblog.example.com/post/2012-03-27/hello-world"],
+  ["k", "web"]
+]
+</code></pre>
+<h3>Books:</h3>
+<ul>
+<li>Book ISBN: <code>["i", "isbn:9780765382030"]</code> - https://isbnsearch.org/isbn/9780765382030</li>
+</ul>
+<p>Book ISBNs MUST be referenced <em><strong>without hyphens</strong></em> as many book search APIs return the ISBNs without hyphens. Removing hypens from ISBNs is trivial, whereas adding the hyphens back in is non-trivial requiring a library.</p>
+<h3>Podcasts:</h3>
+<ul>
+<li>Podcast RSS Feed GUID: <code>["i", "podcast:guid:c90e609a-df1e-596a-bd5e-57bcc8aad6cc"]</code> - https://podcastindex.org/podcast/c90e609a-df1e-596a-bd5e-57bcc8aad6cc</li>
+<li>Podcast RSS Item GUID: <code>["i", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f"]</code></li>
+<li>Podcast RSS Publisher GUID: <code>["i", "podcast:publisher:guid:18bcbf10-6701-4ffb-b255-bc057390d738"]</code></li>
+</ul>
+<h3>Movies:</h3>
+<ul>
+<li>Movie ISAN: <code>["i", "isan:0000-0000-401A-0000-7"]</code> - https://web.isan.org/public/en/isan/0000-0000-401A-0000-7</li>
+</ul>
+<p>Movie ISANs SHOULD be referenced  <em><strong>without the version part</strong></em> as the versions / edits of movies are not relevant. More info on ISAN parts here -  https://support.isan.org/hc/en-us/articles/360002783131-Records-relations-and-hierarchies-in-the-ISAN-Registry</p>
+<h3>Blockchain</h3>
+<p><code>&lt;blockchain&gt;</code> can be any layer 1 chain (<code>bitcoin</code>, <code>ethereum</code>, <code>solana</code>, ...). If necessary (e.g. for ethereum), you can specify a <code>&lt;chainId&gt;</code>.</p>
+<h4>Bitcoin</h4>
+<pre><code>bitcoin:address:&lt;bech32, lowercase | base58, case sensitive&gt;
+bitcoin:tx:&lt;txid, hex, lowercase&gt;
+</code></pre>
+<p>E.g. https://blockstream.info/tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d</p>
+<pre><code class="language-jsonc">[
+  ["i", "bitcoin:tx:a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d"],
+  ["k", "bitcoin:tx"]
+]
+</code></pre>
+<p>E.g. https://blockstream.info/address/1HQ3Go3ggs8pFnXuHVHRytPCq5fGG8Hbhx</p>
+<pre><code class="language-jsonc">[
+  ["i", "bitcoin:address:1HQ3Go3ggs8pFnXuHVHRytPCq5fGG8Hbhx"],
+  ["k", "bitcoin:address"]
+]
+</code></pre>
+<h4>Ethereum (and other EVM chains)</h4>
+<pre><code>ethereum:&lt;chainId, integer&gt;:tx:&lt;txHash, hex, lowercase&gt;
+ethereum:&lt;chainId, integer&gt;:address:&lt;hex, lowercase&gt;
+</code></pre>
+<p>E.g. https://etherscan.io/address/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045</p>
+<pre><code class="language-jsonc">[
+  ["i", "ethereum:1:address:0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
+  ["k", "ethereum:address"]
+]
+</code></pre>
+<p>E.g. https://gnosisscan.io/tx/0x98f7812be496f97f80e2e98d66358d1fc733cf34176a8356d171ea7fbbe97ccd</p>
+<pre><code class="language-jsonc">[
+  ["i", "ethereum:100:tx:0x98f7812be496f97f80e2e98d66358d1fc733cf34176a8356d171ea7fbbe97ccd"],
+  ["k", "ethereum:tx"]
+]
+</code></pre>
+<hr />
+<h3>Optional URL Hints</h3>
+<p>Each <code>i</code> tag MAY have a url hint as the second argument to redirect people to a website if the client isn't opinionated about how to interpret the id:</p>
+<p><code>["i", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f", https://fountain.fm/episode/z1y9TMQRuqXl2awyrQxg]</code></p>
+<p><code>["i", "isan:0000-0000-401A-0000-7", https://www.imdb.com/title/tt0120737]</code></p>
