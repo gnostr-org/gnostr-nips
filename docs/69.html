@@ -1,0 +1,75 @@
+<h1>NIP-69</h1>
+<h2>Peer-to-peer Order events</h2>
+<p><code>draft</code> <code>optional</code></p>
+<h2>Abstract</h2>
+<p>Peer-to-peer (P2P) platforms have seen an upturn in recent years, while having more and more options is positive, in the specific case of p2p, having several options contributes to the liquidity split, meaning sometimes there's not enough assets available for trading. If we combine all these individual solutions into one big pool of orders, it will make them much more competitive compared to centralized systems, where a single authority controls the liquidity.</p>
+<p>This NIP defines a simple standard for peer-to-peer order events, which enables the creation of a big liquidity pool for all p2p platforms participating.</p>
+<h2>The event</h2>
+<p>Events are <a href="01.md#kinds">addressable events</a> and use <code>38383</code> as event kind, a p2p event look like this:</p>
+<pre><code class="language-json">{
+  "id": "84fad0d29cb3529d789faeff2033e88fe157a48e071c6a5d1619928289420e31",
+  "pubkey": "dbe0b1be7aafd3cfba92d7463edbd4e33b2969f61bd554d37ac56f032e13355a",
+  "created_at": 1702548701,
+  "kind": 38383,
+  "tags": [
+    ["d", "ede61c96-4c13-4519-bf3a-dcf7f1e9d842"],
+    ["k", "sell"],
+    ["f", "VES"],
+    ["s", "pending"],
+    ["amt", "0"],
+    ["fa", "100"],
+    ["pm", "face to face", "bank transfer"],
+    ["premium", "1"],
+    [
+      "rating",
+      "{\"total_reviews\":1,\"total_rating\":3.0,\"last_rating\":3,\"max_rate\":5,\"min_rate\":1}"
+    ],
+    ["source", "https://t.me/p2plightning/xxxxxxx"],
+    ["network", "mainnet"],
+    ["layer", "lightning"],
+    ["name", "Nakamoto"],
+    ["g", "&lt;geohash&gt;"],
+    ["bond", "0"],
+    ["expiration", "1719391096"],
+    ["y", "lnp2pbot"],
+    ["z", "order"]
+  ],
+  "content": "",
+  "sig": "7e8fe1eb644f33ff51d8805c02a0e1a6d034e6234eac50ef7a7e0dac68a0414f7910366204fa8217086f90eddaa37ded71e61f736d1838e37c0b73f6a16c4af2"
+}
+</code></pre>
+<h2>Tags</h2>
+<ul>
+<li><code>d</code> &lt; Order ID &gt;: A unique identifier for the order.</li>
+<li><code>k</code> &lt; Order type &gt;: <code>sell</code> or <code>buy</code>.</li>
+<li><code>f</code> &lt; Currency &gt;: The asset being traded, using the <a href="https://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a> standard.</li>
+<li><code>s</code> &lt; Status &gt;: <code>pending</code>, <code>canceled</code>, <code>in-progress</code>, <code>success</code>.</li>
+<li><code>amt</code> &lt; Amount &gt;: The amount of Bitcoin to be traded, the amount is defined in satoshis, if <code>0</code> means that the amount of satoshis will be obtained from a public API after the taker accepts the order.</li>
+<li><code>fa</code> &lt; Fiat amount &gt;: The fiat amount being traded, for range orders two values are expected, the minimum and maximum amount.</li>
+<li><code>pm</code> &lt; Payment method &gt;: The payment method used for the trade, if the order has multiple payment methods, they should be separated by a comma.</li>
+<li><code>premium</code> &lt; Premium &gt;: The percentage of the premium the maker is willing to pay.</li>
+<li><code>source</code> [Source]: The source of the order, it can be a URL that redirects to the order.</li>
+<li><code>rating</code> [Rating]: The rating of the maker, this document does not define how the rating is calculated, it's up to the platform to define it.</li>
+<li><code>network</code> &lt; Network &gt;: The network used for the trade, it can be <code>mainnet</code>, <code>testnet</code>, <code>signet</code>, etc.</li>
+<li><code>layer</code> &lt; Layer &gt;: The layer used for the trade, it can be <code>onchain</code>, <code>lightning</code>, <code>liquid</code>, etc.</li>
+<li><code>name</code> [Name]: The name of the maker.</li>
+<li><code>g</code> [Geohash]: The geohash of the operation, it can be useful in a face to face trade.</li>
+<li><code>bond</code> [Bond]: The bond amount, the bond is a security deposit that both parties must pay.</li>
+<li><code>expiration</code> &lt; Expiration&gt;: The expiration date of the order (<a href="40.md">NIP-40</a>).</li>
+<li><code>y</code> &lt; Platform &gt;: The platform that created the order.</li>
+<li><code>z</code> &lt; Document &gt;: <code>order</code>.</li>
+</ul>
+<p>Mandatory tags are enclosed with <code>&lt;tag&gt;</code>, optional tags are enclosed with <code>[tag]</code>.</p>
+<h2>Implementations</h2>
+<p>Currently implemented on the following platforms:</p>
+<ul>
+<li><a href="https://github.com/MostroP2P/mostro">Mostro</a></li>
+<li><a href="https://github.com/lnp2pBot/bot">@lnp2pBot</a></li>
+<li><a href="https://github.com/RoboSats/robosats/pull/1362">Robosats</a></li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://mostro.network/protocol/">Mostro protocol specification</a></li>
+<li><a href="https://github.com/nostr-protocol/nips/blob/8250274a22f4882f621510df0054fd6167c10c9e/31001.md">Messages specification for peer 2 peer NIP proposal</a></li>
+<li><a href="https://github.com/nobu-maeda/n3xb">n3xB</a></li>
+</ul>
