@@ -45,6 +45,8 @@ done
 export COUNT=$count
 #exit
 
+RELAYS=$(gnostr-get-relays -s)
+
 #new_count = 0
 for commit_hash in $(gnostr-reflog);do
 echo $commit_hash
@@ -53,6 +55,8 @@ echo $padded_commit_hash
 export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
+for relay in $RELAYS;do
+
 gnostr \
 -r wss://nos.lol \
 --nsec $padded_commit_hash \
@@ -70,7 +74,7 @@ note \
 --tag $commit_hash \
 --content "$(git show $commit_hash || exit)" || \
 gnostr \
--r wss://nos.lol \
+-r $relay \
 --nsec $padded_commit_hash \
 note \
 -t $padded_commit_hash \
