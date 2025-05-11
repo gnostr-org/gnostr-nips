@@ -1,0 +1,63 @@
+<h1>NIP-10</h1>
+<h2>Text Notes and Threads</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines <code>kind:1</code> as a simple plaintext note.</p>
+<h2>Abstract</h2>
+<p>The <code>.content</code> property contains some human-readable text.</p>
+<p><code>e</code> tags can be used to define note thread roots and replies. They SHOULD be sorted by the reply stack from root to the direct parent.</p>
+<p><code>q</code> tags MAY be used when citing events in the <code>.content</code> with <a href="21.md">NIP-21</a>.</p>
+<pre><code class="language-json">["q", "&lt;event-id&gt; or &lt;event-address&gt;", "&lt;relay-url&gt;", "&lt;pubkey-if-a-regular-event&gt;"]
+</code></pre>
+<p>Authors of the <code>e</code> and <code>q</code> tags SHOULD be added as <code>p</code> tags to notify of a new reply or quote.</p>
+<p>Markup languages such as markdown and HTML SHOULD NOT be used.</p>
+<h2>Marked "e" tags (PREFERRED)</h2>
+<p>Kind 1 events with <code>e</code> tags are replies to other kind 1 events. Kind 1 replies MUST NOT be used to reply to other kinds, use <a href="22.md">NIP-22</a> instead.</p>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;, &lt;marker&gt;, &lt;pubkey&gt;]</code></p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;event-id&gt;</code> is the id of the event being referenced.</li>
+<li><code>&lt;relay-url&gt;</code> is the URL of a recommended relay associated with the reference. Clients SHOULD add a valid <code>&lt;relay-url&gt;</code> field, but may instead leave it as <code>""</code>.</li>
+<li><code>&lt;marker&gt;</code> is optional and if present is one of <code>"reply"</code>, <code>"root"</code>.</li>
+<li><code>&lt;pubkey&gt;</code> is optional, SHOULD be the pubkey of the author of the referenced event</li>
+</ul>
+<p>Those marked with <code>"reply"</code> denote the id of the reply event being responded to.  Those marked with <code>"root"</code> denote the root id of the reply thread being responded to. For top level replies (those replying directly to the root event), only the <code>"root"</code> marker should be used.</p>
+<p>A direct reply to the root of a thread should have a single marked "e" tag of type "root".</p>
+<blockquote>
+<p>This scheme is preferred because it allows events to mention others without confusing them with <code>&lt;reply-id&gt;</code> or <code>&lt;root-id&gt;</code>.</p>
+</blockquote>
+<p><code>&lt;pubkey&gt;</code> SHOULD be the pubkey of the author of the <code>e</code> tagged event, this is used in the outbox model to search for that event from the authors write relays where relay hints did not resolve the event.</p>
+<h2>The "p" tag</h2>
+<p>Used in a text event contains a list of pubkeys used to record who is involved in a reply thread.</p>
+<p>When replying to a text event E the reply event's "p" tags should contain all of E's "p" tags as well as the <code>"pubkey"</code> of the event being replied to.</p>
+<p>Example:  Given a text event authored by <code>a1</code> with "p" tags [<code>p1</code>, <code>p2</code>, <code>p3</code>] then the "p" tags of the reply should be [<code>a1</code>, <code>p1</code>, <code>p2</code>, <code>p3</code>]
+in no particular order.</p>
+<h2>Deprecated Positional "e" tags</h2>
+<p>This scheme is not in common use anymore and is here just to keep backward compatibility with older events on the network.</p>
+<p>Positional <code>e</code> tags are deprecated because they create ambiguities that are difficult, or impossible to resolve when an event references another but is not a reply.</p>
+<p>They use simple <code>e</code> tags without any marker.</p>
+<p><code>["e", &lt;event-id&gt;, &lt;relay-url&gt;]</code> as per NIP-01.</p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;event-id&gt;</code> is the id of the event being referenced.</li>
+<li><code>&lt;relay-url&gt;</code> is the URL of a recommended relay associated with the reference.  Many clients treat this field as optional.</li>
+</ul>
+<p><strong>The positions of the "e" tags within the event denote specific meanings as follows</strong>:</p>
+<ul>
+<li>
+<p>No "e" tag: <br>
+This event is not a reply to, nor does it refer to, any other event.</p>
+</li>
+<li>
+<p>One "e" tag: <br>
+<code>["e", &lt;id&gt;]</code>: The id of the event to which this event is a reply.</p>
+</li>
+<li>
+<p>Two "e" tags:  <code>["e", &lt;root-id&gt;]</code>, <code>["e", &lt;reply-id&gt;]</code> <br>
+<code>&lt;root-id&gt;</code> is the id of the event at the root of the reply chain.  <code>&lt;reply-id&gt;</code> is the id of the article to which this event is a reply.</p>
+</li>
+<li>
+<p>Many "e" tags: <code>["e", &lt;root-id&gt;]</code> <code>["e", &lt;mention-id&gt;]</code>, ..., <code>["e", &lt;reply-id&gt;]</code><br>
+There may be any number of <code>&lt;mention-ids&gt;</code>.  These are the ids of events which may, or may not be in the reply chain.
+They are citing from this event.  <code>root-id</code> and <code>reply-id</code> are as above.</p>
+</li>
+</ul>
