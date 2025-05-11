@@ -66,7 +66,7 @@ note \
 --tag $commit_hash \
 --content "$(git show $commit_hash || exit)" || \
 gnostr \
--r wss://nostr.band \
+-r wss://relay.damus.io \
 --nsec $padded_commit_hash \
 note \
 -t $padded_commit_hash \
