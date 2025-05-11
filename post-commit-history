@@ -53,8 +53,7 @@ echo $padded_commit_hash
 export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
-gnostr -r wss://nos.lol --nsec $padded_commit_hash note -t $padded_commit_hash --tag nip_commit --tag $commit_hash --content "$(git show $commit_hash || exit)"
-|| gnostr -r wss://e.nos.lol --nsec $padded_commit_hash note -t $padded_commit_hash --tag nip_commit --tag $commit_hash --content "$(git show $commit_hash || exit)" || true
+gnostr -r wss://nos.lol --nsec $padded_commit_hash note -t $padded_commit_hash --tag nip_commit --tag $commit_hash --content "$(git show $commit_hash || exit)" || gnostr -r wss://e.nos.lol --nsec $padded_commit_hash note -t $padded_commit_hash --tag nip_commit --tag $commit_hash --content "$(git show $commit_hash || exit)" || true
 if [[ "$commit_hash" == "$INIT_COMMIT" ]]; then
 exit;
 fi
