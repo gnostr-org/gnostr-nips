@@ -62,7 +62,7 @@ note \
 --tag $commit_hash \
 --content "$(git show $commit_hash || exit)" || \
 gnostr \
--r wss://e.nos.lol \
+-r wss://nostr.band \
 --nsec $padded_commit_hash \
 note \
 -t $padded_commit_hash \
