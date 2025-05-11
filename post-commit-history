@@ -56,23 +56,7 @@ export NEW_COUNT=$new_count
 #n=`printf '%064s' "$(git rev-parse HEAD~$count)"`
 #echo $n
 for relay in $RELAYS;do
-
-gnostr \
--r wss://nos.lol \
---nsec $padded_commit_hash \
-note \
--t $padded_commit_hash \
---tag nip_commit \
---tag $commit_hash \
---content "$(git show $commit_hash || exit)" || \
-gnostr \
--r wss://relay.damus.io \
---nsec $padded_commit_hash \
-note \
--t $padded_commit_hash \
---tag nip_commit \
---tag $commit_hash \
---content "$(git show $commit_hash || exit)" || \
+echo $relay
 gnostr \
 -r $relay \
 --nsec $padded_commit_hash \
