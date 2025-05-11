@@ -90,4 +90,5 @@ new_count=$((new_count+1))
 #echo $new_count & wait
 #exit
 done
+done
 exit;
