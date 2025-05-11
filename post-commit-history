@@ -57,6 +57,7 @@ export NEW_COUNT=$new_count
 #echo $n
 for relay in $RELAYS;do
 echo $relay
+echo
 gnostr \
 -r $relay \
 --nsec $padded_commit_hash \
