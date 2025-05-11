@@ -1,0 +1,33 @@
+<h1>NIP-37</h1>
+<h2>Draft Events</h2>
+<p><code>draft</code> <code>optional</code></p>
+<p>This NIP defines kind <code>31234</code> as a private wrap for drafts of any other event kind.</p>
+<p>The draft event is JSON-stringified, <a href="44.md">NIP44-encrypted</a> to the signer's public key and placed inside the <code>.content</code> of the event.</p>
+<p>An additional <code>k</code> tag identifies the kind of the draft event.</p>
+<pre><code class="language-js">{
+  "kind": 31234,
+  "tags": [
+    ["d", "&lt;identifier&gt;"],
+    ["k", "&lt;kind of the draft event&gt;"],
+    ["e", "&lt;anchor event event id&gt;", "&lt;relay-url&gt;"],
+    ["a", "&lt;anchor event address&gt;", "&lt;relay-url&gt;"],
+  ],
+  "content": nip44Encrypt(JSON.stringify(draft_event)),
+  // other fields
+}
+</code></pre>
+<p>A blanked <code>.content</code> means this draft has been deleted by a client but relays still have the event.</p>
+<p>Tags <code>e</code> and <code>a</code> identify one or more anchor events, such as parent events on replies.</p>
+<h2>Relay List for Private Content</h2>
+<p>Kind <code>10013</code> indicates the user's preferred relays to store private events like Drafts. The event MUST include a list of <code>relay</code> URLs in private tags. Private tags are JSON Stringified, NIP-44-encrypted to the signer's keys and placed inside the .content of the event.</p>
+<pre><code class="language-js">{
+  "kind": 10013,
+  "tags": [],
+  "content": nip44Encrypt(JSON.stringify([
+    ["relay", "wss://myrelay.mydomain.com"]
+  ]))
+  //...other fields
+}
+</code></pre>
+<p>Relays listed in this event SHOULD be authed and only allow downloads to events signed by the authed user.</p>
+<p>Clients SHOULD publish kind <code>10013</code> events to the author's <a href="65.md">NIP-65</a> <code>write</code> relays.</p>
