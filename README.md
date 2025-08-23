@@ -44,7 +44,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-23: Long-form Content](23.md)
 - [NIP-24: Extra metadata fields and tags](24.md)
 - [NIP-25: Reactions](25.md)
-- [NIP-26: Delegated Event Signing](26.md) --- **unrecommended**: adds unecessary burden for little gain
+- [NIP-26: Delegated Event Signing](26.md) --- **unrecommended**: adds unnecessary burden for little gain
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-29: Relay-based Groups](29.md)
@@ -93,6 +93,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-7D: Threads](7D.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-86: Relay Management API](86.md)
+- [NIP-87: Ecash Mint Discoverability](87.md)
 - [NIP-88: Polls](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
@@ -101,13 +102,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-A0: Voice Messages](A0.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
-
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
@@ -151,6 +152,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
+| `1222`        | Voice Message                   | [A0](A0.md)                            |
+| `1244`        | Voice Message Comment           | [A0](A0.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
@@ -172,6 +175,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
+| `7516`        | Geocache log                    | [geocaching][geocaching]               |
+| `7517`        | Geocache proof of find          | [geocaching][geocaching]               |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
@@ -198,6 +203,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
+| `10312`       | Room Presence                   | [53](53.md)                            |
+| `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
+| `11111`       | Transport Method Announcement   | [Nostr Epoxy][nostr-epoxy]             |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -231,6 +239,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
+| `30312`       | Interactive Room                | [53](53.md)                            |
+| `30313`       | Conference Event                | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
 | `30402`       | Classified Listing              | [99](99.md)                            |
@@ -250,6 +260,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
+| `38173`       | Fedimint Announcement           | [87](87.md)                            |
+| `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
@@ -267,6 +280,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [blossom]: https://github.com/hzrd149/blossom
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
+[geocaching]: https://nostrhub.io/naddr1qvzqqqrcvypzppscgyy746fhmrt0nq955z6xmf80pkvrat0yq0hpknqtd00z8z68qqgkwet0vdskx6rfdenj6etkv4h8guc6gs5y5
+[nostr-epoxy]: https://github.com/Origami74/nostr-epoxy-reverse-proxy
 
 ## Message types
 
@@ -339,6 +354,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
+| `HEAD`            | `ref: refs/heads/<branch-name>`      |                                 | [34](34.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
 | `license`         | License of the shared content        | --                              | [C0](C0.md)                                        |
