@@ -15,6 +15,8 @@ clap = { version = "4.4", features = ["derive"] }
 mime_guess = "2.0.5"
 pulldown-cmark = "0.13.0"
 rust-embed = { version = "8.6.0", features = ["axum", "debug-embed", "include-exclude"] }
+ratatui = { version = "0.26.1", features = ["macros"] }
+crossterm = "0.27.0"
 sha2 = "0.10.8"
 termimad = "0.31.2"
 tokio = { version = "1", features = ["full"] }
@@ -22,6 +24,10 @@ tower = { version = "0.5.2", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["full"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[[bin]]
+name = "nip-browser"
+path = "src/bin/nip-browser.rs"
 
 # The profile that 'dist' will build with
 [profile.dist]
