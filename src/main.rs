@@ -66,6 +66,9 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> Result<(), B
                     KeyCode::Esc => {
                         app.show_nip_list = !app.show_nip_list;
                     }
+                    KeyCode::Enter => {
+                        app.show_nip_list = !app.show_nip_list;
+                    }
                     KeyCode::Left => {
                         app.previous_nip();
                         app.show_nip_list = false;
