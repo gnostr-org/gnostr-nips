@@ -1,229 +1,162 @@
-use ratatui::{
-    backend::CrosstermBackend,
-    prelude::{Alignment, Constraint, Direction, Layout, Modifier, Style},
-    style::Color,
-    text::{Line, Span, Text},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
-    Frame,
-    Terminal,
-    widgets::ListState,
-};
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen},
-    cursor::{Hide, Show},
-};
 use std::{
-    io::{self, stdout, Write},
     error::Error,
+    fs,
+    io::{stdout},
+    path::PathBuf,
 };
 
-use rust_embed::RustEmbed;
-use sha2::Digest;
-use termimad::MadSkin;
-use tracing_subscriber::prelude::SubscriberExt;
+use crossterm::{
+    event::{self, Event, KeyCode, KeyEventKind},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    ExecutableCommand,
+};
+use ratatui::{
+    prelude::*,
+    widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
+};
 
-#[derive(RustEmbed)]
-#[folder = "."] // Adjust the folder if NIPs are in a subdirectory
-#[exclude = "*.rs"]
-#[exclude = "*.md.html"]
-#[exclude = "*.toml"]
-#[exclude = "*.lock"]
-#[exclude = "*.sh"]
-#[exclude = ".*"] // Exclude hidden files like .gitignore
-#[exclude = "Cargo.toml"]
-#[exclude = "Cargo.lock"]
-#[exclude = "build.rs"]
-#[exclude = "dist-workspace.toml"]
-#[exclude = "target/*"]
-#[exclude = ".github/*"]
-struct NipsEmbed;
-
-
-struct AppState {
-    nips: Vec<String>, // List of nip filenames
+struct App {
+    nips: Vec<PathBuf>,
     selected_nip_index: usize,
-    nip_content: String,
-    list_state: ListState, // Added for List scrolling
+    content_scroll: u16,
 }
 
-impl AppState {
-    fn new() -> Self {
-        let nip_files: Vec<String> = NipsEmbed::iter()
-            .filter(|name| name.ends_with(".md"))
-            .map(|name| name.to_string())
-            .collect();
-
-        let initial_nip_content = if nip_files.is_empty() {
-            "No NIPs found.".to_string()
-        } else {
-            Self::load_nip_content(&nip_files[0])
-        };
-
-        let mut list_state = ListState::default();
-        list_state.select(Some(0)); // Select the first item by default
-
-        AppState {
-            nips: nip_files,
+impl App {
+    fn new(nips: Vec<PathBuf>) -> App {
+        App {
+            nips,
             selected_nip_index: 0,
-            nip_content: initial_nip_content,
-            list_state, // Initialize list_state
+            content_scroll: 0,
         }
     }
 
-    fn load_nip_content(nip_filename: &str) -> String {
-        if let Some(file) = NipsEmbed::get(nip_filename) {
-            String::from_utf8_lossy(file.data.as_ref()).to_string()
-        } else {
-            format!("Error: NIP '{}' not found.", nip_filename)
-        }
-    }
-
-    fn select_next_nip(&mut self) {
+    fn next_nip(&mut self) {
         if !self.nips.is_empty() {
-            let next_index = (self.selected_nip_index + 1) % self.nips.len();
-            self.selected_nip_index = next_index;
-            self.list_state.select(Some(next_index)); // Update ListState
-            self.nip_content = Self::load_nip_content(&self.nips[self.selected_nip_index]);
+            self.selected_nip_index = (self.selected_nip_index + 1) % self.nips.len();
+            self.content_scroll = 0; // Reset scroll on new selection
         }
     }
 
-    fn select_previous_nip(&mut self) {
+    fn previous_nip(&mut self) {
         if !self.nips.is_empty() {
-            let prev_index = (self.selected_nip_index + self.nips.len() - 1) % self.nips.len();
-            self.selected_nip_index = prev_index;
-            self.list_state.select(Some(prev_index)); // Update ListState
-            self.nip_content = Self::load_nip_content(&self.nips[self.selected_nip_index]);
+            self.selected_nip_index = (self.selected_nip_index + self.nips.len() - 1) % self.nips.len();
+            self.content_scroll = 0; // Reset scroll on new selection
         }
+    }
+
+    fn scroll_content_up(&mut self) {
+        self.content_scroll = self.content_scroll.saturating_sub(1);
+    }
+
+    fn scroll_content_down(&mut self) {
+        self.content_scroll = self.content_scroll.saturating_add(1);
     }
 }
 
-fn ui<B: ratatui::backend::Backend>(f: &mut Frame<B>, app_state: &AppState) {
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .margin(1)
-        .constraints([
-            Constraint::Percentage(10), // Header/NIP list
-            Constraint::Percentage(90), // Content
-        ])
-        .split(f.size());
-
-    // NIP List Pane
-    let list_block = Block::default()
-        .title("NIPs")
-        .title_alignment(Alignment::Center)
-        .borders(Borders::ALL);
-
-    let nip_items: Vec<ListItem> = app_state.nips.iter().enumerate().map(|(i, nip_name)| {
-        let style = if i == app_state.selected_nip_index {
-            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-        } else {
-            Style::default()
-        };
-        ListItem::new(Span::styled(nip_name, style))
-    }).collect();
-
-    let nip_list = List::new(nip_items)
-        .block(list_block)
-        .highlight_style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
-        .highlight_symbol("> ")
-        .state(&app_state.list_state); // Use ListState for highlighting and scrolling
-
-    f.render_widget(nip_list, chunks[0]);
-
-    // Content Pane
-    let content_block = Block::default()
-        .title(format!("NIP: {}", app_state.nips.get(app_state.selected_nip_index).unwrap_or(&"None".to_string())))
-        .title_alignment(Alignment::Center)
-        .borders(Borders::ALL);
-
-    let content_lines: Vec<Line> = app_state.nip_content.lines()
-        .map(|line| Line::from(Span::raw(line.to_string())))
-        .collect();
-    let content_text = Text::from(content_lines);
-
-    let content_paragraph = Paragraph::new(content_text)
-        .block(content_block)
-        .style(Style::default().fg(Color::Gray))
-        .alignment(Alignment::Left)
-        .wrap(ratatui::widgets::Wrap { trim: false });
-
-    f.render_widget(content_paragraph, chunks[1]);
-}
-
-fn run_ratatui_app() -> Result<(), Box<dyn Error>> {
-    let mut stdout = stdout();
-    execute!(stdout, EnterAlternateScreen, Hide)?; 
-    let mut stdout = stdout.lock();
-
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    let mut app_state = AppState::new();
-
+fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> Result<(), Box<dyn Error>> {
     loop {
-        terminal.draw(|f| ui(f, &app_state))?;
+        terminal.draw(|f| ui(f, &mut app))?;
 
-        match event::read()? {
-            Event::Key(key_event) => match key_event.code {
-                KeyCode::Char('q') => break, // Quit
-                KeyCode::Char('j') | KeyCode::ArrowDown => {
-                    app_state.select_next_nip();
+        if let Event::Key(key) = event::read()? {
+            if key.kind == KeyEventKind::Press {
+                match key.code {
+                    KeyCode::Char('q') => return Ok(()),
+                    KeyCode::Down | KeyCode::Char('j') => app.next_nip(),
+                    KeyCode::Up | KeyCode::Char('k') => app.previous_nip(),
+                    KeyCode::PageDown => {
+                        app.content_scroll = app.content_scroll.saturating_add(10);
+                    }
+                    KeyCode::PageUp => {
+                        app.content_scroll = app.content_scroll.saturating_sub(10);
+                    }
+                    _ => {}
                 }
-                KeyCode::Char('k') | KeyCode::ArrowUp => {
-                    app_state.select_previous_nip();
-                }
-                _ => {}
-            },
-            Event::Resize(_, _) => {
-                // Handle terminal resize if necessary
             }
-            _ => {}
         }
     }
+}
 
-    execute!(terminal.backend_mut(), LeaveAlternateScreen, Show)?;
-    terminal.show_cursor()?;
+fn ui(frame: &mut Frame, app: &mut App) {
+    let main_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)])
+        .split(frame.size());
 
-    Ok(())
+    // NIP List
+    let items: Vec<ListItem> = app.nips
+        .iter()
+        .enumerate()
+        .map(|(i, path)| {
+            let content = path.file_name().unwrap().to_string_lossy().into_owned();
+            ListItem::new(content).style(if i == app.selected_nip_index {
+                Style::default().fg(Color::Black).bg(Color::LightGreen)
+            } else {
+                Style::default()
+            })
+        })
+        .collect();
+
+    let list = List::new(items)
+        .block(Block::default().borders(Borders::ALL).title("NIPs"))
+        .highlight_style(Style::default().add_modifier(Modifier::BOLD))
+        .highlight_symbol(">> ");
+
+    frame.render_stateful_widget(list, main_layout[0], &mut ListState::default().with_selected(Some(app.selected_nip_index)));
+
+    // NIP Content
+    let mut content_text = String::new();
+    if let Some(selected_nip_path) = app.nips.get(app.selected_nip_index) {
+        if let Ok(content) = fs::read_to_string(selected_nip_path) {
+            content_text = content;
+        } else {
+            content_text = format!("Error reading file: {}", selected_nip_path.display());
+        }
+    } else {
+        content_text = "No NIP selected.".to_string();
+    }
+
+    let paragraph = Paragraph::new(content_text)
+        .block(Block::default().borders(Borders::ALL).title("Content"))
+        .wrap(Wrap { trim: false })
+        .scroll((app.content_scroll, 0));
+
+    frame.render_widget(paragraph, main_layout[1]);
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let subscriber = tracing_subscriber::registry()
-        .with(tracing_subscriber::fmt::layer().with_writer(std::io::stdout))
-        .with(tracing_subscriber::EnvFilter::new("info"));
-    tracing::subscriber::set_global_default(subscriber)
-        .expect("Failed to set global default subscriber");
+    stdout().execute(EnterAlternateScreen)?;
+    enable_raw_mode()?;
+    let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
+    terminal.clear()?;
 
-    tracing::info!("Starting NIP Browser TUI...");
+    let mut nips: Vec<PathBuf> = fs::read_dir(".")?
+        .filter_map(|entry| {
+            let path = entry.ok()?.path();
+            if path.is_file() && path.extension().map_or(false, |ext| ext == "md") {
+                Some(path)
+            } else {
+                None
+            }
+        })
+        .collect();
 
-    run_ratatui_app()?;
+    nips.sort_by(|a, b| {
+        let a_name = a.file_name().unwrap().to_string_lossy();
+        let b_name = b.file_name().unwrap().to_string_lossy();
+        a_name.cmp(&b_name)
+    });
 
-    tracing::info!("NIP Browser TUI exited.");
+
+    let app = App::new(nips);
+    let res = run_app(&mut terminal, app);
+
+    stdout().execute(LeaveAlternateScreen)?;
+    disable_raw_mode()?;
+    terminal.show_cursor()?;
+
+    if let Err(err) = res {
+        println!("{err:?}");
+    }
+
     Ok(())
-}
-
-// Helper function to remove .md extension for routing, if needed.
-fn remove_md_extension(filename: &str) -> &str {
-    filename.strip_suffix(".md").unwrap_or(filename)
-}
-
-// Placeholder for markdown_to_html
-fn markdown_to_html(markdown: &str) -> String {
-    markdown.to_string()
-}
-
-// Placeholder for calculate_sha256
-fn calculate_sha256(data: &[u8]) -> String {
-    let mut hasher = sha2::Sha256::new();
-    hasher.update(data);
-    format!("{:x}", hasher.finalize())
-}
-
-// Placeholder for make_skin
-fn make_skin() -> termimad::MadSkin {
-    let mut skin = termimad::MadSkin::default();
-    skin.set_headers_fg(termimad::crossterm::style::Color::Yellow);
-    skin
 }
