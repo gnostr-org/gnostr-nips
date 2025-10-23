@@ -175,7 +175,11 @@ pub async fn run_app(skin: MadSkin, nip: String) -> Result<(), Error> {
     terminal::enable_raw_mode()?;
     queue!(w, Hide)?; // hiding the cursor
                       // get nip here
-    let mut view = MadView::from(nip.to_owned(), view_area(), skin);
+    let header = "# Nostr NIPs
+
+";
+    let content_with_header = format!("{}{}", header, nip);
+    let mut view = MadView::from(content_with_header, view_area(), skin);
     loop {
         view.write_on(&mut w)?;
         w.flush()?;
@@ -209,6 +213,8 @@ pub fn make_skin() -> MadSkin {
     skin.italic.set_fg(Magenta);
     skin.scrollbar.thumb.set_fg(AnsiValue(178));
     skin.code_block.align = Alignment::Center;
+    skin.set_fg(AnsiValue(178)); // Set default foreground color for the header
+    skin.bold.set_fg(Yellow); // Make header bold and yellow
     skin
 }
 

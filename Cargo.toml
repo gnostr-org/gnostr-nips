@@ -26,8 +26,8 @@ tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [[bin]]
-name = "nip-browser"
-path = "src/bin/nip-browser.rs"
+name = "nips"
+path = "src/main.rs"
 
 # The profile that 'dist' will build with
 [profile.dist]
