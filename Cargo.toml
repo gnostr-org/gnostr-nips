@@ -1,5 +1,5 @@
 [package]
-name = "nips"
+name = "nips" #gnostr-nips
 version = "0.0.39"
 edition = "2021"
 authors = ["randymcmillan <randymcmillan@protonmail.com>", "The nostr-protocol/nips Contributors"]
@@ -24,6 +24,7 @@ tower = { version = "0.5.2", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["full"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+include_dir = { version = "0.7.4", features = ["glob", "metadata"] }
 
 [[bin]]
 name = "nips"
